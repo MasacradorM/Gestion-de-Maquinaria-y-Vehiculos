@@ -7030,7 +7030,7 @@ textarea.form-control-lg {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
-.icon-link > .bi {
+.icon-link > {
   flex-shrink: 0;
   width: 1em;
   height: 1em;
@@ -7038,12 +7038,12 @@ textarea.form-control-lg {
   transition: 0.2s ease-in-out transform;
 }
 @media (prefers-reduced-motion: reduce) {
-  .icon-link > .bi {
+  .icon-link > {
     transition: none;
   }
 }
 
-.icon-link-hover:hover > .bi, .icon-link-hover:focus-visible > .bi {
+.icon-link-hover:hover >, .icon-link-hover:focus-visible > {
   transform: var(--bs-icon-link-transform, translate3d(0.25em, 0, 0));
 }
 
@@ -12969,7 +12969,7 @@ textarea.form-control-lg {
 }
 
 .app-sidebar {
-  --lte-sidebar-hover-bg: rgba(0, 0, 0, 0.1);
+  --lte-sidebar-hover-bg: rgba(4, 4, 4, 0.1);
   --lte-sidebar-color: #343a40;
   --lte-sidebar-hover-color: #212529;
   --lte-sidebar-active-color: #000;
