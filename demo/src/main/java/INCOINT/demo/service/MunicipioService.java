@@ -7,9 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import INCOINT.demo.DTO.MunicipioDTO;
 import INCOINT.demo.DTO.responseDTO;
-import INCOINT.demo.model.Departamento;
 import INCOINT.demo.model.Municipio;
-import INCOINT.demo.repository.IDepartamento;
 import INCOINT.demo.repository.IMunicipio;
 
 @Service
@@ -17,9 +15,6 @@ public class MunicipioService {
 
     @Autowired
     private IMunicipio data;
-
-    @Autowired
-    private IDepartamento departamentoRepository;
 
     public List<Municipio> findAll() {
         return data.findAll();
@@ -29,15 +24,9 @@ public class MunicipioService {
         return data.findById(municipioId);
     }
 
-    public responseDTO save(MunicipioDTO municipioDTO) {
-        Optional<Departamento> departamento = departamentoRepository.findById(municipioDTO.getDepartamentoId());
-        if (!departamento.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El departamento no existe");
-        }
-        
-        Municipio municipio = new Municipio(0, departamento.get(), municipioDTO.getMunicipioNombre(), municipioDTO.getCodigoDane());
-        data.save(municipio);
-        return new responseDTO(HttpStatus.OK.toString(), "Municipio registrado correctamente");
+    public void save(MunicipioDTO municipioDTO) {   
+        Municipio municipioDT = new Municipio(0,municipioDTO.getDepartamentoId(), municipioDTO.getMunicipioNombre(), municipioDTO.getCodigoDane());
+        data.save(municipioDT);
     }
 
     public responseDTO deleteMunicipio(int municipioId) {

@@ -37,3 +37,4 @@ public class TipoMaquinariaService {
         return new responseDTO(HttpStatus.OK.toString(), "Se eliminó correctamente");
     }
 }
+

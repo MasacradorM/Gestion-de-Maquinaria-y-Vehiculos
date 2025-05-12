@@ -2,7 +2,6 @@ package INCOINT.demo.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import INCOINT.demo.DTO.TipoDTO;
-import INCOINT.demo.DTO.responseDTO;
 import INCOINT.demo.service.TipoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

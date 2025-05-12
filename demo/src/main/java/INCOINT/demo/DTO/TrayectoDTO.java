@@ -1,12 +1,14 @@
 package INCOINT.demo.DTO;
 
+import INCOINT.demo.model.Municipio;
+
 public class TrayectoDTO {
 
     private String trayectoNombre;
-    private int municipioOrigenId;
-    private Integer municipioDestinoId;
+    private Municipio municipioOrigenId;
+    private Municipio municipioDestinoId;
 
-    public TrayectoDTO(String trayectoNombre, int municipioOrigenId, Integer municipioDestinoId) {
+    public TrayectoDTO(String trayectoNombre, Municipio municipioOrigenId, Municipio municipioDestinoId) {
         this.trayectoNombre = trayectoNombre;
         this.municipioOrigenId = municipioOrigenId;
         this.municipioDestinoId = municipioDestinoId;
@@ -20,19 +22,19 @@ public class TrayectoDTO {
         this.trayectoNombre = trayectoNombre;
     }
 
-    public int getMunicipioOrigenId() {
+    public Municipio getMunicipioOrigenId() {
         return municipioOrigenId;
     }
 
-    public void setMunicipioOrigenId(int municipioOrigenId) {
+    public void setMunicipioOrigenId(Municipio municipioOrigenId) {
         this.municipioOrigenId = municipioOrigenId;
     }
 
-    public Integer getMunicipioDestinoId() {
+    public Municipio getMunicipioDestinoId() {
         return municipioDestinoId;
     }
 
-    public void setMunicipioDestinoId(Integer municipioDestinoId) {
+    public void setMunicipioDestinoId(Municipio municipioDestinoId) {
         this.municipioDestinoId = municipioDestinoId;
     }
 }

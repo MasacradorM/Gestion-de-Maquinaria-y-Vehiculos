@@ -1,8 +1,6 @@
 package INCOINT.demo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
 import INCOINT.demo.DTO.VehiculoDTO;
-import INCOINT.demo.DTO.responseDTO;
 import INCOINT.demo.service.VehiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +16,8 @@ public class VehiculoController {
 
     @PostMapping("/")
     public ResponseEntity<Object> registerVehiculo(@RequestBody VehiculoDTO vehiculoDTO) {
-        responseDTO response = vehiculoService.save(vehiculoDTO);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        vehiculoService.save(vehiculoDTO);
+        return new ResponseEntity<>("register OK", HttpStatus.OK);
     }
 
     @GetMapping("/")

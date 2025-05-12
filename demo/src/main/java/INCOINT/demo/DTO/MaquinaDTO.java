@@ -2,25 +2,27 @@ package INCOINT.demo.DTO;
 
 import java.time.LocalDateTime;
 
+import INCOINT.demo.model.TipoMaquinaria;
+
 public class MaquinaDTO {
 
-    private int tipoMaquinariaId;
+    private TipoMaquinaria tipoMaquinariaId;
     private String maquina;
     private LocalDateTime fechaRegistro;
     private boolean estatus;
 
-    public MaquinaDTO(int tipoMaquinariaId, String maquina, LocalDateTime fechaRegistro, boolean estatus) {
+    public MaquinaDTO(TipoMaquinaria tipoMaquinariaId, String maquina, LocalDateTime fechaRegistro, boolean estatus) {
         this.tipoMaquinariaId = tipoMaquinariaId;
         this.maquina = maquina;
         this.fechaRegistro = fechaRegistro;
         this.estatus = estatus;
     }
 
-    public int getTipoMaquinariaId() {
+    public TipoMaquinaria getTipoMaquinariaId() {
         return tipoMaquinariaId;
     }
 
-    public void setTipoMaquinariaId(int tipoMaquinariaId) {
+    public void setTipoMaquinariaId(TipoMaquinaria tipoMaquinariaId) {
         this.tipoMaquinariaId = tipoMaquinariaId;
     }
 

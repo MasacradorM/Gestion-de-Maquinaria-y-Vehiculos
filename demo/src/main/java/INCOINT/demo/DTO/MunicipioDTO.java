@@ -1,22 +1,24 @@
 package INCOINT.demo.DTO;
 
+import INCOINT.demo.model.Departamento;
+
 public class MunicipioDTO {
 
-    private int departamentoId;
+    private Departamento departamentoId;
     private String municipioNombre;
     private int codigoDane;
 
-    public MunicipioDTO(int departamentoId, String municipioNombre, int codigoDane) {
+    public MunicipioDTO(Departamento departamentoId, String municipioNombre, int codigoDane) {
         this.departamentoId = departamentoId;
         this.municipioNombre = municipioNombre;
         this.codigoDane = codigoDane;
     }
 
-    public int getDepartamentoId() {
+    public Departamento getDepartamentoId() {
         return departamentoId;
     }
 
-    public void setDepartamentoId(int departamentoId) {
+    public void setDepartamentoId(Departamento departamentoId) {
         this.departamentoId = departamentoId;
     }
 

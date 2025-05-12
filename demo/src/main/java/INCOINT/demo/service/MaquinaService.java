@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import INCOINT.demo.DTO.MaquinaDTO;
 import INCOINT.demo.DTO.responseDTO;
-import INCOINT.demo.model.TipoMaquinaria;
 import INCOINT.demo.model.Maquina;
-import INCOINT.demo.repository.ITipoMaquinaria;
 import INCOINT.demo.repository.IMaquina;
 
 @Service
@@ -19,8 +17,6 @@ public class MaquinaService {
     @Autowired
     private IMaquina data;
 
-    @Autowired
-    private ITipoMaquinaria tipoMaquinariaRepository;
 
     public List<Maquina> findAll() {
         return data.findAll();
@@ -31,12 +27,7 @@ public class MaquinaService {
     }
 
     public responseDTO save(MaquinaDTO maquinaDTO) {
-        Optional<TipoMaquinaria> tipoMaquinaria = tipoMaquinariaRepository.findById(maquinaDTO.getTipoMaquinariaId());
-        if (!tipoMaquinaria.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El tipo de maquinaria no existe");
-        }
-        
-        Maquina maquina = new Maquina(0, tipoMaquinaria.get(), maquinaDTO.getMaquina(), LocalDateTime.now(), maquinaDTO.isEstatus());
+        Maquina maquina = new Maquina(0, maquinaDTO.getTipoMaquinariaId(), maquinaDTO.getMaquina(), LocalDateTime.now(), maquinaDTO.isEstatus());
         data.save(maquina);
         return new responseDTO(HttpStatus.OK.toString(), "Maquina registrada correctamente");
     }

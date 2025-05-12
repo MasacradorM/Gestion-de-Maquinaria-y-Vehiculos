@@ -1,8 +1,6 @@
 package INCOINT.demo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
 import INCOINT.demo.DTO.TrayectoDTO;
-import INCOINT.demo.DTO.responseDTO;
 import INCOINT.demo.service.TrayectoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +16,8 @@ public class TrayectoController {
 
     @PostMapping("/")
     public ResponseEntity<Object> registerTrayecto(@RequestBody TrayectoDTO trayectoDTO) {
-        responseDTO response = trayectoService.save(trayectoDTO);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        trayectoService.save(trayectoDTO);
+        return new ResponseEntity<>("register OK", HttpStatus.OK);
     }
 
     @GetMapping("/")

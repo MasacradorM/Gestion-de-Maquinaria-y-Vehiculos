@@ -1,11 +1,12 @@
 package INCOINT.demo.DTO;
 
+
 public class responseDTO {
     private String status;
     private String message;
 
-    public responseDTO(String status, String message) {
-        this.status = status;
+    public responseDTO(String ok, String message) {
+        this.status = ok;
         this.message = message;
     }
 

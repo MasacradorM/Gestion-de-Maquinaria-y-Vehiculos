@@ -2,25 +2,27 @@ package INCOINT.demo.DTO;
 
 import java.time.LocalDateTime;
 
+import INCOINT.demo.model.TipoVehiculo;
+
 public class VehiculoDTO {
 
-    private int tipoVehiculoId;
+    private TipoVehiculo tipoVehiculoId;
     private String vehiculo;
     private LocalDateTime fechaRegistro;
     private boolean estatus;
 
-    public VehiculoDTO(int tipoVehiculoId, String vehiculo, LocalDateTime fechaRegistro, boolean estatus) {
+    public VehiculoDTO(TipoVehiculo tipoVehiculoId, String vehiculo, LocalDateTime fechaRegistro, boolean estatus) {
         this.tipoVehiculoId = tipoVehiculoId;
         this.vehiculo = vehiculo;
         this.fechaRegistro = fechaRegistro;
         this.estatus = estatus;
     }
 
-    public int getTipoVehiculoId() {
+    public TipoVehiculo getTipoVehiculoId() {
         return tipoVehiculoId;
     }
 
-    public void setTipoVehiculoId(int tipoVehiculoId) {
+    public void setTipoVehiculoId(TipoVehiculo tipoVehiculoId) {
         this.tipoVehiculoId = tipoVehiculoId;
     }
 

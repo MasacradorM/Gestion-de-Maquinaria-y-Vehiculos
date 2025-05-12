@@ -7,9 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import INCOINT.demo.DTO.TrayectoDTO;
 import INCOINT.demo.DTO.responseDTO;
-import INCOINT.demo.model.Municipio;
 import INCOINT.demo.model.Trayecto;
-import INCOINT.demo.repository.IMunicipio;
 import INCOINT.demo.repository.ITrayecto;
 
 @Service
@@ -17,10 +15,6 @@ public class TrayectoService {
 
     @Autowired
     private ITrayecto data;
-
-    @Autowired
-    private IMunicipio municipioRepository;
-
     public List<Trayecto> findAll() {
         return data.findAll();
     }
@@ -30,21 +24,7 @@ public class TrayectoService {
     }
 
     public responseDTO save(TrayectoDTO trayectoDTO) {
-        Optional<Municipio> municipioOrigen = municipioRepository.findById(trayectoDTO.getMunicipioOrigenId());
-        if (!municipioOrigen.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El municipio de origen no existe");
-        }
-
-        Municipio municipioDestino = null;
-        if (trayectoDTO.getMunicipioDestinoId() != null) {
-            Optional<Municipio> municipioDestinoOpt = municipioRepository.findById(trayectoDTO.getMunicipioDestinoId());
-            if (!municipioDestinoOpt.isPresent()) {
-                return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El municipio de destino no existe");
-            }
-            municipioDestino = municipioDestinoOpt.get();
-        }
-        
-        Trayecto trayecto = new Trayecto(0, trayectoDTO.getTrayectoNombre(), municipioOrigen.get(), municipioDestino);
+        Trayecto trayecto = new Trayecto(0, trayectoDTO.getTrayectoNombre(), trayectoDTO.getMunicipioOrigenId(), trayectoDTO.getMunicipioDestinoId());
         data.save(trayecto);
         return new responseDTO(HttpStatus.OK.toString(), "Trayecto registrado correctamente");
     }

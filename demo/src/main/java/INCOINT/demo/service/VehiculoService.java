@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import INCOINT.demo.DTO.VehiculoDTO;
 import INCOINT.demo.DTO.responseDTO;
-import INCOINT.demo.model.TipoVehiculo;
 import INCOINT.demo.model.Vehiculo;
-import INCOINT.demo.repository.ITipoVehiculo;
 import INCOINT.demo.repository.IVehiculo;
 
 @Service
@@ -18,9 +16,6 @@ public class VehiculoService {
 
     @Autowired
     private IVehiculo data;
-
-    @Autowired
-    private ITipoVehiculo tipoVehiculoRepository;
 
     public List<Vehiculo> findAll() {
         return data.findAll();
@@ -31,12 +26,7 @@ public class VehiculoService {
     }
 
     public responseDTO save(VehiculoDTO vehiculoDTO) {
-        Optional<TipoVehiculo> tipoVehiculo = tipoVehiculoRepository.findById(vehiculoDTO.getTipoVehiculoId());
-        if (!tipoVehiculo.isPresent()) {
-            return new responseDTO(HttpStatus.BAD_REQUEST.toString(), "El tipo de vehículo no existe");
-        }
-        
-        Vehiculo vehiculo = new Vehiculo(0, tipoVehiculo.get(), vehiculoDTO.getVehiculo(), LocalDateTime.now(), vehiculoDTO.isEstatus());
+        Vehiculo vehiculo = new Vehiculo(0, vehiculoDTO.getTipoVehiculoId(), vehiculoDTO.getVehiculo(), LocalDateTime.now(), vehiculoDTO.isEstatus());
         data.save(vehiculo);
         return new responseDTO(HttpStatus.OK.toString(), "Vehículo registrado correctamente");
     }
