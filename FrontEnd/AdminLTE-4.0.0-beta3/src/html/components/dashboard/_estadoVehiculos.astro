@@ -1,0 +1,185 @@
+---
+interface Vehiculo {
+  nombre: string;
+  base: string;
+}
+
+interface Props {
+  disponibles: number;
+  mantenimiento: number;
+  transito: number;
+  vehiculos: Vehiculo[];
+}
+
+const { disponibles, mantenimiento, transito, vehiculos } = Astro.props;
+---
+
+<div class="estado-vehiculos-container">
+  <!-- Botones para cambiar el estado -->
+  <div id="filtros" class="filtros-botones mb-4">
+    <button 
+      class="estado-btn active" 
+      data-estado="disponibles"
+    >
+      Disponibles <span class="badge">{disponibles}</span>
+    </button>
+    <button 
+      class="estado-btn" 
+      data-estado="mantenimiento"
+    >
+      Mantenimiento <span class="badge">{mantenimiento}</span>
+    </button>
+    <button 
+      class="estado-btn" 
+      data-estado="transito"
+    >
+      Tránsito <span class="badge">{transito}</span>
+    </button>
+  </div>
+
+  <!-- Lista donde se mostrarán los vehículos -->
+  <ul id="listaVehiculos" class="lista-vehiculos"></ul>
+</div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const vehiculos = JSON.parse(decodeURIComponent(`{encodeURIComponent(JSON.stringify(vehiculos))}`));
+    const disponibles = {disponibles};
+    const mantenimiento = {mantenimiento};
+    const transito = {transito};
+
+    const lista = document.getElementById("listaVehiculos");
+    const botones = document.querySelectorAll("#filtros button");
+
+    function render(estado) {
+      // Actualizar botones activos
+      botones.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.estado === estado);
+      });
+
+      let seleccionados = [];
+      if (estado === "disponibles") {
+        seleccionados = vehiculos.slice(0, disponibles);
+      } else if (estado === "mantenimiento") {
+        seleccionados = vehiculos.slice(disponibles, disponibles + mantenimiento);
+      } else if (estado === "transito") {
+        seleccionados = vehiculos.slice(disponibles + mantenimiento, disponibles + mantenimiento + transito);
+      }
+
+      lista.innerHTML = seleccionados.map(v => `
+        <li class="vehiculo-item">
+          <div class="vehiculo-info">
+            <strong>${v.nombre}</strong>
+            <span>${v.base}</span>
+          </div>
+          <div class="vehiculo-status ${estado}"></div>
+        </li>
+      `).join("");
+    }
+
+    // Escuchar clicks
+    botones.forEach(btn => {
+      btn.addEventListener("click", () => render(btn.dataset.estado));
+    });
+
+    // Mostrar por defecto los disponibles
+    render("disponibles");
+  });
+</script>
+
+<style>
+  .estado-vehiculos-container {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .filtros-botones {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+  }
+
+  .estado-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    background: #f5f5f5;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .estado-btn.active {
+    background: #1f3b5d;
+    color: white;
+  }
+
+  .estado-btn .badge {
+    background: rgba(255,255,255,0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+  }
+
+  .estado-btn.active .badge {
+    background: rgba(255,255,255,0.3);
+  }
+
+  .lista-vehiculos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .vehiculo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+  }
+
+  .vehiculo-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .vehiculo-info strong {
+    font-size: 0.95rem;
+  }
+
+  .vehiculo-info span {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  .vehiculo-status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .vehiculo-status.disponibles {
+    background: #4CAF50;
+  }
+
+  .vehiculo-status.mantenimiento {
+    background: #FFC107;
+  }
+
+  .vehiculo-status.transito {
+    background: #2196F3;
+  }
+</style>

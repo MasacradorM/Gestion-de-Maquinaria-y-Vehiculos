@@ -1,0 +1,169 @@
+---
+// RegistroResumen.astro
+interface VehiculoPendiente {
+  codigo: string;
+  nombre: string;
+}
+
+interface PropiedadesRegistro {
+  horaInicio: string;
+  totalVehiculos: number;
+  vehiculosPendientes: VehiculoPendiente[];
+  porcentajeCompletado: number;
+}
+
+const {
+  horaInicio = "7:05 AM",
+  totalVehiculos = 26,
+  vehiculosPendientes = [
+    { codigo: "DA3450", nombre: "CAMIÓN DA3450" },
+    { codigo: "SVF404", nombre: "VOLQUETA SVF404" },
+    { codigo: "DA3445", nombre: "CAMIÓN DA3445" },
+    { codigo: "DA3445", nombre: "CAMIÓN DA3445" }
+  ],
+  porcentajeCompletado = 85
+} = Astro.props;
+---
+
+<div class="registro-resumen-container h-100">
+  <div class="card h-100">
+    <div class="card-header">
+      <h3 class="card-title">Resumen del Registro</h3>
+    </div>
+    <div class="card-body">
+      <div class="registro-summary">
+        <div class="summary-header">
+          <span class="total-vehicles">22 de {totalVehiculos} vehículos registrados</span>
+          <span class="start-time">Hora inicio: {horaInicio}</span>
+        </div>
+        
+        <div class="progress-container">
+          <div 
+            class="progress-bar" 
+            style={`width: ${porcentajeCompletado}%`}
+          >
+            {porcentajeCompletado}%
+          </div>
+        </div>
+        
+        <div class="pending-vehicles">
+          <h4>Vehículos Pendientes:</h4>
+          <ul>
+            {vehiculosPendientes.map((vehiculo) => (
+              <li>
+                <span class="vehicle-type">{vehiculo.nombre}</span>
+                <span class="vehicle-code">{vehiculo.codigo}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style lang="scss">
+.registro-resumen-container {
+  width: 100%;
+  
+  .card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .card-header {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      
+      .card-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #000;
+      }
+    }
+    
+    .card-body {
+      padding: 0.75rem 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  
+  .registro-summary {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .summary-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    color: #495057;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .progress-container {
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+    height: 25px;
+    overflow: hidden;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: #1f3b5d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+  }
+  
+  .pending-vehicles {
+    flex: 1;
+    
+    h4 {
+      color: #495057;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem;
+      background-color: #f8f9fa;
+      border-radius: 0.25rem;
+      
+      .vehicle-type {
+        font-weight: 500;
+        color: #212529;
+        font-size: 0.9rem;
+      }
+      
+      .vehicle-code {
+        color: #6c757d;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+</style>

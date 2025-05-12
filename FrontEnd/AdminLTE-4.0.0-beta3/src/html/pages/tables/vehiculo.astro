@@ -5,16 +5,16 @@ import Topbar from "@components/dashboard/_topbar.astro";
 import Sidenav from "@components/dashboard/_sidenav.astro";
 import Scripts from "@components/_scripts.astro";
 
-const title = "Maquinaria Amarilla | Dashboard";
+const title = "Vehiculos | Dashboard";
 const path = "../../../dist";
-const mainPage = "maquinaria";
+const mainPage = "vehiculos";
 const page = "listado";
 
 // Datos de ejemplo para las máquinas (simulando datos reales)
 const maquinas = [
   
   {
-    tipo: "AUTOHOMIGONERA",
+    tipo: "CAMIÓN",
     codigo: "J3500-2",
     modelo: "L3500",
     estado: "EN MANTENIMIENTO",
@@ -24,7 +24,7 @@ const maquinas = [
     conductor: "Rafael Tucci"
   },
   {
-    tipo: "EXCAVADORA",
+    tipo: "CAMIÓN",
     codigo: "DAJ453",
     modelo: "L453",
     estado: "EN OPERACION",
@@ -34,7 +34,7 @@ const maquinas = [
     conductor: "Rafael Tucci"
   },
   {
-    tipo: "EXCAVADORA",
+    tipo: "CAMIÓN",
     codigo: "DAJ453",
     modelo: "L453",
     estado: "DISPONIBLE",
@@ -44,7 +44,7 @@ const maquinas = [
     conductor: "Rafael Tucci"
   },
   {
-    tipo: "EXCAVADORA",
+    tipo: "CAMIÓN",
     codigo: "DAJ453",
     modelo: "L453",
     estado: "DISPONIBLE",
@@ -54,7 +54,7 @@ const maquinas = [
     conductor: "Rafael Tucci"
   },
   {
-    tipo: "EXCAVADORA",
+    tipo: "CAMIÓN",
     codigo: "DAJ453",
     modelo: "L453",
     estado: "EN MANTENIMIENTO",
@@ -64,7 +64,7 @@ const maquinas = [
     conductor: "Rafael Tucci"
   },
   {
-    tipo: "EXCAVADORA",
+    tipo: "CAMIÓN",
     codigo: "DAJ453", 
     modelo: "L453",
     estado: "EN OPERACION",
@@ -396,13 +396,13 @@ const actividadesDisponibles = [
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Maquinaria Amarilla</h3>
+                <h3 class="mb-0">Vehiculos</h3>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">
-                    Maquinaria Amarilla
+                    Vehiculos
                   </li>
                 </ol>
               </div>
@@ -463,7 +463,7 @@ const actividadesDisponibles = [
               
               <div class="nueva-maquina">
                 <button class="btn btn-primary">
-                  <i class="fas fa-plus"></i>   + Nueva Maquina
+                  <i class="fas fa-plus"></i>   + Nuevo Vehículo
                 </button>
               </div>
             </div>
