@@ -2,6 +2,7 @@
 interface Vehiculo {
   nombre: string;
   base: string;
+  estado: 'disponible' | 'mantenimiento' | 'transito';
 }
 
 interface Props {
@@ -11,79 +12,82 @@ interface Props {
   vehiculos: Vehiculo[];
 }
 
-const { disponibles, mantenimiento, transito, vehiculos } = Astro.props;
+const { disponibles, mantenimiento, transito, vehiculos = [] } = Astro.props;
 ---
 
 <div class="estado-vehiculos-container">
   <!-- Botones para cambiar el estado -->
   <div id="filtros" class="filtros-botones mb-4">
-    <button 
-      class="estado-btn active" 
-      data-estado="disponibles"
-    >
-      Disponibles <span class="badge">{disponibles}</span>
+    <button class="estado-btn active" data-estado="disponible">
+      <span class="btn-text">Disponibles</span> <span class="badge">{vehiculos.filter(v => v.estado === 'disponible').length}</span>
     </button>
-    <button 
-      class="estado-btn" 
-      data-estado="mantenimiento"
-    >
-      Mantenimiento <span class="badge">{mantenimiento}</span>
+    <button class="estado-btn" data-estado="mantenimiento">
+      <span class="btn-text">Mantenimiento</span> <span class="badge">{vehiculos.filter(v => v.estado === 'mantenimiento').length}</span>
     </button>
-    <button 
-      class="estado-btn" 
-      data-estado="transito"
-    >
-      Tránsito <span class="badge">{transito}</span>
+    <button class="estado-btn" data-estado="transito">
+      <span class="btn-text">Tránsito</span> <span class="badge">{vehiculos.filter(v => v.estado === 'transito').length}</span>
     </button>
   </div>
 
-  <!-- Lista donde se mostrarán los vehículos -->
-  <ul id="listaVehiculos" class="lista-vehiculos"></ul>
-</div>
-
-<script is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
-    const vehiculos = JSON.parse(decodeURIComponent(`{encodeURIComponent(JSON.stringify(vehiculos))}`));
-    const disponibles = {disponibles};
-    const mantenimiento = {mantenimiento};
-    const transito = {transito};
-
-    const lista = document.getElementById("listaVehiculos");
-    const botones = document.querySelectorAll("#filtros button");
-
-    function render(estado) {
-      // Actualizar botones activos
-      botones.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.estado === estado);
-      });
-
-      let seleccionados = [];
-      if (estado === "disponibles") {
-        seleccionados = vehiculos.slice(0, disponibles);
-      } else if (estado === "mantenimiento") {
-        seleccionados = vehiculos.slice(disponibles, disponibles + mantenimiento);
-      } else if (estado === "transito") {
-        seleccionados = vehiculos.slice(disponibles + mantenimiento, disponibles + mantenimiento + transito);
-      }
-
-      lista.innerHTML = seleccionados.map(v => `
+  <!-- Lista de vehículos -->
+  <div class="lista-container">
+    <ul id="listaVehiculos" class="lista-vehiculos">
+      {vehiculos.filter(v => v.estado === 'disponible').map(vehiculo => (
         <li class="vehiculo-item">
           <div class="vehiculo-info">
-            <strong>${v.nombre}</strong>
-            <span>${v.base}</span>
+            <strong>{vehiculo.nombre}</strong>
+            <span>{vehiculo.base}</span>
           </div>
-          <div class="vehiculo-status ${estado}"></div>
+          <div class={`vehiculo-status ${vehiculo.estado}`}></div>
         </li>
-      `).join("");
+      ))}
+    </ul>
+  </div>
+</div>
+<!-- Exportación de datos JSON -->
+<script define:vars={{ vehiculosData: vehiculos }}>
+  // Ensure data is available to client-side script safely
+  window.vehiculosData = vehiculosData;
+</script>
+
+<!-- Script funcional -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      // Use the data made available through define:vars instead of parsing JSON
+      const vehiculos = window.vehiculosData || [];
+      
+      const lista = document.getElementById("listaVehiculos");
+      const botones = document.querySelectorAll("#filtros button");
+
+      function render(estado) {
+        botones.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.estado === estado);
+        });
+
+        const seleccionados = vehiculos.filter(v => v.estado === estado);
+
+        lista.innerHTML = seleccionados.map(v => `
+          <li class="vehiculo-item">
+            <div class="vehiculo-info">
+              <strong>${v.nombre}</strong>
+              <span>${v.base}</span>
+            </div>
+            <div class="vehiculo-status ${estado}"></div>
+          </li>
+        `).join("");
+      }
+
+      // Inicializa con "disponible"
+      render("disponible");
+
+      botones.forEach(btn => {
+        btn.addEventListener("click", () => render(btn.dataset.estado));
+      });
+
+    } catch (error) {
+      console.error("Error al procesar los datos de vehículos:", error);
     }
-
-    // Escuchar clicks
-    botones.forEach(btn => {
-      btn.addEventListener("click", () => render(btn.dataset.estado));
-    });
-
-    // Mostrar por defecto los disponibles
-    render("disponibles");
   });
 </script>
 
@@ -93,6 +97,7 @@ const { disponibles, mantenimiento, transito, vehiculos } = Astro.props;
     border-radius: 10px;
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden; /* Evita desbordamiento */
   }
 
   .filtros-botones {
@@ -100,11 +105,13 @@ const { disponibles, mantenimiento, transito, vehiculos } = Astro.props;
     gap: 0.5rem;
     border-bottom: 1px solid #eee;
     padding-bottom: 1rem;
+    flex-wrap: wrap; /* Permite que los botones se ajusten en pantallas pequeñas */
   }
 
   .estado-btn {
     flex: 1;
-    padding: 0.75rem;
+    min-width: 120px; /* Ancho mínimo para evitar textos comprimidos */
+    padding: 0.75rem 0.5rem;
     border: none;
     background: #f5f5f5;
     border-radius: 6px;
@@ -114,6 +121,15 @@ const { disponibles, mantenimiento, transito, vehiculos } = Astro.props;
     justify-content: center;
     gap: 0.5rem;
     transition: all 0.2s ease;
+    white-space: nowrap; /* Evita saltos de línea dentro del botón */
+  }
+
+  /* Para pantallas muy pequeñas, apila los botones */
+  @media (max-width: 480px) {
+    .estado-btn {
+      flex: 100%;
+      margin-bottom: 0.5rem;
+    }
   }
 
   .estado-btn.active {
@@ -121,15 +137,28 @@ const { disponibles, mantenimiento, transito, vehiculos } = Astro.props;
     color: white;
   }
 
+  .btn-text {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Agrega puntos suspensivos si el texto es muy largo */
+  }
+
   .estado-btn .badge {
     background: rgba(255,255,255,0.2);
     padding: 0.25rem 0.5rem;
     border-radius: 12px;
     font-size: 0.8rem;
+    min-width: 28px; /* Ancho mínimo para el badge */
+    text-align: center;
   }
 
   .estado-btn.active .badge {
     background: rgba(255,255,255,0.3);
+  }
+
+  .lista-container {
+    max-height: 300px; /* Altura máxima para la lista */
+    overflow-y: auto; /* Scroll vertical cuando sea necesario */
   }
 
   .lista-vehiculos {
@@ -140,6 +169,7 @@ const { disponibles, mantenimiento, transito, vehiculos } = Astro.props;
     flex-direction: column;
     gap: 0.5rem;
     margin-top: 1rem;
+    width: 100%; /* Asegura que la lista use todo el ancho disponible */
   }
 
   .vehiculo-item {
@@ -149,29 +179,41 @@ const { disponibles, mantenimiento, transito, vehiculos } = Astro.props;
     padding: 0.75rem 1rem;
     background: #f9f9f9;
     border-radius: 6px;
+    width: 100%; /* Asegura que cada ítem use todo el ancho */
   }
 
   .vehiculo-info {
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Evita desbordamiento */
+    width: calc(100% - 20px); /* Deja espacio para el indicador de estado */
   }
 
   .vehiculo-info strong {
     font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Agrega puntos suspensivos si el texto es muy largo */
   }
 
   .vehiculo-info span {
     font-size: 0.85rem;
     color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Agrega puntos suspensivos si el texto es muy largo */
   }
 
   .vehiculo-status {
+    min-width: 12px;
+    min-height: 12px;
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    flex-shrink: 0; /* Evita que el círculo se reduzca */
   }
 
-  .vehiculo-status.disponibles {
+  .vehiculo-status.disponible{
     background: #4CAF50;
   }
 

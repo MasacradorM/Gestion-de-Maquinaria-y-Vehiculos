@@ -114,78 +114,7 @@ const actividadesDisponibles = [
   <!--begin::Head-->
   <head>
     <Head title={title} path={path} />
-    <style>
-      .maquina-card {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        background-color: #ffffff;
-      }
-      
-      .maquina-header {
-        padding: 10px 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: #ffffff;
-        background-color: #2c3e50;
-      }
-      
-      .maquina-titulo {
-        font-weight: bold;
-        margin: 0;
-      }
-      
-      .estado-badge {
-        border-radius: 4px;
-        padding: 5px 10px;
-        font-size: 12px;
-        font-weight: bold;
-      }
-      
-      .maquina-content {
-        padding: 15px;
-      }
-      
-      .maquina-info {
-        margin-bottom: 10px;
-      }
-      
-      .maquina-label {
-        font-weight: bold;
-        margin-right: 5px;
-      }
-      
-      .maquina-value {
-        color: #007bff;
-      }
-      
-      .botonera {
-        margin-top: 10px;
-        display: flex;
-        justify-content: flex-end;
-        gap: 5px;
-      }
-      
-      .filtros {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        align-items: center;
-      }
-      
-      .pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-      }
-      
-      .page-item.active .page-link {
-        background-color: #007bff;
-        border-color: #007bff;
-      }
-    </style>
+    
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -460,13 +389,148 @@ const actividadesDisponibles = [
                   </button>
                 </div>
               </div>
+
+
               
               <div class="nueva-maquina">
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoVehiculo">
                   <i class="fas fa-plus"></i>   + Nuevo Vehículo
                 </button>
               </div>
             </div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalNuevoVehiculo" tabindex="-1" aria-labelledby="modalNuevoVehiculoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Encabezado -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalNuevoVehiculoLabel">Registrar Nuevo Vehículo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      
+      <!-- Cuerpo del formulario -->
+      <div class="modal-body">
+        <form id="formVehiculo">
+          <!-- Tipo de Vehículo -->
+          <div class="mb-3">
+            <label for="tipoVehiculo" class="form-label">Tipo de Vehículo</label>
+            <select class="form-select" id="tipoVehiculo" required>
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="Volqueta Sencilla">Volqueta Sencilla</option>
+              <option value="Volqueta Doble Troque">Volqueta Doble Troque</option>
+              <option value="Turbo">Turbo</option>
+              <option value="Camión">Camión</option>
+              <option value="Camioneta">Camioneta</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <!-- Campo para tipo de vehículo si se selecciona "Otro" -->
+          <div class="mb-3 d-none" id="campoOtroTipo">
+            <label for="otroTipo" class="form-label">Especifica el tipo de vehículo</label>
+            <input type="text" class="form-control" id="otroTipo" placeholder="Ej: Motoniveladora">
+          </div>
+
+          <!-- Placa -->
+          <div class="mb-3">
+            <label for="placa" class="form-label">Placa</label>
+            <input type="text" class="form-control" id="placa" placeholder="Ej: ABC123" required>
+          </div>
+
+          <!-- Conductor -->
+          <div class="mb-3">
+            <label for="conductor" class="form-label">Conductor Asignado</label>
+            <input type="text" class="form-control" id="conductor" placeholder="Nombre del conductor" required>
+          </div>
+        </form>
+      </div>
+
+      <!-- Pie de modal -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary" form="formVehiculo">Guardar Vehículo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor donde se agregarán las tarjetas -->
+<div class="row" id="vehiculosContainer">
+  <!-- Las tarjetas se agregarán aquí -->
+</div>
+
+<!-- Script para mostrar campo de texto si selecciona "Otro" y para agregar la tarjeta -->
+<script>
+  // Variables para manejar el formulario y las tarjetas
+  const vehiculos = [];
+  
+  // Mostrar campo "Otro" si selecciona "Otro"
+  document.getElementById('tipoVehiculo').addEventListener('change', function () {
+    const campoOtro = document.getElementById('campoOtroTipo');
+    if (this.value === 'Otro') {
+      campoOtro.classList.remove('d-none');
+      document.getElementById('otroTipo').setAttribute('required', 'required');
+    } else {
+      campoOtro.classList.add('d-none');
+      document.getElementById('otroTipo').removeAttribute('required');
+    }
+  });
+  
+
+
+function agregarVehiculo(vehiculo) {
+  vehiculos.push(vehiculo);
+
+  const tarjetaHTML = `
+    <div class="col-md-4 mb-4">
+      <div class="maquina-card">
+        <div class="maquina-header bg-primary">
+          <h5 class="maquina-titulo">${vehiculo.tipo} ${vehiculo.placa}</h5>
+          <span class="estado-badge ${getEstadoClass(vehiculo.estado)}">
+            ${vehiculo.estado}
+          </span>
+        </div>
+        <div class="maquina-content">
+          <div class="maquina-info">
+            <span class="maquina-label">Fecha:</span>
+            <span class="maquina-value">${vehiculo.fecha}</span>
+          </div>
+          <hr class="maquina-divider" />
+          <div class="maquina-info">
+            <span class="maquina-label">Conductor:</span>
+            <span class="maquina-value">${vehiculo.conductor}</span>
+          </div>
+          <div class="botonera">
+            <button class="btn btn-sm btn-outline-secondary">
+              + Nuevo Registro
+            </button>
+            <button class="btn btn-sm btn-info text-white">
+              Editar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('vehiculosContainer').innerHTML += tarjetaHTML;
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+      
             
             <!--begin::Row-->
             <div class="row">
@@ -577,230 +641,143 @@ const actividadesDisponibles = [
     <!--end::Script-->
   </body><!--end::Body-->
   
-  <style>
-  // Variables
-$primary-color: #007bff;
-$secondary-color: #2c3e50;
-$light-color: #f8f9fa;
 
-// Estilos para el modal
-.modal {
-  &-content {
-    border-radius: 0.5rem;
-  }
 
-  &-header {
-    background: $secondary-color;
-    color: white;
-    border-bottom: none;
-  }
-}
-
-// Estilos para la sección de actividad
-#actividad-cell {
-  .input-group {
-    width: 100%;
-  }
-
-  #nueva-actividad-container {
-    transition: all 0.3s ease;
-  }
-}
-
-// Estilos para los estados
-.estado-badge {
-  &--operacion {
-    background-color: $primary-color;
-    color: white;
+<style>
+  /* ESTILOS PARA TARJETAS DE VEHÍCULOS - VERSIÓN DEFINITIVA */
+  
+  /* Contenedor principal */
+  #vehiculosContainer {
+    margin: 20px 0;
   }
   
-  &--mantenimiento {
-    background-color: #ffc107;
-    color: #212529;
+  /* Tarjeta base */
+  .maquina-card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    height: 100%;
   }
   
-  &--disponible {
-    background-color: #28a745;
-    color: white;
+  .maquina-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
   }
-}
-  // Variables
-$primary-color: #007bff;
-$secondary-color: #2c3e50;
-$light-color: #f8f9fa;
-$disponible-color: #28a745;
-$mantenimiento-color: #ffc107;
-$transito-color: #17a2b8;
-$card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-$border-radius: 8px;
-
-// Estilos para la sección de Maquinaria Amarilla
-.maquinaria-container {
-  padding: 20px 0;
   
-  // Encabezado y filtros
-  .filtros-section {
+  /* Encabezado de la tarjeta */
+  .maquina-card .maquina-header {
+    padding: 12px 16px;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    
-    .search-box {
-      width: 250px;
-      
-      @media (max-width: 768px) {
-        width: 100%;
-      }
-    }
-    
-    .filtros-dropdown {
-      display: flex;
-      gap: 10px;
-      
-      @media (max-width: 768px) {
-        flex-direction: column;
-      }
-    }
+    background: #2c3e50;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   
-  // Tarjetas de maquinaria
-  .maquina-card {
-    border-radius: $border-radius;
-    overflow: hidden;
-    box-shadow: $card-shadow;
-    margin-bottom: 20px;
-    background-color: #ffffff;
-    transition: transform 0.2s ease-in-out;
-    
-    &:hover {
-      transform: translateY(-5px);
-    }
-    
-    .maquina-header {
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #ffffff;
-      background-color: $secondary-color;
-      
-      .maquina-titulo {
-        font-weight: bold;
-        margin: 0;
-        text-transform: uppercase;
-      }
-    }
-    
-    .estado-badge {
-      border-radius: 4px;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: lowercase;
-      
-      &::first-letter {
-        text-transform: uppercase;
-      }
-      
-      &.disponible {
-        background-color: $disponible-color;
-        color: white;
-      }
-      
-      &.mantenimiento {
-        background-color: $mantenimiento-color;
-        color: #212529;
-      }
-      
-      &.transito {
-        background-color: $transito-color;
-        color: white;
-      }
-    }
-    
-    .maquina-content {
-      padding: 15px;
-      
-      .maquina-info {
-        margin-bottom: 8px;
-        display: flex;
-        padding: 2px 0;
-        
-        .maquina-label {
-          font-weight: bold;
-          min-width: 80px;
-          color: #6c757d;
-        }
-        
-        .maquina-value {
-          color: $primary-color;
-          text-transform: capitalize;
-        }
-      }
-      
-      .maquina-divider {
-        margin: 0 0 8px 0;
-        opacity: 0.2;
-        border-top: 1px solid #ccc;
-      }
-      
-      .botonera {
-        margin-top: 10px;
-        display: flex;
-        justify-content: flex-end;
-        gap: 5px;
-      }
-    }
+  .maquina-card .maquina-header.bg-primary {
+    background: #2c3e50 !important;
   }
   
-  // Paginación
-  .pagination-container {
-    margin-top: 30px;
-    
-    .pagination {
-      display: flex;
-      justify-content: center;
-      
-      .page-item {
-        &.active .page-link {
-          background-color: $primary-color;
-          border-color: $primary-color;
-        }
-        
-        .page-link {
-          color: $secondary-color;
-          
-          &:focus {
-            box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25);
-          }
-        }
-      }
-    }
+  .maquina-card .maquina-titulo {
+    font-weight: 600;
+    margin: 0;
+    font-size: 1.05rem;
+    color: white;
   }
-}
+  
+  /* Badge de estado */
+  .maquina-card .estado-badge {
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .maquina-card .bg-success {
+    background-color: #28a745 !important;
+  }
+  
+  .maquina-card .bg-danger {
+    background-color: #dc3545 !important;
+  }
+  
+  .maquina-card .bg-secondary {
+    background-color: #6c757d !important;
+  }
+  
+  /* Cuerpo de la tarjeta */
+  .maquina-card .maquina-content {
+    padding: 16px;
+  }
+  
+  /* Información de la máquina */
+  .maquina-card .maquina-info {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .maquina-card .maquina-label {
+    font-weight: 600;
+    color: #6c757d;
+    min-width: 90px;
+    font-size: 0.85rem;
+  }
+  
+  .maquina-card .maquina-value {
+    color: #495057;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  /* Divisor */
+  .maquina-card .maquina-divider {
+    margin: 12px 0;
+    border: 0;
+    height: 1px;
+    background: #e9ecef;
+  }
+  
+  /* Botones */
+  .maquina-card .botonera {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  .maquina-card .botonera .btn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  
+  /* Asegurar que las columnas tengan el mismo alto */
+  #vehiculosContainer .col-md-4 {
+    display: flex;
+  }
+</style>
 
-// Botón de Nueva Máquina
-.btn-nueva-maquina {
-  font-weight: 600;
-  padding: 8px 16px;
-  display: flex;
-  align-itefms: center;
-  gap: 5px;
-  
-  i {
-    font-size: 12px;
-  }
-}
-</style>ç
+
 <script>
 
+
+  document.getElementById('tipoVehiculo').addEventListener('change', function () {
+    const campoOtro = document.getElementById('campoOtroTipo');
+    if (this.value === 'Otro') {
+      campoOtro.classList.remove('d-none');
+      document.getElementById('otroTipo').setAttribute('required', 'required');
+    } else {
+      campoOtro.classList.add('d-none');
+      document.getElementById('otroTipo').removeAttribute('required');
+    }
+  });
 // Espera a que el DOM esté cargado
 document.addEventListener("DOMContentLoaded", () => {
   const estadoRadios = document.querySelectorAll<HTMLInputElement>('input[name="estado"]');

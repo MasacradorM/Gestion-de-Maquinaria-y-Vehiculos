@@ -1,5 +1,6 @@
 ---
-// src/components/RendimientoComparativoChart.astro
+// RendimientoComparativoChart.astro
+// Define las interfaces para los tipos de datos
 interface DatoRendimiento {
   kmRecorridos: number;
   rendimientoKmGal: number;
@@ -7,6 +8,7 @@ interface DatoRendimiento {
   velocidadMax: number;
 }
 
+// Propiedades que se pueden pasar al componente
 interface Props {
   datosAyer: DatoRendimiento;
   datosAnteayer: DatoRendimiento;
@@ -14,269 +16,277 @@ interface Props {
   fechaAnteayer: string;
 }
 
+// Valores por defecto para demostración
 const {
-  datosAyer = { kmRecorridos: 90, rendimientoKmGal: 25, galonesUsados: 23, velocidadMax: 22 },
-  datosAnteayer = { kmRecorridos: 50, rendimientoKmGal: 0, galonesUsados: 0, velocidadMax: 0 },
+  datosAyer = {
+    kmRecorridos: 90,
+    rendimientoKmGal: 25,
+    galonesUsados: 23,
+    velocidadMax: 22
+  },
+  datosAnteayer = {
+    kmRecorridos: 50,
+    rendimientoKmGal: 0,
+    galonesUsados: 0,
+    velocidadMax: 0
+  },
   fechaAyer = "08/04/2025",
   fechaAnteayer = "09/04/2025"
 } = Astro.props;
-
-const maxValue = Math.max(
-  ...Object.values(datosAyer),
-  ...Object.values(datosAnteayer)
-);
-
-// Calcular valores para el eje Y (0, 30, 60, etc.)
-const yAxisValues = Array.from({length: 4}, (_, i) => Math.round((maxValue * 1.2) * (i/3)));
 ---
 
-<div class="chart-container">
-  <div class="chart-header">
-    <h3 class="main-title">Comparación de Rendimiento:</h3>
-    <h4 class="sub-title">Ayer VS Anteayer</h4>
-  </div>
+<div class="col-lg-7 rendimiento-chart-container">
   
-  <div class="chart-wrapper">
-    <!-- Eje Y fuera del gráfico -->
-    <div class="y-axis">
-      {yAxisValues.map((value, index) => (
-        <div class="y-tick" style={`bottom: ${(index/3)*100}%`}>
-          <span class="y-value">{value}</span>
-          <span class="y-line"></span>
-        </div>
-      ))}
+    <div class="card-header">
+      <h3 class="card-title">Comparación de Rendimiento: Ayer VS Anteayer</h3>
     </div>
-    
-    <!-- Gráfico principal -->
-    <div class="chart-content">
-      <div class="chart-grid">
-        <!-- Barras -->
-        <div class="bars-container">
-          {['kmRecorridos', 'rendimientoKmGal', 'galonesUsados', 'velocidadMax'].map((metric) => (
-            <div class="metric-column">
-              <div class="bar-group">
-                <div 
-                  class="bar ayer" 
-                  style={`height: ${(datosAyer[metric]/yAxisValues[3])*100}%`}
-                  data-value={datosAyer[metric]}
-                ></div>
-                <div 
-                  class="bar anteayer" 
-                  style={`height: ${(datosAnteayer[metric]/yAxisValues[3])*100}%`}
-                  data-value={datosAnteayer[metric]}
-                ></div>
+    <div class="card-body">
+      <div class="chart-container">
+        <!-- Gráfico con cuadrícula completa -->
+        <div class="chart-grid">
+          <!-- Eje Y con valores -->
+          <div class="y-axis">
+            <span>200</span>
+            <span>150</span>
+            <span>100</span>
+            <span>50</span>
+            <span>0</span>
+          </div>
+          
+          <!-- Columnas de datos -->
+          <div class="chart-columns">
+            <!-- Columna KM Recorridos -->
+            <div class="chart-column">
+              <div class="bars-container">
+                <div class="bar ayer" style={`height: ${datosAyer.kmRecorridos / 2}%`}></div>
+                <div class="bar anteayer" style={`height: ${datosAnteayer.kmRecorridos / 2}%`}></div>
+              </div>
+
+            </div>
+            
+            <!-- Columna Rendimiento KM/GAL -->
+            <div class="chart-column">
+              <div class="bars-container">
+                <div class="bar ayer" style={`height: ${datosAyer.rendimientoKmGal / 2}%`}></div>
+                <div class="bar anteayer" style={`height: ${datosAnteayer.rendimientoKmGal / 2}%`}></div>
               </div>
             </div>
-          ))}
+            
+            <!-- Columna Galones Usados -->
+            <div class="chart-column">
+              <div class="bars-container">
+                <div class="bar ayer" style={`height: ${datosAyer.galonesUsados / 2}%`}></div>
+                <div class="bar anteayer" style={`height: ${datosAnteayer.galonesUsados / 2}%`}></div>
+              </div>
+            </div>
+            
+            <!-- Columna Velocidad Máxima -->
+            <div class="chart-column">
+              <div class="bars-container">
+                <div class="bar ayer" style={`height: ${datosAyer.velocidadMax / 2}%`}></div>
+                <div class="bar anteayer" style={`height: ${datosAnteayer.velocidadMax / 2}%`}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Etiquetas de categorías por fuera del gráfico -->
+        <div class="x-axis-labels">
+          <div class="axis-label">Km Recorridos</div>
+          <div class="axis-label">Rendimiento (km/gal)</div>
+          <div class="axis-label">Galones usados</div>
+          <div class="axis-label">Velocidad Máx</div>
+        </div>
+        
+        <!-- Leyenda -->
+        <div class="chart-legend">
+          <div class="legend-item">
+            <div class="legend-color ayer"></div>
+            <span>Ayer({fechaAyer})</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color anteayer"></div>
+            <span>Anteayer ({fechaAnteayer})</span>
+          </div>
         </div>
       </div>
-      
-      <!-- Eje X fuera del gráfico -->
-      <div class="x-axis">
-        {['kmRecorridos', 'rendimientoKmGal', 'galonesUsados', 'velocidadMax'].map((metric) => (
-          <div class="x-tick">
-            <span class="x-label">
-              {metric === 'rendimientoKmGal' ? 'Rendimiento' : 
-               metric === 'galonesUsados' ? 'Galones' :
-               metric === 'velocidadMax' ? 'Velocidad' : 'Km Rec.'}
-            </span>
-          </div>
-        ))}
-      </div>
     </div>
   </div>
-  
-  <div class="legend">
-    <div class="legend-item">
-      <div class="legend-color ayer"></div>
-      <span>Ayer ({fechaAyer})</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-color anteayer"></div>
-      <span>Anteayer ({fechaAnteayer})</span>
-    </div>
-  </div>
-</div>
+
 
 <style lang="scss">
-.chart-container {
+.rendimiento-chart-container {
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
   
-  .chart-header {
-    text-align: center;
+  .card {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 1.5rem;
+    background-color: #fff;
     
-    .main-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin: 0;
-      color: #333;
-    }
-    
-    .sub-title {
-      font-size: 1.25rem;
-      font-weight: 500;
-      margin: 0.25rem 0 0;
-      color: #555;
-    }
-  }
-  
-  .chart-wrapper {
-    display: flex;
-    position: relative;
-    min-height: 300px;
-  }
-  
-  .y-axis {
-    width: 40px;
-    position: relative;
-    margin-right: 0.5rem;
-    
-    .y-tick {
-      position: absolute;
-      width: 100%;
-      display: flex;
-      align-items: center;
+    .card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
       
-      .y-value {
-        font-size: 0.8rem;
-        color: #666;
-        width: 30px;
-        text-align: right;
-        padding-right: 0.5rem;
-      }
-      
-      .y-line {
-        flex: 1;
-        height: 1px;
-        background: #eee;
+      .card-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+        text-align: center;
       }
     }
+    
+    .card-body {
+      padding: 1.25rem;
+    }
   }
   
-  .chart-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  .chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
   }
   
   .chart-grid {
-    flex: 1;
-    position: relative;
-    border-left: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    background: 
-      linear-gradient(to bottom, transparent 95%, #f5f5f5 95%) 0% 0% / 100% calc(100% / 3);
-  }
-  
-  .bars-container {
     display: flex;
-    height: 100%;
-    gap: 1rem;
-    padding: 0 1rem;
+    height: 250px;
+    position: relative;
+    margin-bottom: 0.5rem; /* Reducido para las etiquetas abajo */
+    border: 1px solid #ddd;
+    background-color: #fff;
+    background-image:
+      /* Líneas horizontales */
+      linear-gradient(
+        to bottom,
+        #ddd 1px, 
+        transparent 1px
+      ),
+      /* Líneas verticales */
+      linear-gradient(
+        to right,
+        #ddd 1px, 
+        transparent 1px
+      );
+    background-size: 
+      100% 50px,  /* Tamaño de celdas horizontales */
+      25% 100%;   /* Tamaño de celdas verticales */
   }
   
-  .metric-column {
+  /* Etiquetas del eje X (categorías) */
+  .x-axis-labels {
+    display: flex;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+    
+    .axis-label {
+      flex: 1;
+      text-align: center;
+      color: #666;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      transform: rotate(-15deg);
+      padding: 0.5rem 0;
+      
+      @media (max-width: 576px) {
+        font-size: 0.65rem;
+        transform: rotate(-20deg);
+      }
+    }
+  }
+  
+
+  .y-axis {
+  position: absolute;
+  left: -21px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #888;
+  font-size: 0.8rem;
+  
+  /* Elimina el transform y ajusta el margen si es necesario */
+  span {
+    /* transform: translateY(50%);  <-- Elimina esta línea */
+    margin-top: 2.09rem; /* Ajusta según necesidad (opcional) */
+    
+    &:last-child {
+      /* transform: translateY(0);  <-- Elimina esta línea */
+      margin-bottom: 2rem; /* Ajusta el "0" si queda muy abajo */
+    }
+  }
+}
+  
+  .chart-columns {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding-left: 0.5rem;
+  }
+  
+  .chart-column {
     flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    position: relative;
     
-    .bar-group {
+    .bars-container {
       flex: 1;
+      width: 100%;
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 0.5rem;
-      padding: 0 0.5rem;
+      gap: 8px;
+      z-index: 1;
     }
     
     .bar {
       width: 40%;
       min-height: 2px;
-      border-radius: 4px 4px 0 0;
-      position: relative;
       transition: height 0.3s ease;
-      
-      &::after {
-        content: attr(data-value);
-        position: absolute;
-        top: -25px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 0.75rem;
-        background: rgba(0,0,0,0.7);
-        color: white;
-        padding: 2px 5px;
-        border-radius: 3px;
-        opacity: 0;
-        transition: opacity 0.2s;
-      }
-      
-      &:hover::after {
-        opacity: 1;
-      }
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      z-index: 2;
       
       &.ayer {
-        background: #1f3b5d;
+        background-color: #1f3b5d;
       }
       
       &.anteayer {
-        background: #4BA9E9;
+        background-color: #4BA9E9;
       }
     }
-  }
-  
-  .x-axis {
-    display: flex;
-    margin-top: 0.5rem;
-    padding-left: 1rem;
     
-    .x-tick {
-      flex: 1;
-      text-align: center;
-      
-      .x-label {
-        font-size: 0.8rem;
-        color: #666;
-        display: inline-block;
-        transform: rotate(-30deg);
-        transform-origin: left center;
-        text-align: left;
-        padding-left: 1rem;
-        white-space: nowrap;
-      }
-    }
+
   }
   
-  .legend {
+  .chart-legend {
     display: flex;
     justify-content: center;
     gap: 2rem;
-    margin-top: 1.5rem;
+    margin-top: 0.9rem;
     
     .legend-item {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+      color: #666;
       
       .legend-color {
-        width: 15px;
-        height: 15px;
-        border-radius: 3px;
+        width: 14px;
+        height: 14px;
+        border-radius: 2px;
         
         &.ayer {
-          background: #1f3b5d;
+          background-color: #1f3b5d;
         }
         
         &.anteayer {
-          background: #4BA9E9;
+          background-color: #4BA9E9;
         }
       }
     }
