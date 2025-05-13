@@ -15,8 +15,7 @@ const maquinas = [
   
   {
     tipo: "AUTOHOMIGONERA",
-    codigo: "J3500-2",
-    modelo: "L3500",
+    placa: "L3500",
     estado: "EN MANTENIMIENTO",
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
@@ -25,8 +24,7 @@ const maquinas = [
   },
   {
     tipo: "EXCAVADORA",
-    codigo: "DAJ453",
-    modelo: "L453",
+    placa: "L453",
     estado: "EN OPERACION",
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
@@ -35,8 +33,7 @@ const maquinas = [
   },
   {
     tipo: "EXCAVADORA",
-    codigo: "DAJ453",
-    modelo: "L453",
+    placa: "L453",
     estado: "DISPONIBLE",
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
@@ -45,8 +42,7 @@ const maquinas = [
   },
   {
     tipo: "EXCAVADORA",
-    codigo: "DAJ453",
-    modelo: "L453",
+    placa: "L453",
     estado: "DISPONIBLE",
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
@@ -55,8 +51,7 @@ const maquinas = [
   },
   {
     tipo: "EXCAVADORA",
-    codigo: "DAJ453",
-    modelo: "L453",
+    placa: "L453",
     estado: "EN MANTENIMIENTO",
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
@@ -64,9 +59,8 @@ const maquinas = [
     conductor: "Rafael Tucci"
   },
   {
-    tipo: "EXCAVADORA",
-    codigo: "DAJ453", 
-    modelo: "L453",
+    tipo: "EXCAVADORA", 
+    placa: "L453",
     estado: "EN OPERACION",
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
@@ -90,8 +84,7 @@ const getEstadoClass = (estado: string) => {
 };
 interface Maquina {
   tipo: string;
-  codigo: string;
-  modelo: string;
+  placa: string;
   estado: string;
   fecha: string;
   obra: string;
@@ -209,11 +202,7 @@ const actividadesDisponibles = [
             <input type="text" class="form-control" id="modal-tipo" readonly>
           </div>
           <div class="col-md-4">
-            <label for="modal-modelo" class="form-label">Modelo</label>
-            <input type="text" class="form-control" id="modal-modelo" readonly>
-          </div>
-          <div class="col-md-4">
-            <label for="modal-placa" class="form-label">Placa/Código</label>
+            <label for="modal-placa" class="form-label">Placa</label>
             <input type="text" class="form-control" id="modal-placa" readonly>
           </div>
         </div>
@@ -476,7 +465,7 @@ const actividadesDisponibles = [
                     <div class="maquina-card">
                       <div class="maquina-header">
                         <h5 class="maquina-titulo">
-                          {maquina.tipo} {maquina.codigo}
+                          {maquina.tipo} 
                         </h5>
                         <span 
                           class={`estado-badge ${getEstadoClass(maquina.estado)}`}
@@ -513,8 +502,7 @@ const actividadesDisponibles = [
   data-bs-toggle="modal" 
   data-bs-target="#equipoModal"
   data-tipo={maquina.tipo}
-  data-codigo={maquina.codigo}
-  data-modelo={maquina.modelo}
+  data-placa={maquina.placa}
   data-estado={maquina.estado}
   data-fecha={maquina.fecha}
   data-obra={maquina.obra}
@@ -798,7 +786,8 @@ $border-radius: 8px;
     font-size: 12px;
   }
 }
-</style>ç
+</style>
+
 <script>
 
 // Espera a que el DOM esté cargado
@@ -861,6 +850,37 @@ document.addEventListener("DOMContentLoaded", () => {
   galones.addEventListener("input", calcularRendimiento);
   hrCombustible.addEventListener("input", calcularRendimiento);
 });
+
+
+const equipoModal = document.getElementById("equipoModal");
+
+equipoModal?.addEventListener("show.bs.modal", (event) => {
+  const button = event.relatedTarget as HTMLElement;
+
+  const tipo = button.getAttribute("data-tipo") || "";
+  const placa = button.getAttribute("data-placa") || "";
+  const estado = button.getAttribute("data-estado") || "";
+  const fecha = button.getAttribute("data-fecha") || "";
+  const obra = button.getAttribute("data-obra") || "";
+  const actividad = button.getAttribute("data-actividad") || "";
+  const conductor = button.getAttribute("data-conductor") || "";
+
+  // Colocar los valores en los campos del modal
+  (document.getElementById("modal-tipo") as HTMLInputElement).value = tipo;
+  (document.getElementById("modal-placa") as HTMLInputElement).value = placa;
+  (document.getElementById("modal-fecha") as HTMLInputElement).value = fecha;
+  (document.getElementById("modal-obra") as HTMLInputElement).value = obra;
+  (document.getElementById("modal-actividad") as HTMLInputElement).value = actividad;
+  (document.getElementById("modal-conductor") as HTMLInputElement).value = conductor;
+
+  // Estado (radio button)
+  const radio = document.querySelector(`input[name="estado"][value="${estado}"]`) as HTMLInputElement;
+  if (radio) {
+    radio.checked = true;
+    radio.dispatchEvent(new Event("change")); // Para mostrar u ocultar "actividad"
+  }
+});
+
 
 </script>
 </html>

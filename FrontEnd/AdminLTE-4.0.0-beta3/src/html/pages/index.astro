@@ -21,16 +21,7 @@ const vehiculos = [
   { nombre: "CAMION DAS345", base: "BARRANQUILLA", estado: "transito" },
   { nombre: "CAMION DAJ441", base: "MALIBU", estado: "disponible" },
   { nombre: "CAMION DAJ441", base: "MALIBU", estado: "disponible" },
-  { nombre: "CAMION DAJ441", base: "MALIBU", estado: "disponible" },
-  { nombre: "CAMION DAJ441", base: "MALIBU", estado: "disponible" },
-  { nombre: "CAMION DAJ441", base: "MALIBU", estado: "disponible" },
-  { nombre: "CAMION DAJ441", base: "MALIBU", estado: "disponible" },
-  { nombre: "CAMION DAJ441", base: "MALIBU", estado: "disponible" },
-  { nombre: "VOLQUETA SFF404", base: "CARTAGENA", estado: "mantenimiento" },
-  { nombre: "CAMION DAS345", base: "BARRANQUILLA", estado: "transito" },
-  { nombre: "VOLQUETA SFF404", base: "CARTAGENA", estado: "mantenimiento" },
-  { nombre: "CAMION DAS345", base: "BARRANQUILLA", estado: "transito" },
-  // Agrega más vehículos según necesites
+ 
 ];
 const title = "AdminLTE v4 | Dashboard";
 const path = "../../dist";
@@ -286,6 +277,10 @@ const page = "index";
           
 
 <style>
+.row {
+  align-items: stretch;
+}
+
 
 /* Estilos para contenedores uniformes y responsivos */
 .small-box {
@@ -304,6 +299,7 @@ const page = "index";
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   height: 100%;
+  min-height: 300px;
 }
 
 .card-header {
