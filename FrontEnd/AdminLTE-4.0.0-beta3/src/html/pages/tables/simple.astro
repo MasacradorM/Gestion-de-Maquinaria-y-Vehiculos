@@ -29,7 +29,7 @@ const maquinas = [
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
     actividad: "Transporte de Vibro",
-    operaador: "Rafael Tucci"
+    operador: "Rafael Tucci"
   },
   {
     tipo: "EXCAVADORA",
@@ -424,6 +424,13 @@ $border-radius: 8px;
     font-size: 12px;
   }
 }
+
+.btn-edit {
+  background-color: #3498DB;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  
+}
 </style>
   </head>
   <!--end::Head-->
@@ -754,12 +761,14 @@ $border-radius: 8px;
                           <span class="maquina-label">Operador:</span>
                           <span class="maquina-value">{maquina.operador}</span>
                         </div>
+                        
+                        <hr class="maquina-divider" />
                         <div class="botonera">
                           <button class="btn btn-sm btn-outline-secondary">
                             + Nuevo Registro
                           </button>
 <button 
-  class="btn btn-sm btn-info text-white" 
+  class="btn btn-sm btn-info text-white btn-edit" 
   data-bs-toggle="modal" 
   data-bs-target="#equipoModal"
   data-tipo={maquina.tipo}
@@ -773,6 +782,7 @@ $border-radius: 8px;
   Editar
 </button>
          
+
                         </div>
                       </div>
                     </div>
@@ -826,100 +836,4 @@ $border-radius: 8px;
     <!--end::Script-->
   </body><!--end::Body-->
   
-
-<script>
-
-// Espera a que el DOM esté cargado
-document.addEventListener("DOMContentLoaded", () => {
-  const estadoRadios = document.querySelectorAll<HTMLInputElement>('input[name="estado"]');
-  const actividadCell = document.getElementById("actividad-cell")!;
-  const hrInicial = document.getElementById("modal-hr-inicial") as HTMLInputElement;
-  const hrFinal = document.getElementById("modal-hr-final") as HTMLInputElement;
-  const hrTotal = document.getElementById("modal-horometro") as HTMLInputElement;
-  const valorHr = document.getElementById("modal-valor-hr") as HTMLInputElement;
-  const total = document.getElementById("modal-total") as HTMLInputElement;
-  const galones = document.getElementById("combustible-galones") as HTMLInputElement;
-  const hrCombustible = document.getElementById("combustible-horometro") as HTMLInputElement;
-  const rendimiento = document.getElementById("combustible-rendimiento") as HTMLInputElement;
-
-  // Mostrar u ocultar actividades según el estado
-  estadoRadios.forEach((radio) => {
-    radio.addEventListener("change", () => {
-      actividadCell.style.display = (radio.id === "operacion" && radio.checked) ? "block" : "none";
-    });
-  });
-
-  // Función para calcular horómetro total
-  function calcularHorometroYTotal() {
-    const inicial = parseFloat(hrInicial.value);
-    const final = parseFloat(hrFinal.value);
-    const valor = parseFloat(valorHr.value);
-
-    if (!isNaN(inicial) && !isNaN(final) && final >= inicial) {
-      const totalHoras = final - inicial;
-      hrTotal.value = totalHoras.toFixed(2);
-
-      if (!isNaN(valor)) {
-        total.value = (totalHoras * valor).toFixed(2);
-      }
-    } else {
-      hrTotal.value = "";
-      total.value = "";
-    }
-  }
-
-  // Función para calcular rendimiento
-  function calcularRendimiento() {
-    const gal = parseFloat(galones.value);
-    const horas = parseFloat(hrCombustible.value);
-
-    if (!isNaN(gal) && !isNaN(horas) && horas > 0) {
-      rendimiento.value = (gal / horas).toFixed(2);
-    } else {
-      rendimiento.value = "";
-    }
-  }
-
-  // Eventos para cálculo de horómetro y total
-  hrInicial.addEventListener("input", calcularHorometroYTotal);
-  hrFinal.addEventListener("input", calcularHorometroYTotal);
-  valorHr.addEventListener("input", calcularHorometroYTotal);
-
-  // Eventos para cálculo de rendimiento
-  galones.addEventListener("input", calcularRendimiento);
-  hrCombustible.addEventListener("input", calcularRendimiento);
-});
-
-
-const equipoModal = document.getElementById("equipoModal");
-
-equipoModal?.addEventListener("show.bs.modal", (event) => {
-  const button = event.relatedTarget as HTMLElement;
-
-  const tipo = button.getAttribute("data-tipo") || "";
-  const placa = button.getAttribute("data-placa") || "";
-  const estado = button.getAttribute("data-estado") || "";
-  const fecha = button.getAttribute("data-fecha") || "";
-  const obra = button.getAttribute("data-obra") || "";
-  const actividad = button.getAttribute("data-actividad") || "";
-  const operador= button.getAttribute("data-operador") || "";
-
-  // Colocar los valores en los campos del modal
-  (document.getElementById("modal-tipo") as HTMLInputElement).value = tipo;
-  (document.getElementById("modal-placa") as HTMLInputElement).value = placa;
-  (document.getElementById("modal-fecha") as HTMLInputElement).value = fecha;
-  (document.getElementById("modal-obra") as HTMLInputElement).value = obra;
-  (document.getElementById("modal-actividad") as HTMLInputElement).value = actividad;
-  (document.getElementById("modal-operador") as HTMLInputElement).value = operador;
-
-  // Estado (radio button)
-  const radio = document.querySelector(`input[name="estado"][value="${estado}"]`) as HTMLInputElement;
-  if (radio) {
-    radio.checked = true;
-    radio.dispatchEvent(new Event("change")); // Para mostrar u ocultar "actividad"
-  }
-});
-
-
-</script>
 </html>
