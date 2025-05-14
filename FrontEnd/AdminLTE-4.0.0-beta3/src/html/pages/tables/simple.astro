@@ -20,25 +20,16 @@ const maquinas = [
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
     actividad: "Transporte de Vibro",
-    conductor: "Rafael Tucci"
+    operador: "Rafael Tucci"
   },
   {
     tipo: "EXCAVADORA",
     placa: "L453",
-    estado: "EN OPERACION",
+    estado: "EN OPERACIÓN",
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
     actividad: "Transporte de Vibro",
-    conductor: "Rafael Tucci"
-  },
-  {
-    tipo: "EXCAVADORA",
-    placa: "L453",
-    estado: "DISPONIBLE",
-    fecha: "12/04/2025",
-    obra: "Ingeniero villani",
-    actividad: "Transporte de Vibro",
-    conductor: "Rafael Tucci"
+    operaador: "Rafael Tucci"
   },
   {
     tipo: "EXCAVADORA",
@@ -47,7 +38,16 @@ const maquinas = [
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
     actividad: "Transporte de Vibro",
-    conductor: "Rafael Tucci"
+    operador: "Rafael Tucci"
+  },
+  {
+    tipo: "EXCAVADORA",
+    placa: "L453",
+    estado: "DISPONIBLE",
+    fecha: "12/04/2025",
+    obra: "Ingeniero villani",
+    actividad: "Transporte de Vibro",
+    operador: "Rafael Tucci"
   },
   {
     tipo: "EXCAVADORA",
@@ -56,7 +56,7 @@ const maquinas = [
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
     actividad: "Transporte de Vibro",
-    conductor: "Rafael Tucci"
+    operador: "Rafael Tucci"
   },
   {
     tipo: "EXCAVADORA", 
@@ -65,23 +65,29 @@ const maquinas = [
     fecha: "12/04/2025",
     obra: "Ingeniero villani",
     actividad: "Transporte de Vibro",
-    conductor: "Rafael Tucci"
+    operador: "Rafael Tucci"
   }
 ];
 
 // Función para obtener la clase CSS del estado
 const getEstadoClass = (estado: string) => {
-  switch (estado) {
-    case "DISPONIBLE":
-      return "bg-success text-white";
-    case "EN MANTENIMIENTO":
-      return "bg-warning text-dark";
-    case "EN OPERACION":
-      return "bg-info text-white";
-    default:
-      return "bg-secondary";
-  }
+  // Primero normalizamos el estado (minúsculas, sin espacios extras)
+  const estadoNormalizado = estado.trim().toLowerCase();
+  
+  // Mapeo de estados a clases CSS
+  const estados = {
+    'disponible': 'disponible',
+    'en mantenimiento': 'mantenimiento multilinea',
+    'mantenimiento': 'mantenimiento multilinea', // Por si acaso
+    'en operacion': 'operacion multilinea',
+    'operacion': 'operacion multilinea',
+    'en operación': 'operacion multilinea', // Con tilde
+    'default': 'transito'
+  };
+
+  return estados[estadoNormalizado] || estados['default'];
 };
+
 interface Maquina {
   tipo: string;
   placa: string;
@@ -89,7 +95,7 @@ interface Maquina {
   fecha: string;
   obra: string;
   actividad: string;
-  conductor: string;
+  operador: string;
 }
 
 const actividadesDisponibles = [
@@ -108,6 +114,77 @@ const actividadesDisponibles = [
   <head>
     <Head title={title} path={path} />
     <style>
+
+  // Variables
+$primary-color: #3498DB;
+$secondary-color: #2c3e50;
+$light-color: #f8f9fa;
+
+/* ESTILOS PARA ESTADOS */
+
+
+/* Estilos base para todos los badges */
+.estado-badge {
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+  text-align: center;
+  text-transform: uppercase;
+  min-width: 80px;
+}
+
+/* Badges multilínea */
+.estado-badge.multilinea {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 40px;
+  line-height: 0.9;
+  padding: 6px 10px;
+  
+}
+
+.estado-badge.multilinea span {
+  display: block;
+  width:120px;
+}
+
+/* Colores específicos para cada estado */
+.estado-badge.disponible {
+  min-width: 120px;
+  padding: 6px 10px;
+  background-color: rgba(93, 209, 93, 0.15);
+  color: rgba(93, 209, 93, 1);
+  border: 1px solid rgba(93, 209, 93, 1);
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.estado-badge.mantenimiento {
+  background-color: rgba(255, 165, 0, 0.15);
+  color: rgba(255, 165, 0, 1);
+  border: 1px solid rgba(255, 165, 0, 1);
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.estado-badge.operacion {
+  background-color:rgba(52, 152, 219, 0.15);
+  color:rgba(52, 152, 219, 1);
+  border: 1px solid rgba(52, 152, 219, 1);
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.estado-badge.transito {
+  background-color: #6c757d;
+  color: white;
+}
+
+
+
       .maquina-card {
         border-radius: 8px;
         overflow: hidden;
@@ -122,7 +199,7 @@ const actividadesDisponibles = [
         justify-content: space-between;
         align-items: center;
         color: #ffffff;
-        background-color: #2c3e50;
+        background-color: #1A365D;
       }
       
       .maquina-titulo {
@@ -130,12 +207,6 @@ const actividadesDisponibles = [
         margin: 0;
       }
       
-      .estado-badge {
-        border-radius: 4px;
-        padding: 5px 10px;
-        font-size: 12px;
-        font-weight: bold;
-      }
       
       .maquina-content {
         padding: 15px;
@@ -178,7 +249,182 @@ const actividadesDisponibles = [
         background-color: #007bff;
         border-color: #007bff;
       }
-    </style>
+
+
+
+// Estilos para el modal
+.modal {
+  &-content {
+    border-radius: 0.5rem;
+  }
+
+  &-header {
+    background: $secondary-color;
+    color: white;
+    border-bottom: none;
+  }
+}
+
+// Estilos para la sección de actividad
+#actividad-cell {
+  .input-group {
+    width: 100%;
+  }
+
+  #nueva-actividad-container {
+    transition: all 0.3s ease;
+  }
+}
+// Variables
+$color-disponible: #28a745;
+$color-mantenimiento: red;
+$color-operacion: #3498DB;
+$color-transito: #6c757d;
+
+
+$card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$border-radius: 8px;
+
+// Estilos para la sección de Maquinaria Amarilla
+.maquinaria-container {
+  padding: 20px 0;
+  
+  // Encabezado y filtros
+  .filtros-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .search-box {
+      width: 250px;
+      
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+    
+    .filtros-dropdown {
+      display: flex;
+      gap: 10px;
+      
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+    }
+  }
+  
+  // Tarjetas de maquinaria
+  .maquina-card {
+    border-radius: $border-radius;
+    overflow: hidden;
+    box-shadow: $card-shadow;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    transition: transform 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-5px);
+    }
+    
+    .maquina-header {
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #ffffff;
+      background-color: $secondary-color;
+      
+      .maquina-titulo {
+        font-weight: bold;
+        margin: 0;
+        text-transform: uppercase;
+      }
+    }
+    
+    
+    .maquina-content {
+      padding: 15px;
+      
+      .maquina-info {
+        margin-bottom: 8px;
+        display: flex;
+        padding: 2px 0;
+        
+        .maquina-label {
+          font-weight: bold;
+          min-width: 80px;
+          color: #6c757d;
+        }
+        
+        .maquina-value {
+          color: $primary-color;
+          text-transform: capitalize;
+        }
+      }
+      
+      .maquina-divider {
+        margin: 0 0 8px 0;
+        opacity: 0.2;
+        border-top: 1px solid #ccc;
+      }
+      
+      .botonera {
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 5px;
+      }
+    }
+  }
+  
+  // Paginación
+  .pagination-container {
+    margin-top: 30px;
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      
+      .page-item {
+        &.active .page-link {
+          background-color: $primary-color;
+          border-color: $primary-color;
+        }
+        
+        .page-link {
+          color: $secondary-color;
+          
+          &:focus {
+            box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Botón de Nueva Máquina
+.btn-nueva-maquina {
+  font-weight: 600;
+  background-color: #3498DB;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  
+  i {
+    font-size: 12px;
+  }
+}
+</style>
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -278,8 +524,8 @@ const actividadesDisponibles = [
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <label for="modal-conductor" class="form-label">Conductor</label>
-            <input type="text" class="form-control" id="modal-conductor">
+            <label for="modal-operador" class="form-label">Operador</label>
+            <input type="text" class="form-control" id="modal-operador">
           </div>
         </div>
 
@@ -445,14 +691,14 @@ const actividadesDisponibles = [
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    Conductor : Todos
+                    Operador: Todos
                   </button>
                 </div>
               </div>
               
               <div class="nueva-maquina">
-                <button class="btn btn-primary">
-                  <i class="fas fa-plus"></i>   + Nueva Maquina
+                <button class="btn ">
+                  <i class="fas fa-plus"></i> <strong>+ Nueva Maquina</strong>
                 </button>
               </div>
             </div>
@@ -465,13 +711,28 @@ const actividadesDisponibles = [
                     <div class="maquina-card">
                       <div class="maquina-header">
                         <h5 class="maquina-titulo">
-                          {maquina.tipo} 
+                          {maquina.tipo} {maquina.placa}
                         </h5>
-                        <span 
-                          class={`estado-badge ${getEstadoClass(maquina.estado)}`}
-                        >
-                          {maquina.estado}
-                        </span>
+       
+
+       <span class={`estado-badge ${getEstadoClass(maquina.estado)}`}>
+  {maquina.estado.split(' ').length > 2 ? (
+    // Para estados con más de 2 palabras (ej: "EN MANTENIMIENTO PREVENTIVO")
+    <>
+      <span>{maquina.estado.split(' ')[0]}</span>
+      <span>{maquina.estado.split(' ').slice(1).join(' ')}</span>
+    </>
+  ) : maquina.estado.split(' ').length > 1 ? (
+    // Para estados con 2 palabras (ej: "EN OPERACION")
+    <>
+      <span>{maquina.estado.split(' ')[0]}</span>
+      <span>{maquina.estado.split(' ')[1]}</span>
+    </>
+  ) : (
+    // Para estados de una sola palabra (ej: "DISPONIBLE")
+    maquina.estado
+  )}
+</span>
                       </div>
                       <div class="maquina-content">
                         <div class="maquina-info">
@@ -490,8 +751,8 @@ const actividadesDisponibles = [
                         </div>
                         <hr class="maquina-divider" />
                         <div class="maquina-info">
-                          <span class="maquina-label">Conductor:</span>
-                          <span class="maquina-value">{maquina.conductor}</span>
+                          <span class="maquina-label">Operador:</span>
+                          <span class="maquina-value">{maquina.operador}</span>
                         </div>
                         <div class="botonera">
                           <button class="btn btn-sm btn-outline-secondary">
@@ -507,7 +768,7 @@ const actividadesDisponibles = [
   data-fecha={maquina.fecha}
   data-obra={maquina.obra}
   data-actividad={maquina.actividad}
-  data-conductor={maquina.conductor}
+  data-operador={maquina.operador}
 >
   Editar
 </button>
@@ -565,228 +826,6 @@ const actividadesDisponibles = [
     <!--end::Script-->
   </body><!--end::Body-->
   
-  <style>
-  // Variables
-$primary-color: #007bff;
-$secondary-color: #2c3e50;
-$light-color: #f8f9fa;
-
-// Estilos para el modal
-.modal {
-  &-content {
-    border-radius: 0.5rem;
-  }
-
-  &-header {
-    background: $secondary-color;
-    color: white;
-    border-bottom: none;
-  }
-}
-
-// Estilos para la sección de actividad
-#actividad-cell {
-  .input-group {
-    width: 100%;
-  }
-
-  #nueva-actividad-container {
-    transition: all 0.3s ease;
-  }
-}
-
-// Estilos para los estados
-.estado-badge {
-  &--operacion {
-    background-color: $primary-color;
-    color: white;
-  }
-  
-  &--mantenimiento {
-    background-color: #ffc107;
-    color: #212529;
-  }
-  
-  &--disponible {
-    background-color: #28a745;
-    color: white;
-  }
-}
-  // Variables
-$primary-color: #007bff;
-$secondary-color: #2c3e50;
-$light-color: #f8f9fa;
-$disponible-color: #28a745;
-$mantenimiento-color: #ffc107;
-$transito-color: #17a2b8;
-$card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-$border-radius: 8px;
-
-// Estilos para la sección de Maquinaria Amarilla
-.maquinaria-container {
-  padding: 20px 0;
-  
-  // Encabezado y filtros
-  .filtros-section {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    
-    .search-box {
-      width: 250px;
-      
-      @media (max-width: 768px) {
-        width: 100%;
-      }
-    }
-    
-    .filtros-dropdown {
-      display: flex;
-      gap: 10px;
-      
-      @media (max-width: 768px) {
-        flex-direction: column;
-      }
-    }
-  }
-  
-  // Tarjetas de maquinaria
-  .maquina-card {
-    border-radius: $border-radius;
-    overflow: hidden;
-    box-shadow: $card-shadow;
-    margin-bottom: 20px;
-    background-color: #ffffff;
-    transition: transform 0.2s ease-in-out;
-    
-    &:hover {
-      transform: translateY(-5px);
-    }
-    
-    .maquina-header {
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #ffffff;
-      background-color: $secondary-color;
-      
-      .maquina-titulo {
-        font-weight: bold;
-        margin: 0;
-        text-transform: uppercase;
-      }
-    }
-    
-    .estado-badge {
-      border-radius: 4px;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: lowercase;
-      
-      &::first-letter {
-        text-transform: uppercase;
-      }
-      
-      &.disponible {
-        background-color: $disponible-color;
-        color: white;
-      }
-      
-      &.mantenimiento {
-        background-color: $mantenimiento-color;
-        color: #212529;
-      }
-      
-      &.transito {
-        background-color: $transito-color;
-        color: white;
-      }
-    }
-    
-    .maquina-content {
-      padding: 15px;
-      
-      .maquina-info {
-        margin-bottom: 8px;
-        display: flex;
-        padding: 2px 0;
-        
-        .maquina-label {
-          font-weight: bold;
-          min-width: 80px;
-          color: #6c757d;
-        }
-        
-        .maquina-value {
-          color: $primary-color;
-          text-transform: capitalize;
-        }
-      }
-      
-      .maquina-divider {
-        margin: 0 0 8px 0;
-        opacity: 0.2;
-        border-top: 1px solid #ccc;
-      }
-      
-      .botonera {
-        margin-top: 10px;
-        display: flex;
-        justify-content: flex-end;
-        gap: 5px;
-      }
-    }
-  }
-  
-  // Paginación
-  .pagination-container {
-    margin-top: 30px;
-    
-    .pagination {
-      display: flex;
-      justify-content: center;
-      
-      .page-item {
-        &.active .page-link {
-          background-color: $primary-color;
-          border-color: $primary-color;
-        }
-        
-        .page-link {
-          color: $secondary-color;
-          
-          &:focus {
-            box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25);
-          }
-        }
-      }
-    }
-  }
-}
-
-// Botón de Nueva Máquina
-.btn-nueva-maquina {
-  font-weight: 600;
-  padding: 8px 16px;
-  display: flex;
-  align-itefms: center;
-  gap: 5px;
-  
-  i {
-    font-size: 12px;
-  }
-}
-</style>
 
 <script>
 
@@ -863,7 +902,7 @@ equipoModal?.addEventListener("show.bs.modal", (event) => {
   const fecha = button.getAttribute("data-fecha") || "";
   const obra = button.getAttribute("data-obra") || "";
   const actividad = button.getAttribute("data-actividad") || "";
-  const conductor = button.getAttribute("data-conductor") || "";
+  const operador= button.getAttribute("data-operador") || "";
 
   // Colocar los valores en los campos del modal
   (document.getElementById("modal-tipo") as HTMLInputElement).value = tipo;
@@ -871,7 +910,7 @@ equipoModal?.addEventListener("show.bs.modal", (event) => {
   (document.getElementById("modal-fecha") as HTMLInputElement).value = fecha;
   (document.getElementById("modal-obra") as HTMLInputElement).value = obra;
   (document.getElementById("modal-actividad") as HTMLInputElement).value = actividad;
-  (document.getElementById("modal-conductor") as HTMLInputElement).value = conductor;
+  (document.getElementById("modal-operador") as HTMLInputElement).value = operador;
 
   // Estado (radio button)
   const radio = document.querySelector(`input[name="estado"][value="${estado}"]`) as HTMLInputElement;
