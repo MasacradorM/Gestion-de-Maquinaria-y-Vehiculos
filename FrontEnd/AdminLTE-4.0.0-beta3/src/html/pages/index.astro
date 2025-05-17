@@ -196,9 +196,10 @@ const page = "index";
         <!-- /.card -->
 
         <!-- Card: Registro Resumen -->
-        <div class="card mb-4 flex-grow-1">
+         <div class="card mb-4 flex-grow-1">
+
           <div class="card-header border-0">
-            <h3 class="card-title">Registro Resumen</h3>
+            <h3 class="card-title invisible">Resumen del Registro</h3>
           </div>
           <div class="card-body">
             <RegistroResumen 
@@ -241,8 +242,13 @@ const page = "index";
         
         <!-- Card: Alertas Pendientes -->
         <div class="card mb-4 flex-grow-1">
-          <div class="card-header border-0">
-            <h3 class="card-title">Alertas Pendientes</h3>
+          <div class="card-header border-0" >
+            <h3 class="card-title" style="  font-size: 1.8rem;
+        font-weight: bold;
+        color: #000;
+        
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+">Alertas Pendientes</h3>
           </div>
           <div class="card-body">
             <AlertasPendientes 
@@ -277,6 +283,18 @@ const page = "index";
           
 
 <style>
+  /* global.css */
+.card {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+}
+
+.card > .card-body {
+  flex: 1 1 auto;
+  min-height: 150px;
+}
+
 .row {
   align-items: stretch;
 }

@@ -45,6 +45,93 @@ const adminlteJsUrl = path + "/js/adminlte.js";
 document.addEventListener("DOMContentLoaded", () => {
   const estadoRadios = document.querySelectorAll<HTMLInputElement>('input[name="estado"]');
   const actividadCell = document.getElementById("actividad-cell")!;
+  
+  const actividadSelect = document.getElementById("actividad-select");
+  const btnAgregarActividad = document.getElementById("btn-agregar-actividad");
+  const btnGuardarActividad = document.getElementById("btn-guardar-actividad");
+  const nuevaActividadContainer = document.getElementById("nueva-actividad-container");
+  const nuevaActividadInput = document.getElementById("nueva-actividad-input");
+  const actividadesAgregadas = document.getElementById("actividades-agregadas");
+  const mensajeActividadesVacio = document.getElementById("mensaje-actividades-vacio");
+
+  // Array to store activities
+  let actividades = [];
+
+  // Show/hide new activity input when "Otra actividad..." is selected
+  if (actividadSelect) {
+    actividadSelect.addEventListener("change", function() {
+      if (nuevaActividadContainer) {
+        nuevaActividadContainer.style.display = 
+          this.value === "Otra actividad..." ? "block" : "none";
+      }
+    });
+  }
+
+  // Add activity from select
+  if (btnAgregarActividad) {
+    btnAgregarActividad.addEventListener("click", function() {
+      if (!actividadSelect || !actividadesAgregadas || !mensajeActividadesVacio) return;
+      
+      const selectedValue = actividadSelect.value;
+      if (selectedValue && selectedValue !== "Seleccionar actividad" && selectedValue !== "Otra actividad...") {
+        agregarActividad(selectedValue);
+      }
+    });
+  }
+
+  // Save new custom activity
+  if (btnGuardarActividad && nuevaActividadInput) {
+    btnGuardarActividad.addEventListener("click", function() {
+      const nuevaActividad = nuevaActividadInput.value.trim();
+      if (nuevaActividad) {
+        agregarActividad(nuevaActividad);
+        // Reset the input and hide the container
+        nuevaActividadInput.value = "";
+        if (nuevaActividadContainer) {
+          nuevaActividadContainer.style.display = "none";
+        }
+        // Reset the select
+        if (actividadSelect) {
+          actividadSelect.value = "Seleccionar actividad";
+        }
+      }
+    });
+  }
+
+  // Function to add activity to the list
+  function agregarActividad(actividad) {
+    if (!actividadesAgregadas || !mensajeActividadesVacio) return;
+    
+    actividades.push(actividad);
+    
+    // Hide empty message
+    mensajeActividadesVacio.style.display = "none";
+    
+    // Create activity item
+    const actividadItem = document.createElement("div");
+    actividadItem.className = "d-flex justify-content-between align-items-center mb-2";
+    
+    const actividadText = document.createElement("span");
+    actividadText.textContent = actividad;
+    
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "btn btn-sm btn-danger";
+    deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+    deleteBtn.addEventListener("click", function() {
+      actividades = actividades.filter(a => a !== actividad);
+      actividadItem.remove();
+      
+      // Show empty message if no activities left
+      if (actividades.length === 0 && mensajeActividadesVacio) {
+        mensajeActividadesVacio.style.display = "block";
+      }
+    });
+    
+    actividadItem.appendChild(actividadText);
+    actividadItem.appendChild(deleteBtn);
+    actividadesAgregadas.appendChild(actividadItem);
+  }
+
   const hrInicial = document.getElementById("modal-hr-inicial") as HTMLInputElement;
   const hrFinal = document.getElementById("modal-hr-final") as HTMLInputElement;
   const hrTotal = document.getElementById("modal-horometro") as HTMLInputElement;
@@ -133,6 +220,25 @@ equipoModal?.addEventListener("show.bs.modal", (event) => {
 });
 
 
+</script>
+
+
+<script>
+  // Mostrar/ocultar campo para nuevo tipo
+  document.addEventListener("DOMContentLoaded", function () {
+    const tipoSelect = document.getElementById("tipo");
+    const nuevoTipoContainer = document.getElementById("nuevoTipoContainer");
+
+    tipoSelect.addEventListener("change", function () {
+      if (this.value === "otro") {
+        nuevoTipoContainer.style.display = "block";
+        document.getElementById("nuevoTipo").setAttribute("required", "required");
+      } else {
+        nuevoTipoContainer.style.display = "none";
+        document.getElementById("nuevoTipo").removeAttribute("required");
+      }
+    });
+  });
 </script>
 
 <!--end::OverlayScrollbars Configure-->

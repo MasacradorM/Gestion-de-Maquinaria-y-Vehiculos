@@ -46,10 +46,7 @@ const alertaConfig = {
 ---
 
 <div class="alertas-pendientes-container h-100">
-  <div class="card h-100">
-    <div class="card-header">
-      <h3 class="card-title">Alertas Pendientes</h3>
-    </div>
+  
     <div class="card-body">
       <div class="alertas-lista">
         {alertas.map((alerta) => {
@@ -67,11 +64,13 @@ const alertaConfig = {
       </div>
     </div>
   </div>
-</div>
 
 <style lang="scss">
 .alertas-pendientes-container {
   width: 100%;
+  .card-header{
+    border-bottom: none !important;
+  }
   
   .card {
     display: flex;
@@ -81,8 +80,7 @@ const alertaConfig = {
     
     .card-header {
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-      
+      border-bottom: none;
       .card-title {
         margin: 0;
         font-size: 1.25rem;
@@ -104,6 +102,10 @@ const alertaConfig = {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+  //Para alinear los elementos de la lista
+    align-items: stretch;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   
   .alerta {
@@ -111,6 +113,7 @@ const alertaConfig = {
     align-items: center;
     border-radius: 0.25rem;
     padding: 0.75rem;
+    min-height:80px;
     
     .alerta-icono {
       width: 30px;
@@ -126,6 +129,9 @@ const alertaConfig = {
     
     .alerta-contenido {
       flex-grow: 1;
+      word-wrap:break-word;
+      word-break: break-word;
+      white-space:normal;
       
       .alerta-mensaje {
         font-weight: 600;
