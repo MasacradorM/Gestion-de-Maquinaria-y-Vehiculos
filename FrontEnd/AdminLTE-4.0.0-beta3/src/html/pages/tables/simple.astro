@@ -1,110 +1,26 @@
 ---
+import '../styles/maquina.scss'
 import Head from "@components/_head.astro";
 import Footer from "@components/dashboard/_footer.astro";
 import Topbar from "@components/dashboard/_topbar.astro";
 import Sidenav from "@components/dashboard/_sidenav.astro";
 import Scripts from "@components/_scripts.astro";
-
+import HistorialRegistro from "../../components/maquinaInterfaz/historialRegistro.astro";
 const title = "Maquinaria Amarilla | Dashboard";
 const path = "../../../dist";
 const mainPage = "maquinaria";
 const page = "listado";
 
-// Datos de ejemplo para las máquinas (simulando datos reales)
-const maquinas = [
-  
-  {
-    tipo: "AUTOHOMIGONERA",
-    placa: "L3500",
-    estado: "EN MANTENIMIENTO",
-    fecha: "12/04/2025",
-    obra: "Ingeniero villani",
-    actividad: "Transporte de Vibro",
-    operador: "Rafael Tucci"
-  },
-  {
-    tipo: "EXCAVADORA",
-    placa: "L453",
-    estado: "EN OPERACIÓN",
-    fecha: "12/04/2025",
-    obra: "Ingeniero villani",
-    actividad: "Transporte de Vibro",
-    operador: "Rafael Tucci"
-  },
-  {
-    tipo: "EXCAVADORA",
-    placa: "L453",
-    estado: "DISPONIBLE",
-    fecha: "12/04/2025",
-    obra: "Ingeniero villani",
-    actividad: "Transporte de Vibro",
-    operador: "Rafael Tucci"
-  },
-  {
-    tipo: "EXCAVADORA",
-    placa: "L453",
-    estado: "DISPONIBLE",
-    fecha: "12/04/2025",
-    obra: "Ingeniero villani",
-    actividad: "Transporte de Vibro",
-    operador: "Rafael Tucci"
-  },
-  {
-    tipo: "EXCAVADORA",
-    placa: "L453",
-    estado: "EN MANTENIMIENTO",
-    fecha: "12/04/2025",
-    obra: "Ingeniero villani",
-    actividad: "Transporte de Vibro",
-    operador: "Rafael Tucci"
-  },
-  {
-    tipo: "EXCAVADORA", 
-    placa: "L453",
-    estado: "EN OPERACION",
-    fecha: "12/04/2025",
-    obra: "Ingeniero villani",
-    actividad: "Transporte de Vibro",
-    operador: "Rafael Tucci"
-  }
-];
 
 // Función para obtener la clase CSS del estado
 const getEstadoClass = (estado: string) => {
   // Primero normalizamos el estado (minúsculas, sin espacios extras)
   const estadoNormalizado = estado.trim().toLowerCase();
   
-  // Mapeo de estados a clases CSS
-  const estados = {
-    'disponible': 'disponible',
-    'en mantenimiento': 'mantenimiento multilinea',
-    'mantenimiento': 'mantenimiento multilinea', // Por si acaso
-    'en operacion': 'operacion multilinea',
-    'operacion': 'operacion multilinea',
-    'en operación': 'operacion multilinea', // Con tilde
-    'default': 'transito'
-  };
 
   return estados[estadoNormalizado] || estados['default'];
 };
 
-interface Maquina {
-  tipo: string;
-  placa: string;
-  estado: string;
-  fecha: string;
-  obra: string;
-  actividad: string;
-  operador: string;
-}
-
-const actividadesDisponibles = [
-  "Transporte de Vibro",
-  "Excavación",
-  "Carga de Materiales",
-  "Nivelación de Terreno",
-  "Otra actividad..."
-];
 
 ---
 
@@ -112,6 +28,12 @@ const actividadesDisponibles = [
 <html lang="es">
   <!--begin::Head-->
   <head>
+     <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
+      crossorigin="anonymous"
+    />
 
     <!-- Bootstrap CSS (esto probablemente ya lo tienes) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -120,221 +42,22 @@ const actividadesDisponibles = [
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <Head title={title} path={path} />
-    <style lang="scss">
-  // Variables (SCSS)
-  $color-disponible: #28a745;
-  $color-mantenimiento: red;
-  $color-operacion: #3498DB;
-  $color-transito: #6c757d;
-  $card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  $border-radius: 8px;
-  $secondary-color: #1A365D; // Cambiado a tu color original
-  $light-color: #f8f9fa;
-  $primary-color: #3498DB;
-
-  /* ESTILOS BASE (CSS puro) */
-  .filtros {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    align-items: center;
-  }
-  
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    
-    .page-item.active .page-link {
-      background-color: $primary-color;
-      border-color: $primary-color;
-    }
-  }
-
-  /* COMPONENTE BADGES (SCSS anidado) */
-  .estado-badge {
-    border-radius: 20px;
-    padding: 6px 10px;
-    font-size: 12px;
-    font-weight: bold;
-    display: inline-block;
-    text-align: center;
-    text-transform: uppercase;
-    min-width: 80px;
-    border: 1px solid transparent;
-
-    /* Versión multilínea */
-    &.multilinea {
-      display: inline-flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 40px;
-      line-height: 0.9;
-      
-      span {
-        display: block;
-        width: 120px;
-      }
-    }
-
-    /* Estados */
-    &.disponible {
-      min-width: 120px;
-      background-color: rgba(93, 209, 93, 0.15);
-      color: rgba(93, 209, 93, 1);
-      border-color: rgba(93, 209, 93, 1);
-    }
-
-    &.mantenimiento {
-      background-color: rgba(255, 165, 0, 0.15);
-      color: rgba(255, 165, 0, 1);
-      border-color: rgba(255, 165, 0, 1);
-    }
-
-    &.operacion {
-      background-color: rgba(52, 152, 219, 0.15);
-      color: rgba(52, 152, 219, 1);
-      border-color: rgba(52, 152, 219, 1);
-    }
-
-    &.transito {
-      background-color: $color-transito;
-      color: white;
-    }
-  }
-
-  /* COMPONENTE TARJETA (SCSS anidado) */
-  .maquina-card {
-    border-radius: $border-radius;
-    overflow: hidden;
-    box-shadow: $card-shadow;
-    margin-bottom: 20px;
-    background-color: #ffffff;
-    transition: transform 0.2s ease-in-out;
-    
-    &:hover {
-      transform: translateY(-5px);
-    }
-    
-    .maquina-header {
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #ffffff;
-      background-color: $secondary-color; // Usando tu color original #1A365D
-      
-      .maquina-titulo {
-        font-weight: bold;
-        margin: 0;
-        text-transform: uppercase;
-      }
-    }
-    
-    .maquina-content {
-      padding: 15px;
-      
-      .maquina-info {
-        margin-bottom: 8px;
-        display: flex;
-        padding: 2px 0;
-        
-        .maquina-label {
-          font-weight: bold;
-          min-width: 80px;
-          color: #6c757d;
-          margin-right: 5px;
-        }
-        
-        .maquina-value {
-          color: $primary-color;
-          text-transform: capitalize;
-        }
-      }
-      
-      .botonera {
-        margin-top: 10px;
-        display: flex;
-        justify-content: flex-end;
-        gap: 5px;
-      }
-    }
-  }
-
-  /* CONTENEDOR PRINCIPAL (SCSS anidado) */
-  .maquinaria-container {
-    padding: 20px 0;
-    
-    .filtros-section {
-      @extend .filtros; // Hereda estilos de .filtros
-      flex-wrap: wrap;
-      gap: 10px;
-      
-      @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .search-box {
-        width: 250px;
-        
-        @media (max-width: 768px) {
-          width: 100%;
-        }
-      }
-    }
-  }
-
-  /* COMPONENTE MODAL (SCSS anidado) */
-  .modal {
-    &-content {
-      border-radius: 0.5rem;
-    }
-
-    &-header {
-      background: $secondary-color;
-      color: white;
-      border-bottom: none;
-    }
-  }
-
-  /* BOTONES (SCSS) */
-  .btn-edit {
-    background-color: $primary-color;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-  }
-
-  /* SECCIÓN ACTIVIDADES */
-  #actividades-agregadas {
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 10px;
-    background-color: $light-color;
-    border-radius: 5px;
-  }
-</style>
+ 
   </head>
   <!--end::Head-->
   <!--begin::Body-->
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
 
-
-  
-  <!-- Modal -->
+<!-- Modal Editar Maquina -->
 <div class="modal fade" id="equipoModal" tabindex="-1" aria-labelledby="equipoModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
+<div class="modal-dialog modal-lg">
+  <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="equipoModalLabel">Detalles del Equipo</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Primera sección: Datos del equipo -->
+        <!-- Primera sección: Datos del equipo (siempre visible) -->
         <div class="row mb-3">
           <div class="col-md-4">
             <label for="modal-tipo" class="form-label">Tipo</label>
@@ -345,92 +68,88 @@ const actividadesDisponibles = [
             <input type="text" class="form-control" id="modal-placa" readonly>
           </div>
         </div>
-
-        <!-- Segunda sección: Estado del equipo -->
+        <!-- Segunda sección: Estado del equipo (siempre visible) -->
         <div class="row mb-3">
           <div class="col-12">
             <label class="form-label">Estado del Equipo</label>
-            <div class="d-flex flex-wrap gap-4">
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="estado" id="mantenimiento" value="EN MANTENIMIENTO">
-                <label class="form-check-label" for="mantenimiento">En Mantenimiento</label>
-              </div>
-              
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="estado" id="disponible" value="DISPONIBLE">
-                <label class="form-check-label" for="disponible">Disponible</label>
-              </div>
-
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="estado" id="operacion" value="EN OPERACION">
-                <label class="form-check-label" for="operacion">En Operación</label>
-              </div>
-            
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="estado" id="standBy" value="STAND BY">
-                <label class="form-check-label" for="standBy">Stand By</label>
-              </div>
+            <div class="estado-selector">
+              <label class="estado-option">
+                <input type="radio" name="estado" id="mantenimiento" value="EN MANTENIMIENTO">
+                <span>EN MANTENIMIENTO</span>
+              </label>
+              <label class="estado-option">
+                <input type="radio" name="estado" id="disponible" value="DISPONIBLE">
+                <span>DISPONIBLE</span>
+              </label>
+              <label class="estado-option">
+                <input type="radio" name="estado" id="operacion" value="EN OPERACION">
+                <span>EN OPERACIÓN</span>
+              </label>
+              <label class="estado-option">
+                <input type="radio" name="estado" id="standby" value="STAND BY">
+                <span>STAND BY</span>
+              </label>
+            </div>
+          </div>
+        </div> 
+        <hr>
+          <div class="row mb-3">
+            <div id="fecha-container" class="col-md-6" style="display: none;">
+            <label for="modal-fecha" class="form-label">Fecha</label>
+              <input type="date" class="form-control" id="modal-fecha">
+            </div>
+            <div id="obra-container" class="col-md-6" style="display: none;">
+              <label for="modal-obra" class="form-label">Obra</label>
+              <input type="text" class="form-control" id="modal-obra">
+            </div>
+          </div>
+<div class="row mb-3">
+  <!-- Contenedor independiente para operador -->
+  <div id="operador-container" class="col-md-6" style="display: none;">
+    <label for="modal-operador" class="form-label">Operador</label>
+    <input type="text" class="form-control" id="modal-operador">
+  </div>
+  <!-- Contenedor independiente para reporte -->
+  <div id="reporte-container" class="col-md-6" style="display: none;">
+    <label for="modal-reporte" class="form-label">Reporte</label>
+    <input type="text" class="form-control" id="modal-reporte">
+  </div>
+</div>
+</div>
+        <!-- Sección de horómetros (solo visible en EN OPERACIÓN) -->
+        <div id="horas-section" class="mb-3">
+          <h4>Horómetros</h4>
+          <div class="row">
+            <div class="col-md-4">
+              <label for="modal-hr-inicial" class="form-label">Horómetro Inicial</label>
+              <input type="number" class="form-control" id="modal-hr-inicial">
+            </div>
+            <div class="col-md-4">
+              <label for="modal-hr-final" class="form-label">Horómetro Final</label>
+              <input type="number" class="form-control" id="modal-hr-final">
+            </div>
+            <div class="col-md-4">
+              <label for="modal-horometro" class="form-label">Horómetro Total</label>
+              <input type="number" class="form-control" id="modal-horometro" readonly>
             </div>
           </div>
         </div>
-
-        <hr>
-        
-        <!-- Tercera sección: Detalles de operación (siempre visible) -->
-        <h4>Detalles de Operación</h4>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="modal-fecha" class="form-label">Fecha</label>
-            <input type="date" class="form-control" id="modal-fecha">
-          </div>
-          <div class="col-md-6">
-            <label for="modal-obra" class="form-label">Obra</label>
-            <input type="text" class="form-control" id="modal-obra">
-          </div>
-        </div>
-        
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="modal-hr-inicial" class="form-label">Horómetro Inicial</label>
-            <input type="number" class="form-control" id="modal-hr-inicial">
-          </div>
-          <div class="col-md-6">
-            <label for="modal-hr-final" class="form-label">Horómetro Final</label>
-            <input type="number" class="form-control" id="modal-hr-final">
+        <!-- Sección de costos (solo visible en EN OPERACIÓN) -->
+        <div id="costos-section" class="mb-3">
+          <h4>Costos</h4>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="modal-valor-hr" class="form-label">Valor por hora</label>
+              <input type="number" class="form-control" id="modal-valor-hr">
+            </div>
+            <div class="col-md-6">
+              <label for="modal-total" class="form-label">Total</label>
+              <input type="number" class="form-control" id="modal-total" readonly>
+            </div>
           </div>
         </div>
-        
-        <div class="row mb-3">
-          <div class="col-md-4">
-            <label for="modal-horometro" class="form-label">Horómetro Total</label>
-            <input type="number" class="form-control" id="modal-horometro" readonly>
-          </div>
-          <div class="col-md-4">
-            <label for="modal-valor-hr" class="form-label">Valor por hora</label>
-            <input type="number" class="form-control" id="modal-valor-hr">
-          </div>
-          <div class="col-md-4">
-            <label for="modal-total" class="form-label">Total</label>
-            <input type="number" class="form-control" id="modal-total" readonly>
-          </div>
-        </div>
-        
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="modal-operador" class="form-label">Operador</label>
-            <input type="text" class="form-control" id="modal-operador">
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="modal-reporte" class="form-label">Reporte</label>
-            <input type="text" class="form-control" id="modal-reporte">
-          </div>
-        </div> 
-
-        <!-- Sección de actividades (solo visible en operación) -->
-        <div id="actividad-cell" class="mb-4" style="display: none;">
+        <!-- Sección de actividades (visible en EN OPERACIÓN y MANTENIMIENTO) -->
+        <div id="actividad-cell" class="mb-4">
           <h4>Actividades</h4>
           <div class="d-flex gap-2 mb-2">
             <select id="actividad-select" class="form-select">
@@ -441,21 +160,21 @@ const actividadesDisponibles = [
               <option value="Nivelación de Terreno">Nivelación de Terreno</option>
               <option value="Otra actividad...">Otra actividad...</option>
             </select>
+            
+            <input type="number" id="cantidad-actividad" class="form-control" placeholder="cantidad" min="1">
             <button id="btn-agregar-actividad" type="button" class="btn btn-primary">
               Agregar
             </button>
           </div>
-
           <div id="nueva-actividad-container" class="mt-3 p-3 border rounded" style="display: none;">
-            <label class="form-label"  for="modal-actividad">Nueva Actividad</label>
+            <label class="form-label" for="nueva-actividad-input">Nueva Actividad</label>
             <div class="d-flex gap-2">
-              <input id="nueva-actividad-input "  type="text" class="form-control" placeholder="Ingrese nueva actividad">
+              <input id="nueva-actividad-input" type="text" class="form-control" placeholder="Ingrese nueva actividad">
               <button id="btn-guardar-actividad" type="button" class="btn btn-success">
                 Guardar
               </button>
             </div>
           </div>
-
           <div class="mt-3">
             <h5>Actividades agregadas:</h5>
             <div id="actividades-agregadas" class="mt-2">
@@ -463,9 +182,31 @@ const actividadesDisponibles = [
             </div>
           </div>
         </div>
-
-        <!-- Sección de combustible -->
-        <div class="mb-4">
+<!-- Fuera del estado-selector, añade esto -->
+<div id="programarMantenimiento-section" class="mt-3" style="display: none;">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" id="programar-mantenimiento-check">
+    <label class="form-check-label" for="programar-mantenimiento-check">
+      Programar próximo mantenimiento
+    </label>
+  </div>
+  
+  <div id="mantenimiento-form" style="display: none;" class="mt-3 p-3 border bg-light">
+    <label>Fecha próximo mantenimiento:</label>
+    <input type="date" id="fecha-proximo-mantenimiento" class="form-control mb-2">
+    <label>Mensaje:</label>
+    <textarea id="mensaje-alerta" class="form-control mb-2"></textarea>
+  </div>
+</div>
+  <!--Sección de GPS (solo visible en EN OPERACIÓN) -->
+        <div class="row mb-3">
+              <div  id ="gps-container" class="col-md-6" style="display: none;">  
+              <label for="modal-gps" class="form-label">GPS</label>
+              <input type="text" id="modal-gps" class="form-control">
+            </div>
+        </div>
+        <!-- Sección de combustible (solo visible en EN OPERACIÓN) -->
+        <div id="combustible-section" class="mb-4">
           <h4>Combustible</h4>
           <div class="row">
             <div class="col-md-4">
@@ -482,32 +223,30 @@ const actividadesDisponibles = [
             </div>
           </div>
         </div>
-      
-        <!-- Sección de observaciones -->
-        <div class="mb-4">
+        <!-- Sección de observaciones (visible en todos excepto DISPONIBLE) -->
+        <div id="observaciones-section" class="mb-4">
           <h4>Observaciones</h4>
           <textarea id="modal-observaciones" class="form-control" rows="3" placeholder="Ingrese observaciones adicionales sobre el equipo o la operación"></textarea>
         </div>
       </div>
-      
-      <!-- Footer con botones de eliminar, cancelar y guardar -->
-      <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-danger" id="btn-eliminar">
+  
+      <!-- Añade un modal-footer para los botones -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger">
           <i class="bi bi-trash"></i> Eliminar
         </button>
-
-        <div class="d-flex gap-2">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancelar">
+        <div class="d-flex gap-2 ms-auto">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             <i class="bi bi-x-circle"></i> Cancelar
           </button>
-          <button type="button" class="btn btn-primary" id="btn-guardar-cambios">
-            <i class="bi bi-save"></i> Guardar Cambios
+          <button type="button" class="btn btn-primary">
+            <i class="bi bi-save"></i> Guardar
           </button>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+    </div> <!-- Cierre del modal-content -->
+  </div> <!-- Cierre del modal-dialog -->
+</div> <!-- Cierre del modal fade -->
 
 
 
@@ -579,19 +318,15 @@ const actividadesDisponibles = [
 
 
 <!-- Modal -->
-<div class="modal fade" id="modalNuevaMaquina" tabindex="-1" aria-labelledby="modalNuevaMaquinaLabel" aria-hidden="true">
+<div class="modal fade" id="modalNuevaMaquina" tabindex="-1" aria-labelledby="modalNuevaMaquinaLabel">
   <div class="modal-dialog">
     <div class="modal-content">
-      
       <div class="modal-header">
         <h5 class="modal-title" id="modalNuevaMaquinaLabel">Registrar Nueva Máquina</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      
       <form id="formNuevaMaquina">
         <div class="modal-body">
-
-
           <!-- Tipo de máquina -->
 <div class="mb-3">
   <label for="tipo" class="form-label">Tipo de máquina</label>
@@ -607,125 +342,85 @@ const actividadesDisponibles = [
     <option value="otro">Otro...</option>
   </select>
 </div>
-
 <!-- Campo adicional para nuevo tipo -->
 <div class="mb-3" id="nuevoTipoContainer" style="display: none;">
   <label for="nuevoTipo" class="form-label">Nuevo tipo de máquina</label>
   <input type="text" class="form-control" id="nuevoTipo" name="nuevoTipo" placeholder="Escriba el nuevo tipo">
 </div>
-
-
-
           <div class="mb-3">
             <label for="placa" class="form-label">Placa</label>
             <input type="text" class="form-control" id="placa" name="placa" placeholder="Ej: SDN095" required>
           </div>
 
-          <div class="mb-3">
-            <label for="operador" class="form-label">Asignar a (Operador)</label>
-            <select class="form-select" id="operador" name="operador">
-              <option value="">-- Sin asignar --</option>
-              <option value="1">Cristian Aldana</option>
-              <option value="2">Aldair Diaz</option>
-
-              <!-- Aquí puedes cargar dinámicamente los operadores -->
-            </select>
-          </div>
-
+  <div class="mb-3">
+  <label for="operador" class="form-label">Asignar a (Operador)</label>
+  <select class="form-select" id="operador" name="operador">
+    <option value="">-- Sin asignar --</option>
+    <option value="Cristian Aldana">Cristian Aldana</option>
+    <option value="Aldair Diaz">Aldair Diaz</option>
+  </select>
+</div>
         </div>
-        
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar Máquina</button>
         </div>
       </form>
-
     </div>
   </div>
 </div>
 
+<!-- 1. AGREGA ESTE HTML ANTES DEL CIERRE </body> EN TU PÁGINA -->
+<div id="historialOverlay" style="display: none;">
+  <button onclick="cerrarHistorial()" class="btn btn-danger" style="position: absolute; top: 1rem; right: 1rem; z-index: 40; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+    Cerrar
+  </button>
+  
+  <h2 style="padding: 2rem 2rem 1rem 2rem; margin: 0; color: #0d2b55; font-weight: 600;">
+    Historial de Registros
+  </h2>
+  
+  <div class="table-container">
+    <table id="tablaHistorial">
+  <thead>
+        <tr>
+          <th class="sticky-first-col sticky-header">Fecha</th>
+          <th class="sticky-second-col sticky-header">Placa</th>
+          <th>Obra</th>
+          <th style="min-width: 200px;">Actividad</th>
+          <th>Hora Inicial</th>
+          <th>Hora Final</th>
+          <th>Total Horas</th>
+          <th>Valor Hora</th>
+          <th>Galones</th>
+          <th>Valor Galones</th>
+          <th>Horometro Tanqueo</th>
+          <th>GPS</th>
+          <th>Observaciones</th>
+          <th>Reporte</th>
+           <th>Operador</th>
+        </tr>
+      </thead>
+  <tbody>
+    <!-- Las filas generadas dinámicamente deben tener: -->
+    <tr>
+      <td class="sticky-first-col">...</td>
+      <td class="sticky-second-col">...</td>
+      <!-- resto de celdas normales -->
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<!--begin::Row-->
+            <div class="row" 
+id="maquinas-container">
+
+              <!-- Asegúrate que existe este contenedor -->
+  <!-- Las tarjetas aparecerán aquí -->
 
 
-            <!--begin::Row-->
-            <div class="row">
-              {
-                maquinas.map((maquina) => (
-                  <div class="col-md-4">
-                    <div class="maquina-card">
-                      <div class="maquina-header">
-                        <h5 class="maquina-titulo">
-                          {maquina.tipo} {maquina.placa}
-                        </h5>
-       
-
-       <span class={`estado-badge ${getEstadoClass(maquina.estado)}`}>
-  {maquina.estado.split(' ').length > 2 ? (
-    // Para estados con más de 2 palabras (ej: "EN MANTENIMIENTO PREVENTIVO")
-    <>
-      <span>{maquina.estado.split(' ')[0]}</span>
-      <span>{maquina.estado.split(' ').slice(1).join(' ')}</span>
-    </>
-  ) : maquina.estado.split(' ').length > 1 ? (
-    // Para estados con 2 palabras (ej: "EN OPERACION")
-    <>
-      <span>{maquina.estado.split(' ')[0]}</span>
-      <span>{maquina.estado.split(' ')[1]}</span>
-    </>
-  ) : (
-    // Para estados de una sola palabra (ej: "DISPONIBLE")
-    maquina.estado
-  )}
-</span>
-                      </div>
-                      <div class="maquina-content">
-                        <div class="maquina-info">
-                          <span class="maquina-label">Fecha:</span>
-                          <span class="maquina-value">{maquina.fecha}</span>
-                        </div>
-                        
-                        <hr class="maquina-divider" />
-                        <div class="maquina-info">
-                          <span class="maquina-label">Obra:</span>
-                          <span class="maquina-value">{maquina.obra}</span>
-                        </div>
-                        <hr class="maquina-divider" />
-                        <div class="maquina-info">
-                          <span class="maquina-label">Actividad:</span>
-                          <span class="maquina-value">{maquina.actividad}</span>
-                        </div>
-                        <hr class="maquina-divider" />
-                        <div class="maquina-info">
-                          <span class="maquina-label">Operador:</span>
-                          <span class="maquina-value">{maquina.operador}</span>
-                        </div>
-                        
-                        <hr class="maquina-divider" />
-                        <div class="botonera">
-                          <button class="btn btn-sm btn-outline-secondary">
-                            + Nuevo Registro
-                          </button>
-<button 
-  class="btn btn-sm btn-info text-white btn-edit" 
-  data-bs-toggle="modal" 
-  data-bs-target="#equipoModal"
-  data-tipo={maquina.tipo}
-  data-placa={maquina.placa}
-  data-estado={maquina.estado}
-  data-fecha={maquina.fecha}
-  data-obra={maquina.obra}
-  data-actividad={maquina.actividad}
-  data-operador={maquina.operador}
->
-  Editar
-</button>
-         
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              }
             </div>
             <!--end::Row-->
             
@@ -767,10 +462,10 @@ const actividadesDisponibles = [
       <!--end::App Main-->
       <Footer />
     </div>
+
     <!--end::App Wrapper-->
     <!--begin::Script-->
     <Scripts path={path} />
-    <!--end::Script-->
-  </body><!--end::Body-->
+     </body><!--end::Body-->
   
 </html>

@@ -15,17 +15,23 @@
     "strictPropertyInitialization": true,
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["src/html/components/*"],
+      "@components/*": [
+        "src/html/components/*"
+      ]
     },
-    /* Language and Environment */
     "target": "es6",
-    "lib": ["es2018", "DOM"],
+    "lib": [
+      "es2018",
+      "DOM"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   },
   "include": [
     "src/ts/**/*"
   ],
   "exclude": [
     "dist",
-    "node_modules",
+    "node_modules"
   ]
 }

@@ -19,12 +19,11 @@ public class PersonalController {
         personalService.save(personalDTO);
         return new ResponseEntity<>("Registro OK", HttpStatus.OK);
     }
+@GetMapping("/ping")
+public ResponseEntity<Object> ping() {
+    return new ResponseEntity<>("Servicio activo", HttpStatus.OK);
+}
 
-    @GetMapping("/")
-    public ResponseEntity<Object> getAllPersonal() {
-        var listPersonal = personalService.findAll();
-        return new ResponseEntity<>(listPersonal, HttpStatus.OK);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOnePersonal(@PathVariable int id) {

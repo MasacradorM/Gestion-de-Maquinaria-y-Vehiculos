@@ -13,6 +13,73 @@ const adminlteJsUrl = path + "/js/adminlte.js";
 <script src={adminlteJsUrl} is:inline></script>
 <!--end::Required Plugin(AdminLTE)-->
 <!--begin::OverlayScrollbars Configure-->
+<script>
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+  // Cierra otros dropdowns excepto el actual
+  function closeOtherDropdowns(currentContent) {
+    document.querySelectorAll('.dropdown-content.visible').forEach(el => {
+      if (el !== currentContent && el.previousElementSibling) {
+        el.classList.remove('visible');
+        const arrow = el.previousElementSibling.querySelector('.arrow');
+        if (arrow) arrow.classList.remove('rotated');
+      }
+    });
+  }
+
+  // Configura los botones de toggle
+  document.querySelectorAll('.toggle-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const container = button.closest('.dropdown-container');
+      if (!container) return;
+      
+      const arrow = button.querySelector('.arrow');
+      const content = container.querySelector('.dropdown-content');
+      if (!arrow || !content) return;
+
+      closeOtherDropdowns(content);
+      arrow.classList.toggle('rotated');
+      content.classList.toggle('visible');
+    });
+  });
+
+
+  // Cierra dropdowns al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown-container')) {
+      document.querySelectorAll('.dropdown-content.visible').forEach(content => {
+        content.classList.remove('visible');
+        if (content.previousElementSibling) {
+          const arrow = content.previousElementSibling.querySelector('.arrow');
+          if (arrow) arrow.classList.remove('rotated');
+        }
+      });
+    }
+  });
+});
+</script>
+
+
+<script is:inline>
+      
+      const connectedSortables =
+        document.querySelectorAll(".connectedSortable");
+      connectedSortables.forEach((connectedSortable) => {
+        let sortable = new Sortable(connectedSortable, {
+          group: "shared",
+          handle: ".card-header",
+        });
+      });
+
+      const cardHeaders = document.querySelectorAll(
+        ".connectedSortable .card-header",
+      );
+      cardHeaders.forEach((cardHeader) => {
+        cardHeader.style.cursor = "move";
+      });
+    </script>
 <script is:inline>
   const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
   const Default = {
@@ -36,193 +103,1052 @@ const adminlteJsUrl = path + "/js/adminlte.js";
     }
   });
 </script>
+<script>
+async function cargarOperadores() {
+  try {
+    // 1. Petición GET al backend
+    const res = await fetch('/api/v1/personal');   // <— mismo host
+    if (!res.ok) throw new Error('Error HTTP ' + res.status);
+    
+    const personal = await res.json();             // 2. Convertir a JSON
+    
+    // 3. Selecciona solo quienes tengan cargo = "OPERADOR"
+    const operadores = personal.filter(p =>
+      p.cargo && p.cargo.toLowerCase() === 'operador'
+    );
 
+    // 4. Limpiar y construir las <option>
+    const select = document.getElementById('operador');
+    select.innerHTML = '<option value="">-- Sin asignar --</option>';
+
+    operadores.forEach(op => {
+      const option = document.createElement('option');
+      option.value = op.id;        // guarda el id, no el nombre
+      option.textContent = op.nombreCompleto; // o la propiedad que uses
+      select.appendChild(option);
+    });
+  } catch (e) {
+    console.error('No se pudieron cargar operadores:', e);
+  }
+}
+
+// Ejecutar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', cargarOperadores);
+</script>
+
+<script>
+/* almacén sencillo de máquinas en memoria */
+const maquinas = [];     // { id, tipo, placa, ... }
+
+const equipoModal = document.getElementById('equipoModal');
+const saveBtn      = equipoModal.querySelector('.btn-primary');
+
+equipoModal.addEventListener('show.bs.modal', (e) => {
+  const btn     = e.relatedTarget;
+  const mode    = btn.dataset.mode;          // "new" | "edit"
+  const form    = equipoModal;               // alias corto
+  form.dataset.mode = mode;                  // guarda el modo
+
+  if (mode === 'new') {
+    // —— NUEVO: limpia todo y habilita inputs bloqueados ——
+    form.dataset.editingId = '';
+    limpiarFormulario();
+
+    form.querySelector('#modal-tipo').removeAttribute('readonly');
+    form.querySelector('#modal-placa').removeAttribute('readonly');
+
+  } else { // mode === 'edit'
+    // —— EDITAR: rellena con data-* ——
+    form.dataset.editingId = btn.dataset.id;       // guarda id
+    rellenarFormulario(btn.dataset);               // función abajo
+
+    form.querySelector('#modal-tipo').setAttribute('readonly', 'true');
+    form.querySelector('#modal-placa').setAttribute('readonly', 'true');
+  }
+});
+
+/* ---------- helpers ---------- */
+
+function limpiarFormulario() {
+  equipoModal.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.type === 'radio') { el.checked = false; }
+    else { el.value = ''; }
+  });
+  // selecciona estado “DISPONIBLE” por defecto
+  const def = document.getElementById('disponible');
+  def.checked = true;
+  def.dispatchEvent(new Event('change'));
+}
+
+function rellenarFormulario(d) {
+  document.getElementById('modal-tipo').value        = d.tipo;
+  document.getElementById('modal-placa').value       = d.placa;
+  document.getElementById('modal-fecha').value       = d.fecha;
+  document.getElementById('modal-obra').value        = d.obra;
+  document.getElementById('modal-operador').value    = d.operador;
+  document.getElementById('actividad-select').value  = d.actividad;
+
+  // estado
+  const r = document.querySelector(`input[name="estado"][id="${d.estado.toLowerCase()}"]`);
+  if (r) { r.checked = true; r.dispatchEvent(new Event('change')); }
+}
+
+/* ---------- guardar ---------- */
+
+saveBtn.addEventListener('click', () => {
+  const form = equipoModal;
+  const modo = form.dataset.mode;            // new | edit
+
+  const data = recolectarDatosFormulario();  // función tuya o usa form.querySelectorAll…
+
+  if (modo === 'new') {
+    data.id = crypto.randomUUID();
+    maquinas.push(data);                     // ⇢ backend en la vida real
+    crearTarjetaMaquina(data);               // ya tienes esta función
+  } else {
+    const id = form.dataset.editingId;
+    const idx = maquinas.findIndex(m => m.id === id);
+    if (idx !== -1) {
+      maquinas[idx] = {...maquinas[idx], ...data};
+      actualizarTarjetaDOM(maquinas[idx]);   // ver #3
+    }
+  }
+  bootstrap.Modal.getInstance(form).hide();
+});
+</script>
+
+
+ <script is:inline>
+// FUNCIÓN PARA MAPEAR ESTADOS A CLASES CSS
+function getEstadoClass(estado) {
+  const estadoLower = estado.toLowerCase();
+  switch (estadoLower) {
+    case 'disponible':
+      return 'disponible';
+    case 'mantenimiento':
+      return 'mantenimiento';
+    case 'operacion':
+    case 'operación':
+      return 'operacion';
+    case 'transito':
+    case 'tránsito':
+      return 'transito';
+    case 'standby':
+      return 'standby';
+    default:
+      return 'disponible'; // Por defecto
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Verifica que el formulario existe
+  const form = document.getElementById('formNuevaMaquina');
+  if (!form) {
+    console.error("Error: No se encontró el formulario");
+    return;
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // 2. Verifica campos requeridos
+    const placa = document.getElementById('placa').value;
+    if (!placa) {
+      alert("La placa es requerida");
+      return;
+    }
+
+    // 3. Obtener valores seguros
+    const tipoSelect = document.getElementById('tipo');
+    const tipo = tipoSelect.value;
+    const tipoTexto = tipo === 'otro' 
+      ? (document.getElementById('nuevoTipo').value || 'Otro') 
+      : tipoSelect.options[tipoSelect.selectedIndex].text;
+
+    // 4. Crear objeto
+    const nuevaMaquina = {
+      tipo: tipoTexto,
+      placa: placa,
+      estado: 'DISPONIBLE',
+      fecha: new Date().toLocaleDateString('es-ES'),
+      obra: 'Sin asignar',
+      actividad: 'Ninguna',
+      operadorId: parseInt(document.getElementById('operador').value) || null
+
+
+    };
+
+    console.log("Nueva máquina:", nuevaMaquina);
+    
+    // 5. Crear y mostrar tarjeta
+    if (crearTarjetaMaquina(nuevaMaquina)) {
+      // 6. Cerrar modal solo si todo salió bien
+      const modal = document.getElementById('modalNuevaMaquina');
+      const bsModal = bootstrap.Modal.getInstance(modal);
+      bsModal.hide();
+
+      // Limpia los estilos del modal
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = 'auto';
+      document.body.style.paddingRight = '0';
+
+      // Elimina el backdrop si persiste
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+      form.reset();
+    }
+  });
+});
+
+// FUNCIÓN CORREGIDA PARA CREAR TARJETAS
+function crearTarjetaMaquina(maquina) {
+  try {
+    const container = document.getElementById('maquinas-container');
+    if (!container) throw new Error("Contenedor no encontrado");
+
+    const colDiv = document.createElement('div');
+    colDiv.className = 'col-md-4';
+    
+    // ESTRUCTURA CORREGIDA - Usando las clases exactas de tu CSS
+    colDiv.innerHTML = `
+    <div class="maquina-card" >
+                  
+      <div class="maquina-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+  <h5 class="maquina-titulo" style="margin: 0; text-align: left; width: 100%;">
+    ${maquina.tipo}
+  </h5>
+
+          <div style="display: flex; align-items: center; gap: 1rem;">
+              <small style="font-size: 1.5rem; font-weight:bold; color: #ffff;">
+
+            ${maquina.placa}
+            </small>
+            <span class="estado-badge ${getEstadoClass(maquina.estado)}">
+              ${maquina.estado}
+            </span>
+          </div>
+        </div>
+        
+        <div class="maquina-content">
+          <div class="maquina-info">
+            <span class="maquina-label">Fecha:</span>
+            <span class="maquina-value">${maquina.fecha}</span>
+          </div>
+          
+          <div class="maquina-info">
+            <span class="maquina-label">Obra:</span>
+            <span class="maquina-value">${maquina.obra}</span>
+          </div>
+          
+          <div class="maquina-info">
+            <span class="maquina-label">Actividad:</span>
+            <span class="maquina-value">${maquina.actividad}</span>
+          </div>
+          
+          <div class="maquina-info">
+            <span class="maquina-label">Operador:</span>
+            <span class="maquina-value">${maquina.operador}</span>
+          </div>
+          
+          <div class="botonera">
+
+            <button class="btn btn-sm btn-outline-secondary"
+            data-bs-toggle="modal"
+            data-bs-target="#equipoModal"
+            data-mode="new"
+            
+              data-tipo="${maquina.tipo}"
+              data-placa="${maquina.placa}"
+              data-estado="${maquina.estado}"
+              data-fecha="${maquina.fecha}"
+              data-obra="${maquina.obra}"
+              data-actividad="${maquina.actividad}"
+              data-operador="${maquina.operador}"
+           
+            >
+              + Nuevo Registro
+            </button>
+            <button class="btn btn-sm btn-info text-white btn-edit"
+              data-bs-toggle="modal" 
+              data-bs-target="#equipoModal"
+              data-mode="edit"
+              data-tipo="${maquina.tipo}"
+              data-placa="${maquina.placa}"
+              data-estado="${maquina.estado}"
+              data-fecha="${maquina.fecha}"
+              data-obra="${maquina.obra}"
+              data-actividad="${maquina.actividad}"
+              data-operador="${maquina.operador}">
+              Editar
+            </button>
+          </div>
+        </div>
+      </div>`;
+    
+    container.appendChild(colDiv);
+    
+    // Agregar evento de clic al header
+const header = colDiv.querySelector('.maquina-header');
+header.style.cursor = 'pointer';
+header.addEventListener('click', function () {
+  mostrarHistorial(maquina);
+});
+
+
+    
+    // OPCIONAL: Forzar un reflow para asegurar que los estilos se apliquen
+    container.offsetHeight;
+    
+    return true;
+    
+  } catch (error) {
+    console.error("Error al crear tarjeta:", error);
+    alert("Ocurrió un error al guardar");
+    return false;
+  }
+}
+
+
+function actualizarTarjetaDOM(m) {
+  const card = document.querySelector(`.maquina-card[data-id="${m.id}"]`);
+  if (!card) return;
+
+  card.querySelector('.maquina-titulo').textContent     = m.tipo;
+  card.querySelector('.maquina-header small').textContent = m.placa;
+
+  const badge = card.querySelector('.estado-badge');
+  badge.textContent = m.estado;
+  badge.className   = 'estado-badge ' + getEstadoClass(m.estado);
+
+  const values = card.querySelectorAll('.maquina-value');
+  values[0].textContent = m.fecha;
+  values[1].textContent = m.obra;
+  values[2].textContent = m.actividad;
+  values[3].textContent = m.operador;          // o nombre
+}
+
+// FUNCIÓN ADICIONAL: Para debugging de estilos
+function verificarEstilos() {
+  console.log("Verificando estilos aplicados...");
+  const tarjetas = document.querySelectorAll('.maquina-card');
+  tarjetas.forEach((tarjeta, index) => {
+    const computedStyle = window.getComputedStyle(tarjeta);
+    console.log(`Tarjeta ${index}:`, {
+      backgroundColor: computedStyle.backgroundColor,
+      borderRadius: computedStyle.borderRadius,
+      boxShadow: computedStyle.boxShadow
+    });
+  });
+}
+
+// Agrega esto al inicio de tu script para tener datos de prueba
+function inicializarDatosDePrueba() {
+  const datosPrueba = [
+    {
+      placa: 'MMMM',
+      fecha: '23/05/2025',
+      obra: 'Construcción Centro Comercial',
+      actividad: 'Movimiento de tierras',
+      horaInicio: '08:00',
+      horaFin: '12:30',
+      operador: 'Juan Pérez'
+    },
+    {
+      placa: 'MMMM',
+      fecha: '22/05/2025',
+      obra: 'Construcción Centro Comercial',
+      actividad: 'Nivelación de terreno',
+      horaInicio: '13:00',
+      horaFin: '17:30',
+      operador: 'Juan Pérez'
+    },
+    {
+      placa: 'ABC123',
+      fecha: '22/05/2025',
+      obra: 'Autopista Norte',
+      actividad: 'Excavación',
+      horaInicio: '07:30',
+      horaFin: '16:00',
+      operador: 'Carlos Gómez'
+    }
+  ];
+  
+  if (!localStorage.getItem('maquinas')) {
+    localStorage.setItem('maquinas', JSON.stringify(datosPrueba));
+    console.log('Datos de prueba inicializados');
+  }
+}
+
+// Llama a esta función al cargar la página
+inicializarDatosDePrueba();
+
+function obtenerRegistrosHistorial(placa) {
+  console.group('Depuración: obtenerRegistrosHistorial');
+  try {
+    console.log('Placa recibida:', placa);
+    
+    // 1. Obtener todos los registros
+    const todosLosRegistros = JSON.parse(localStorage.getItem('maquinas')) || [];
+    console.log('Total registros en localStorage:', todosLosRegistros.length);
+    console.log('Contenido completo:', todosLosRegistros);
+    
+    // 2. Filtrar por placa (insensible a mayúsculas/espacios)
+    const registrosFiltrados = todosLosRegistros.filter(registro => {
+      const placaRegistro = registro.placa ? registro.placa.trim().toUpperCase() : '';
+      const placaBuscada = placa.trim().toUpperCase();
+      console.log(`Comparando: "${placaRegistro}" con "${placaBuscada}"`);
+      return placaRegistro === placaBuscada;
+    });
+    
+    console.log(`Registros filtrados encontrados: ${registrosFiltrados.length}`);
+    
+    // 3. Ordenar por fecha (más reciente primero)
+    registrosFiltrados.sort((a, b) => {
+      try {
+        // Convertir fechas formato dd/mm/yyyy a Date
+        const convertirFecha = (fechaStr) => {
+          if (!fechaStr) return 0;
+          const [day, month, year] = fechaStr.split('/');
+          return new Date(`${year}-${month}-${day}`);
+        };
+        
+        const fechaA = convertirFecha(a.fecha);
+        const fechaB = convertirFecha(b.fecha);
+        return fechaB - fechaA;
+      } catch (error) {
+        console.error('Error al ordenar fechas:', error);
+        return 0;
+      }
+    });
+    
+    console.log('Registros ordenados:', registrosFiltrados);
+    console.groupEnd();
+    return registrosFiltrados;
+    
+  } catch (error) {
+    console.error('Error en obtenerRegistrosHistorial:', error);
+    console.groupEnd();
+    return [];
+  }
+}
+
+function mostrarHistorial(maquina) {
+  console.log('Mostrando historial para:', maquina);
+  
+  const overlay = document.getElementById('historialOverlay');
+  const tbody = document.querySelector('#tablaHistorial tbody');
+  
+  if (!overlay || !tbody) {
+    console.error('Elementos del historial no encontrados');
+    return;
+  }
+  
+  // Limpiar tabla
+  tbody.innerHTML = '';
+  
+  // Obtener registros
+  const registros = obtenerRegistrosHistorial(maquina.placa);
+  
+  if (registros.length === 0) {
+    // Mostrar mensaje cuando no hay registros
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+      <td class="sticky-first-col">${new Date().toLocaleDateString()}</td>
+      <td class="sticky-second-col">${maquina.placa}</td>
+      <td colspan="6" style="text-align: center; font-style: italic; color: #666;">
+        No se encontraron registros para esta máquina
+      </td>
+    `;
+    tbody.appendChild(fila);
+  } else {
+    // Generar filas con los registros
+    registros.forEach(reg => {
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td class="sticky-first-col">${reg.fecha || '-'}</td>
+        <td class="sticky-second-col">${reg.placa || maquina.placa}</td>
+        <td>${reg.obra || '-'}</td>
+        <td>${reg.actividad || '-'}</td>
+        <td>${reg.horaInicio || '-'}</td>
+        <td>${reg.horaFin || '-'}</td>
+        <td>${reg.horaInicio && reg.horaFin ? calcularHorasTotales(reg.horaInicio, reg.horaFin) + ' hrs' : '-'}</td>
+        <td>${reg.valorHr || '-'}</td>
+        <td>${reg.galones || '-'}</td>
+        <td>${reg.valorGalones || '-'}</td>
+        <td>${reg.horometroTanqueo || '-'}</td>
+        <td>${reg.gps || '-'}</td>
+        <td>${reg.observaciones || '-'}</td>
+        <td>${reg.reporte || '-'}</td>
+        
+        <td>${reg.operador || '-'}</td>
+      `;
+      tbody.appendChild(fila);
+    });
+  }
+  
+  // Mostrar el overlay
+  overlay.style.display = 'block';
+  
+  // Solución definitiva para columnas sticky
+  setTimeout(() => {
+    const table = document.getElementById('tablaHistorial');
+    if (table) {
+      // 1. Forzar recálculo de estilos
+      const firstCols = table.querySelectorAll('.sticky-first-col');
+      const secondCols = table.querySelectorAll('.sticky-second-col');
+      
+      // 2. Aplicar estilos críticos directamente
+      firstCols.forEach(col => {
+        col.style.position = 'sticky';
+        col.style.left = '0';
+        col.style.zIndex = '50';
+        col.style.background = 'white';
+      });
+      
+      secondCols.forEach(col => {
+        col.style.position = 'sticky';
+        col.style.left = '120px';
+        col.style.zIndex = '50';
+        col.style.background = 'white';
+      });
+      
+      // 3. Forzar redibujado
+      table.style.transform = 'translateZ(0)';
+    }
+  }, 100);
+}
+
+// FUNCIÓN PARA CERRAR EL HISTORIAL
+function cerrarHistorial() {
+  const overlay = document.getElementById('historialOverlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+  }
+}
+
+// FUNCIÓN PARA CALCULAR HORAS TOTALES
+function calcularHorasTotales(inicio, fin) {
+  try {
+    const [h1, m1] = inicio.split(':').map(Number);
+    const [h2, m2] = fin.split(':').map(Number);
+    const totalHoras = (h2 + m2 / 60) - (h1 + m1 / 60);
+    return totalHoras.toFixed(1);
+  } catch (error) {
+    console.error('Error al calcular horas:', error);
+    return '0.0';
+  }
+}
+
+// CERRAR CON TECLA ESCAPE
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    cerrarHistorial();
+  }
+});
+
+// CERRAR HACIENDO CLIC FUERA DE LA TABLA
+document.addEventListener('click', function(event) {
+  const overlay = document.getElementById('historialOverlay');
+  const tableContainer = document.querySelector('.table-container');
+  
+  if (overlay && overlay.style.display === 'block') {
+    // Si se hace clic en el overlay pero no en la tabla o sus contenidos
+    if (event.target === overlay && !tableContainer.contains(event.target)) {
+      cerrarHistorial();
+    }
+  }
+});
+</script>
 
 
 <script>
+  // Aplicando principios SOLID al código de gestión de equipos
 
-// Espera a que el DOM esté cargado
+// Single Responsibility Principle (SRP): Cada clase tiene una única responsabilidad
+// Open/Closed Principle (OCP): Clases extensibles sin modificarlas
+// Liskov Substitution Principle (LSP): Objetos de una superclase pueden ser reemplazados por subclases
+// Interface Segregation Principle (ISP): Interfaces específicas en lugar de una general
+// Dependency Inversion Principle (DIP): Dependencia de abstracciones, no implementaciones
+
 document.addEventListener("DOMContentLoaded", () => {
-  const estadoRadios = document.querySelectorAll<HTMLInputElement>('input[name="estado"]');
-  const actividadCell = document.getElementById("actividad-cell")!;
   
-  const actividadSelect = document.getElementById("actividad-select");
-  const btnAgregarActividad = document.getElementById("btn-agregar-actividad");
-  const btnGuardarActividad = document.getElementById("btn-guardar-actividad");
-  const nuevaActividadContainer = document.getElementById("nueva-actividad-container");
-  const nuevaActividadInput = document.getElementById("nueva-actividad-input");
-  const actividadesAgregadas = document.getElementById("actividades-agregadas");
-  const mensajeActividadesVacio = document.getElementById("mensaje-actividades-vacio");
+  // Inicializar la aplicación
+  const app = new EquipmentFormApp();
+  app.initialize();
+});
 
-  // Array to store activities
-  let actividades = [];
+// Clase principal que orquesta la aplicación
+class EquipmentFormApp {
+  constructor() {
+    // Inicializar las diferentes partes de la aplicación
+    this.formManager = new FormManager();
+    this.stateManager = new StateManager(this.formManager);
+    this.activityManager = new ActivityManager();
+    this.calculationManager = new CalculationManager();
+    this.maintenanceManager = new MaintenanceManager();
+    this.modalManager = new ModalManager(this.stateManager);
+  }
 
-  // Show/hide new activity input when "Otra actividad..." is selected
-  if (actividadSelect) {
-    actividadSelect.addEventListener("change", function() {
-      if (nuevaActividadContainer) {
-        nuevaActividadContainer.style.display = 
-          this.value === "Otra actividad..." ? "block" : "none";
-      }
+  initialize() {
+    this.stateManager.initialize();
+    this.activityManager.initialize();
+    this.calculationManager.initialize();
+    this.maintenanceManager.initialize();
+    this.modalManager.initialize();
+  }
+}
+
+// Gestor de formularios (SRP: responsable de obtener referencias a elementos DOM)
+class FormManager {
+  constructor() {
+    // Estado y formulario principal
+    this.estadoRadios = document.querySelectorAll('input[name="estado"]');
+    this.actividadCell = document.getElementById("actividad-cell");
+    
+    // Secciones del formulario
+    this.sections = {
+      fechaContainer: document.getElementById("fecha-container"), 
+      obraContainer: document.getElementById("obra-container"),
+      gpsContainer:document.getElementById("gps-container"),
+      horasSection: document.getElementById("horas-section"),
+      costosSection: document.getElementById("costos-section"),
+      actividadSection: document.getElementById("actividad-cell"),
+      combustibleSection: document.getElementById("combustible-section"),
+      gpsSection: document.getElementById("gps-section"),
+      observacionesSection: document.getElementById("observaciones-section"),
+      operadorContainer: document.getElementById("operador-container"),
+      reporteContainer: document.getElementById("reporte-container"),
+      programarMantenimientoSection: document.getElementById("programarMantenimiento-section")
+    };
+    
+    // Campos de entrada
+    this.inputs = {
+      hrInicial: document.getElementById("modal-hr-inicial"),
+      hrFinal: document.getElementById("modal-hr-final"),
+      hrTotal: document.getElementById("modal-horometro"),
+      valorHr: document.getElementById("modal-valor-hr"),
+      total: document.getElementById("modal-total"),
+      galones: document.getElementById("combustible-galones"),
+      hrCombustible: document.getElementById("combustible-horometro"),
+      rendimiento: document.getElementById("combustible-rendimiento"),
+      actividadSelect: document.getElementById("actividad-select"),
+      actividadInput: document.getElementById("nueva-actividad-input"),
+      programarMantenimientoCheck: document.getElementById("programar-mantenimiento-check"),
+      mantenimientoForm: document.getElementById("mantenimiento-form"),
+      tipoInput: document.getElementById("modal-tipo"),
+      placaInput: document.getElementById("modal-placa"),
+      fechaInput: document.getElementById("modal-fecha"),
+      obraInput: document.getElementById("modal-obra"),
+      operadorInput: document.getElementById("modal-operador"),
+      gpsInput: document.getElementById("modal-gps")  
+    };
+    
+    // Actividades
+    this.activityElements = {
+      btnAgregarActividad: document.getElementById("btn-agregar-actividad"),
+      btnGuardarActividad: document.getElementById("btn-guardar-actividad"),
+      nuevaActividadContainer: document.getElementById("nueva-actividad-container"),
+      nuevaActividadInput: document.getElementById("nueva-actividad-input"),
+      actividadesAgregadas: document.getElementById("actividades-agregadas"),
+      mensajeActividadesVacio: document.getElementById("mensaje-actividades-vacio")
+    };
+
+    // Modal
+    this.equipoModal = document.getElementById("equipoModal");
+  }
+
+  // Método para mostrar/ocultar una sección
+  toggleSection(sectionId, display) {
+    if (this.sections[sectionId]) {
+      this.sections[sectionId].style.display = display ? "block" : "none";
+    }
+  }
+
+  // Método para obtener un elemento de entrada
+  getInput(inputId) {
+    return this.inputs[inputId];
+  }
+
+  // Método para obtener un elemento de actividades
+  getActivityElement(elementId) {
+    return this.activityElements[elementId];
+  }
+}
+
+// Gestor de estados (SRP: responsable de gestionar estados del formulario)
+class StateManager {
+  constructor(formManager) {
+    this.formManager = formManager;
+    this.requiredFields = {
+      standby: ["modal-fecha", "modal-obra", "modal-operador"],
+      mantenimiento: ["modal-fecha", "modal-obra", "actividad-select", "modal-reporte"],
+      disponible: ["modal-fecha", "modal-obra"],
+      operacion: ["modal-fecha", "modal-obra", "modal-hr-inicial", "modal-hr-final", 
+                  "modal-valor-hr", "actividad-select", "modal-operador", "modal-reporte"]
+    };
+  }
+  
+  initialize() {
+    // Registrar eventos para cambio de estado
+    this.formManager.estadoRadios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (radio.checked) {
+          this.updateSectionsVisibility(radio.id);
+        }
+      });
     });
   }
 
-  // Add activity from select
-  if (btnAgregarActividad) {
-    btnAgregarActividad.addEventListener("click", function() {
-      if (!actividadSelect || !actividadesAgregadas || !mensajeActividadesVacio) return;
+  // Actualizar visibilidad de secciones según estado
+  updateSectionsVisibility(stateId) {
+    // Reset all required fields
+    this.resetRequiredFields();
+    
+    // Ocultar todas las secciones primero
+    Object.keys(this.formManager.sections).forEach(sectionId => {
+      this.formManager.toggleSection(sectionId, false);
+    });
+    
+    // Mostrar secciones según el estado seleccionado
+    switch(stateId) {
+      case "standby":
+        this.formManager.toggleSection("observacionesSection", true);
+        this.formManager.toggleSection("operadorContainer", true);
+        this.formManager.toggleSection("horasSection", true);
+        this.formManager.toggleSection("reporteContainer", true);
+        this.formManager.toggleSection("operacionDetails", true);
+        this.setRequiredFields("standby");
+        break;
+        
+      case "mantenimiento":
+        this.formManager.toggleSection("fechaContainer", true);
+        this.formManager.toggleSection("obraContainer", true);  
+        this.formManager.toggleSection("horasSection", true);
+        this.formManager.toggleSection("actividadSection", true);
+        this.formManager.toggleSection("observacionesSection", true);
+        this.formManager.toggleSection("reporteContainer", true);
+        this.formManager.toggleSection("programarMantenimientoSection", true);
+        this.setRequiredFields("mantenimiento");
+        break;
+        
+      case "disponible":
+        this.formManager.toggleSection("fechaContainer", true);
+        this.formManager.toggleSection("horasSection", true);
+        this.formManager.toggleSection("costosSection", true);
+        this.formManager.toggleSection("observacionesSection", true);
+        this.formManager.toggleSection("reporteContainer", true);
+
+        this.setRequiredFields("disponible");
+        break;
+        
+      case "operacion":
+        this.formManager.toggleSection("fechaContainer", true);
+        this.formManager.toggleSection("obraContainer", true);
+        this.formManager.toggleSection("horasSection", true);
+        this.formManager.toggleSection("costosSection", true);
+        this.formManager.toggleSection("actividadSection", true);
+        this.formManager.toggleSection("combustibleSection", true);
+        this.formManager.toggleSection("gpsSection", true);
+        this.formManager.toggleSection("observacionesSection", true);
+        this.formManager.toggleSection("operadorContainer", true);
+        this.formManager.toggleSection("reporteContainer", true);
+        this.formManager.toggleSection("gpsContainer", true);
+        this.setRequiredFields("operacion");
+        break;
+    }
+  }
+  
+  // Resetear los campos requeridos
+  resetRequiredFields() {
+    // Combinar todos los posibles campos requeridos
+    const allPossibleRequired = [...new Set([
+      ...this.requiredFields.standby,
+      ...this.requiredFields.mantenimiento,
+      ...this.requiredFields.disponible,
+      ...this.requiredFields.operacion
+    ])];
+    
+    allPossibleRequired.forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      if (field) {
+        field.removeAttribute("required");
+      }
+    });
+  }
+  
+  // Establecer campos requeridos según el estado
+  setRequiredFields(state) {
+    if (this.requiredFields[state]) {
+      this.requiredFields[state].forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.setAttribute("required", "required");
+        }
+      });
+    }
+  }
+}
+
+// Gestor de actividades (SRP: responsable de gestionar las actividades)
+class ActivityManager {
+  constructor() {
+    // Referencias a elementos DOM relacionados con actividades
+    this.btnAgregarActividad = document.getElementById("btn-agregar-actividad");
+    this.btnGuardarActividad = document.getElementById("btn-guardar-actividad");
+    this.nuevaActividadContainer = document.getElementById("nueva-actividad-container");
+    this.nuevaActividadInput = document.getElementById("nueva-actividad-input");
+    this.actividadesAgregadas = document.getElementById("actividades-agregadas");
+    this.mensajeActividadesVacio = document.getElementById("mensaje-actividades-vacio");
+    this.actividadSelect = document.getElementById("actividad-select");
+    this.cantidadActividad = document.getElementById("cantidad-actividad");
+    
+    // Lista de actividades
+    this.actividades = [];
+  }
+  
+  initialize() {
+    this.setupEventListeners();
+  }
+  
+  setupEventListeners() {
+    // Mostrar/ocultar entrada de nueva actividad
+    if (this.actividadSelect) {
+      this.actividadSelect.addEventListener("change", () => {
+        if (this.nuevaActividadContainer) {
+          this.nuevaActividadContainer.style.display = 
+            this.actividadSelect.value === "Otra actividad..." ? "block" : "none";
+        }
+      });
+    }
+    
+    // Agregar actividad desde select
+    if (this.btnAgregarActividad) {
+      this.btnAgregarActividad.addEventListener("click", () => {
+        if (!this.actividadSelect || !this.actividadesAgregadas || !this.mensajeActividadesVacio) return;
+        
+        const selectedValue = this.actividadSelect.value;
+        const cantidadIngresada = parseInt(this.cantidadActividad.value,10);
       
-      const selectedValue = actividadSelect.value;
-      if (selectedValue && selectedValue !== "Seleccionar actividad" && selectedValue !== "Otra actividad...") {
-        agregarActividad(selectedValue);
-      }
-    });
-  }
-
-  // Save new custom activity
-  if (btnGuardarActividad && nuevaActividadInput) {
-    btnGuardarActividad.addEventListener("click", function() {
-      const nuevaActividad = nuevaActividadInput.value.trim();
-      if (nuevaActividad) {
-        agregarActividad(nuevaActividad);
-        // Reset the input and hide the container
-        nuevaActividadInput.value = "";
-        if (nuevaActividadContainer) {
-          nuevaActividadContainer.style.display = "none";
+      
+        if (selectedValue && selectedValue !== "Seleccionar actividad" && selectedValue !== "Otra actividad..." &&       !isNaN(cantidadIngresada) && cantidadIngresada > 0
+) {
+          this.addActivity(selectedValue,cantidadIngresada);
         }
-        // Reset the select
-        if (actividadSelect) {
-          actividadSelect.value = "Seleccionar actividad";
+      });
+    }
+    
+    // Guardar nueva actividad personalizada
+    if (this.btnGuardarActividad && this.nuevaActividadInput) {
+      this.btnGuardarActividad.addEventListener("click", () => {
+        const nuevaActividad = this.nuevaActividadInput.value.trim();
+        if (nuevaActividad) {
+          this.addActivity(nuevaActividad);
+          // Resetear la entrada y ocultar el contenedor
+          this.nuevaActividadInput.value = "";
+          if (this.nuevaActividadContainer) {
+            this.nuevaActividadContainer.style.display = "none";
+          }
+          // Resetear el select
+          if (this.actividadSelect) {
+            this.actividadSelect.value = "Seleccionar actividad";
+          }
         }
-      }
-    });
+      });
+    }
   }
+  
+  // Agregar actividad a la lista
+  addActivity(nombreActividad,cantidad) {
+    if (!this.actividadesAgregadas || !this.mensajeActividadesVacio) return;
+    
+    this.actividades.push({ actividad: nombreActividad, cantidad });
 
-  // Function to add activity to the list
-  function agregarActividad(actividad) {
-    if (!actividadesAgregadas || !mensajeActividadesVacio) return;
+    // Ocultar mensaje de vacío
+    this.mensajeActividadesVacio.style.display = "none";
     
-    actividades.push(actividad);
-    
-    // Hide empty message
-    mensajeActividadesVacio.style.display = "none";
-    
-    // Create activity item
+    // Crear elemento de actividad
     const actividadItem = document.createElement("div");
     actividadItem.className = "d-flex justify-content-between align-items-center mb-2";
     
     const actividadText = document.createElement("span");
-    actividadText.textContent = actividad;
-    
+    actividadText.textContent = `${nombreActividad} (x${cantidad})`;   // ⬅️ mostramos cantidad
+
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "btn btn-sm btn-danger";
     deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
-    deleteBtn.addEventListener("click", function() {
-      actividades = actividades.filter(a => a !== actividad);
-      actividadItem.remove();
-      
-      // Show empty message if no activities left
-      if (actividades.length === 0 && mensajeActividadesVacio) {
-        mensajeActividadesVacio.style.display = "block";
-      }
+    deleteBtn.addEventListener("click", () => {
+      this.removeActivity(nombreActividad, actividadItem);
     });
     
     actividadItem.appendChild(actividadText);
     actividadItem.appendChild(deleteBtn);
-    actividadesAgregadas.appendChild(actividadItem);
+    this.actividadesAgregadas.appendChild(actividadItem);
   }
+  
+  // Eliminar actividad de la lista
+ removeActivity(nombreActividad, actividadItem) {
+  this.actividades = this.actividades.filter(a => a.actividad !== nombreActividad);
+  actividadItem.remove();
+  if (this.actividades.length === 0) {
+    this.mensajeActividadesVacio.style.display = "block";
+  }
+}
 
-  const hrInicial = document.getElementById("modal-hr-inicial") as HTMLInputElement;
-  const hrFinal = document.getElementById("modal-hr-final") as HTMLInputElement;
-  const hrTotal = document.getElementById("modal-horometro") as HTMLInputElement;
-  const valorHr = document.getElementById("modal-valor-hr") as HTMLInputElement;
-  const total = document.getElementById("modal-total") as HTMLInputElement;
-  const galones = document.getElementById("combustible-galones") as HTMLInputElement;
-  const hrCombustible = document.getElementById("combustible-horometro") as HTMLInputElement;
-  const rendimiento = document.getElementById("combustible-rendimiento") as HTMLInputElement;
+}
 
-  // Mostrar u ocultar actividades según el estado
-  estadoRadios.forEach((radio) => {
-    radio.addEventListener("change", () => {
-      actividadCell.style.display = (radio.id === "operacion" && radio.checked) ? "block" : "none";
-    });
-  });
 
-  // Función para calcular horómetro total
-  function calcularHorometroYTotal() {
-    const inicial = parseFloat(hrInicial.value);
-    const final = parseFloat(hrFinal.value);
-    const valor = parseFloat(valorHr.value);
+// Gestor de cálculos (SRP: responsable de los cálculos matemáticos)
+class CalculationManager {
+  constructor() {
+    // Referencias a elementos DOM para cálculos
+    this.hrInicial = document.getElementById("modal-hr-inicial");
+    this.hrFinal = document.getElementById("modal-hr-final");
+    this.hrTotal = document.getElementById("modal-horometro");
+    this.valorHr = document.getElementById("modal-valor-hr");
+    this.total = document.getElementById("modal-total");
+    this.galones = document.getElementById("combustible-galones");
+    this.hrCombustible = document.getElementById("combustible-horometro");
+    this.rendimiento = document.getElementById("combustible-rendimiento");
+  }
+  
+  initialize() {
+    this.setupEventListeners();
+  }
+  
+  setupEventListeners() {
+    // Eventos para cálculo de horómetro y total
+    if (this.hrInicial && this.hrFinal && this.valorHr) {
+      this.hrInicial.addEventListener("input", () => this.calculateHorometerAndTotal());
+      this.hrFinal.addEventListener("input", () => this.calculateHorometerAndTotal());
+      this.valorHr.addEventListener("input", () => this.calculateHorometerAndTotal());
+    }
+
+    // Eventos para cálculo de rendimiento
+    if (this.galones && this.hrCombustible) {
+      this.galones.addEventListener("input", () => this.calculateEfficiency());
+      this.hrCombustible.addEventListener("input", () => this.calculateEfficiency());
+    }
+  }
+  
+  // Cálculo de horómetro y total
+  calculateHorometerAndTotal() {
+    if (!this.hrInicial || !this.hrFinal || !this.hrTotal || !this.valorHr || !this.total) return;
+    
+    const inicial = parseFloat(this.hrInicial.value);
+    const final = parseFloat(this.hrFinal.value);
+    const valor = parseFloat(this.valorHr.value);
 
     if (!isNaN(inicial) && !isNaN(final) && final >= inicial) {
       const totalHoras = final - inicial;
-      hrTotal.value = totalHoras.toFixed(2);
+      this.hrTotal.value = totalHoras.toFixed(2);
 
       if (!isNaN(valor)) {
-        total.value = (totalHoras * valor).toFixed(2);
+        this.total.value = (totalHoras * valor).toFixed(2);
       }
     } else {
-      hrTotal.value = "";
-      total.value = "";
+      this.hrTotal.value = "";
+      this.total.value = "";
     }
   }
 
-  // Función para calcular rendimiento
-  function calcularRendimiento() {
-    const gal = parseFloat(galones.value);
-    const horas = parseFloat(hrCombustible.value);
+  // Cálculo de rendimiento de combustible
+  calculateEfficiency() {
+    if (!this.galones || !this.hrCombustible || !this.rendimiento) return;
+    
+    const gal = parseFloat(this.galones.value);
+    const horas = parseFloat(this.hrCombustible.value);
 
     if (!isNaN(gal) && !isNaN(horas) && horas > 0) {
-      rendimiento.value = (gal / horas).toFixed(2);
+      this.rendimiento.value = (gal / horas).toFixed(2);
     } else {
-      rendimiento.value = "";
+      this.rendimiento.value = "";
     }
   }
+}
 
-  // Eventos para cálculo de horómetro y total
-  hrInicial.addEventListener("input", calcularHorometroYTotal);
-  hrFinal.addEventListener("input", calcularHorometroYTotal);
-  valorHr.addEventListener("input", calcularHorometroYTotal);
-
-  // Eventos para cálculo de rendimiento
-  galones.addEventListener("input", calcularRendimiento);
-  hrCombustible.addEventListener("input", calcularRendimiento);
-});
-
-
-const equipoModal = document.getElementById("equipoModal");
-
-equipoModal?.addEventListener("show.bs.modal", (event) => {
-  const button = event.relatedTarget as HTMLElement;
-
-  const tipo = button.getAttribute("data-tipo") || "";
-  const placa = button.getAttribute("data-placa") || "";
-  const estado = button.getAttribute("data-estado") || "";
-  const fecha = button.getAttribute("data-fecha") || "";
-  const obra = button.getAttribute("data-obra") || "";
-  const actividad = button.getAttribute("data-actividad") || "";
-  const operador= button.getAttribute("data-operador") || "";
-
-  // Colocar los valores en los campos del modal
-  (document.getElementById("modal-tipo") as HTMLInputElement).value = tipo;
-  (document.getElementById("modal-placa") as HTMLInputElement).value = placa;
-  (document.getElementById("modal-fecha") as HTMLInputElement).value = fecha;
-  (document.getElementById("modal-obra") as HTMLInputElement).value = obra;
-  (document.getElementById("modal-actividad") as HTMLInputElement).value = actividad;
-  (document.getElementById("modal-operador") as HTMLInputElement).value = operador;
-
-  // Estado (radio button)
-  const radio = document.querySelector(`input[name="estado"][value="${estado}"]`) as HTMLInputElement;
-  if (radio) {
-    radio.checked = true;
-    radio.dispatchEvent(new Event("change")); // Para mostrar u ocultar "actividad"
+// Gestor de mantenimiento (SRP: responsable de la sección de mantenimiento)
+class MaintenanceManager {
+  constructor() {
+    this.programarMantenimientoCheck = document.getElementById("programar-mantenimiento-check");
+    this.mantenimientoForm = document.getElementById("mantenimiento-form");
   }
-});
+  
+  initialize() {
+    if (this.programarMantenimientoCheck && this.mantenimientoForm) {
+      this.programarMantenimientoCheck.addEventListener("change", () => {
+        this.mantenimientoForm.style.display = this.programarMantenimientoCheck.checked ? "block" : "none";
+      });
+    }
+  }
+}
+
+// Gestor del modal (SRP: responsable de inicializar y gestionar el modal)
+class ModalManager {
+  constructor(stateManager) {
+    this.stateManager = stateManager;
+    this.equipoModal = document.getElementById("equipoModal");
+    this.tipoInput = document.getElementById("modal-tipo");
+    this.placaInput = document.getElementById("modal-placa");
+    this.fechaInput = document.getElementById("modal-fecha");
+    this.obraInput = document.getElementById("modal-obra");
+    this.operadorInput = document.getElementById("modal-operador");
+  }
+  
+  initialize() {
+    if (this.equipoModal) {
+      this.equipoModal.addEventListener("show.bs.modal", (event) => {
+        const button = event.relatedTarget;
+        if (!button) return;
+
+        // Obtener atributos del botón
+        const tipo = button.getAttribute("data-tipo") || "";
+        const placa = button.getAttribute("data-placa") || "";
+        const estado = button.getAttribute("data-estado") || "";
+        const fecha = button.getAttribute("data-fecha") || "";
+        const obra = button.getAttribute("data-obra") || "";
+        const operador = button.getAttribute("data-operador") || "";
+
+        // Establecer valores en el formulario
+        this.setFormValues(tipo, placa, fecha, obra, operador);
+        
+        // Establecer estado
+        this.setFormState(estado);
+      });
+    }
+  }
+  
+  // Establecer valores en el formulario
+  setFormValues(tipo, placa, fecha, obra, operador) {
+    if (this.tipoInput) this.tipoInput.value = tipo;
+    if (this.placaInput) this.placaInput.value = placa;
+    if (this.fechaInput) this.fechaInput.value = fecha || new Date().toISOString().split('T')[0]; // Fecha actual si no hay
+    if (this.obraInput) this.obraInput.value = obra;
+    if (this.operadorInput) this.operadorInput.value = operador;
+  }
+  
+  // Establecer estado del formulario
+  setFormState(estado) {
+    const radio = document.getElementById(estado.toLowerCase()) || 
+                  document.querySelector(`input[name="estado"][id="${estado.toLowerCase()}"]`);
+    
+    if (radio) {
+      radio.checked = true;
+      // Disparar el evento change para actualizar la visibilidad
+      radio.dispatchEvent(new Event("change"));
+    } else {
+      // Por defecto, seleccionar DISPONIBLE
+      const defaultRadio = document.getElementById("disponible");
+      if (defaultRadio) {
+        defaultRadio.checked = true;
+        defaultRadio.dispatchEvent(new Event("change"));
+      }
+    }
+  }
+}
+
+
 
 
 </script>
-
-
 <script>
   // Mostrar/ocultar campo para nuevo tipo
   document.addEventListener("DOMContentLoaded", function () {
