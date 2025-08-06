@@ -1,0 +1,206 @@
+---
+const { path } = Astro.props;
+const adminlteJsUrl = path + "/js/adminlte.js";
+---
+
+<!--begin::Third Party Plugin(OverlayScrollbars)-->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js" integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ=" crossorigin="anonymous"></script>
+<!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Required Plugin(popperjs for Bootstrap 5)-->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
+<script src={adminlteJsUrl} is:inline></script>
+<!--end::Required Plugin(AdminLTE)-->
+<!--begin::OverlayScrollbars Configure-->
+<script>
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+  // Cierra otros dropdowns excepto el actual
+  function closeOtherDropdowns(currentContent) {
+    document.querySelectorAll('.dropdown-content.visible').forEach(el => {
+      if (el !== currentContent && el.previousElementSibling) {
+        el.classList.remove('visible');
+        const arrow = el.previousElementSibling.querySelector('.arrow');
+        if (arrow) arrow.classList.remove('rotated');
+      }
+    });
+  }
+
+  // Configura los botones de toggle
+  document.querySelectorAll('.toggle-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const container = button.closest('.dropdown-container');
+      if (!container) return;
+      
+      const arrow = button.querySelector('.arrow');
+      const content = container.querySelector('.dropdown-content');
+      if (!arrow || !content) return;
+
+      closeOtherDropdowns(content);
+      arrow.classList.toggle('rotated');
+      content.classList.toggle('visible');
+    });
+  });
+
+
+  // Cierra dropdowns al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown-container')) {
+      document.querySelectorAll('.dropdown-content.visible').forEach(content => {
+        content.classList.remove('visible');
+        if (content.previousElementSibling) {
+          const arrow = content.previousElementSibling.querySelector('.arrow');
+          if (arrow) arrow.classList.remove('rotated');
+        }
+      });
+    }
+  });
+});
+</script>
+
+
+<script is:inline>
+      
+      const connectedSortables =
+        document.querySelectorAll(".connectedSortable");
+      connectedSortables.forEach((connectedSortable) => {
+        let sortable = new Sortable(connectedSortable, {
+          group: "shared",
+          handle: ".card-header",
+        });
+      });
+
+      const cardHeaders = document.querySelectorAll(
+        ".connectedSortable .card-header",
+      );
+      cardHeaders.forEach((cardHeader) => {
+        cardHeader.style.cursor = "move";
+      });
+    </script>
+<script is:inline>
+  const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
+  const Default = {
+    scrollbarTheme: "os-theme-light",
+    scrollbarAutoHide: "leave",
+    scrollbarClickScroll: true,
+  };
+  document.addEventListener("DOMContentLoaded", function () {
+    const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+    if (
+      sidebarWrapper &&
+      typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== "undefined"
+    ) {
+      OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+        scrollbars: {
+          theme: Default.scrollbarTheme,
+          autoHide: Default.scrollbarAutoHide,
+          clickScroll: Default.scrollbarClickScroll,
+        },
+      });
+    }
+  });
+</script>
+
+<script>
+/* almacén sencillo de máquinas en memoria */
+const maquinas = [];     // { id, tipo, placa, ... }
+
+const equipoModal = document.getElementById('equipoModal');
+const saveBtn      = equipoModal.querySelector('.btn-primary');
+
+equipoModal.addEventListener('show.bs.modal', (e) => {
+  const btn     = e.relatedTarget;
+  const mode    = btn.dataset.mode;          // "new" | "edit"
+  const form    = equipoModal;               // alias corto
+  form.dataset.mode = mode;                  // guarda el modo
+
+  if (mode === 'new') {
+    // —— NUEVO: limpia todo y habilita inputs bloqueados ——
+    form.dataset.editingId = '';
+    limpiarFormulario();
+
+    form.querySelector('#modal-tipo').removeAttribute('readonly');
+    form.querySelector('#modal-placa').removeAttribute('readonly');
+
+  } else { // mode === 'edit'
+    // —— EDITAR: rellena con data-* ——
+    form.dataset.editingId = btn.dataset.id;       // guarda id
+    rellenarFormulario(btn.dataset);               // función abajo
+
+    form.querySelector('#modal-tipo').setAttribute('readonly', 'true');
+    form.querySelector('#modal-placa').setAttribute('readonly', 'true');
+  }
+});
+
+/* ---------- helpers ---------- */
+
+function limpiarFormulario() {
+  equipoModal.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.type === 'radio') { el.checked = false; }
+    else { el.value = ''; }
+  });
+  // selecciona estado “DISPONIBLE” por defecto
+  const def = document.getElementById('disponible');
+  def.checked = true;
+  def.dispatchEvent(new Event('change'));
+}
+
+function rellenarFormulario(d) {
+  document.getElementById('modal-tipo').value        = d.tipo;
+  document.getElementById('modal-placa').value       = d.placa;
+  document.getElementById('modal-fecha').value       = d.fecha;
+  document.getElementById('modal-obra').value        = d.obra;
+  document.getElementById('modal-operador').value    = d.operador;
+  document.getElementById('actividad-select').value  = d.actividad;
+
+  // estado
+  const r = document.querySelector(`input[name="estado"][id="${d.estado.toLowerCase()}"]`);
+  if (r) { r.checked = true; r.dispatchEvent(new Event('change')); }
+}
+
+/* ---------- guardar ---------- */
+
+saveBtn.addEventListener('click', () => {
+  const form = equipoModal;
+  const modo = form.dataset.mode;            // new | edit
+
+  const data = recolectarDatosFormulario();  // función tuya o usa form.querySelectorAll…
+
+  if (modo === 'new') {
+    data.id = crypto.randomUUID();
+    maquinas.push(data);                     // ⇢ backend en la vida real
+    crearTarjetaMaquina(data);               // ya tienes esta función
+  } else {
+    const id = form.dataset.editingId;
+    const idx = maquinas.findIndex(m => m.id === id);
+    if (idx !== -1) {
+      maquinas[idx] = {...maquinas[idx], ...data};
+      actualizarTarjetaDOM(maquinas[idx]);   // ver #3
+    }
+  }
+  bootstrap.Modal.getInstance(form).hide();
+});
+</script>
+
+<script>
+  // Mostrar/ocultar campo para nuevo tipo
+  document.addEventListener("DOMContentLoaded", function () {
+    const tipoSelect = document.getElementById("tipo");
+    const nuevoTipoContainer = document.getElementById("nuevoTipoContainer");
+
+    tipoSelect.addEventListener("change", function () {
+      if (this.value === "otro") {
+        nuevoTipoContainer.style.display = "block";
+        document.getElementById("nuevoTipo").setAttribute("required", "required");
+      } else {
+        nuevoTipoContainer.style.display = "none";
+        document.getElementById("nuevoTipo").removeAttribute("required");
+      }
+    });
+  });
+</script>
+
+<!--end::OverlayScrollbars Configure-->

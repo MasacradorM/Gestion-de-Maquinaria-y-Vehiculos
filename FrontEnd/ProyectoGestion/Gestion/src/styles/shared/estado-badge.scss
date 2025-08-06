@@ -1,0 +1,57 @@
+// ======================
+// COMPONENTE BADGES
+// ======================
+@import '../variables';
+
+  /* COMPONENTE BADGES (SCSS anidado) */
+  .estado-badge {
+    border-radius: 20px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    text-align: center;
+    text-transform: uppercase;
+    min-width: 80px;
+    border: 1px solid transparent;
+
+    /* Versión multilínea */
+    &.multilinea {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 40px;
+      line-height: 0.9;
+      
+      span {
+        display: block;
+        width: 120px;
+      }
+    }
+
+    /* Estados */
+    &.disponible {
+      min-width: 120px;
+      background-color: rgba(93, 209, 93, 0.15);
+      color: rgba(93, 209, 93, 1);
+      border-color: rgba(93, 209, 93, 1);
+    }
+
+    &.mantenimiento {
+      background-color: rgba(255, 165, 0, 0.15);
+      color: rgba(255, 165, 0, 1);
+      border-color: rgba(255, 165, 0, 1);
+    }
+
+    &.operacion {
+      background-color: rgba(52, 152, 219, 0.15);
+      color: rgba(52, 152, 219, 1);
+      border-color: rgba(52, 152, 219, 1);
+    }
+
+    &.transito {
+      background-color: map-get($colors,'grey-2');
+      color: map-get($colors, 'white-1');
+    }
+  }
+  

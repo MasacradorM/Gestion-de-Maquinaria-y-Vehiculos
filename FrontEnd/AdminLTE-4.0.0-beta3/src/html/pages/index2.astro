@@ -1,0 +1,452 @@
+---
+import './styles/stilo.scss';
+import Head from "@components/_head.astro";
+import Footer from "@components/dashboard/_footer.astro";
+import Topbar from "@components/dashboard/_topbar.astro";
+import Sidenav from "@components/dashboard/_sidenav.astro";
+import Scripts from "@components/_scripts.astro";
+
+const title = "GM&V | Configuración";
+const path = "../../dist";
+const mainPage = "configuracion";
+const page = "index";
+
+// Datos de ejemplo para la actividad reciente
+const actividadReciente = [
+  {
+    id: 1,
+    usuario: "Juan Perez",
+    accion: "Nuevo usuario",
+    descripcion: "añadido al sistema.",
+    tipo: "usuario", // usuario, obra, personal
+    timestamp: "Hace 2 horas"
+  },
+  {
+    id: 2,
+    usuario: "Nueva Obra",
+    accion: "Plaza Comercial Las Palmas",
+    descripcion: "registrada.",
+    tipo: "obra",
+    timestamp: "Hace 4 horas"
+  },
+  {
+    id: 3,
+    usuario: "Carlos Rodriguez",
+    accion: "Nuevo conductor",
+    descripcion: "añadido al sistema",
+    tipo: "personal",
+    timestamp: "Hace 6 horas"
+  }
+];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <Head title={title} path={path} />
+  </head>
+  
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+      <Topbar path={path} />
+      <Sidenav path={path} mainPage={mainPage} page={page} />
+      
+      <main class="app-main">
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6">
+                <h2 class="mb-0 config-title">Configuración</h2>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                    Configuración
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="container-fluid">
+            
+            <!-- Sección de Categorías -->
+            <div class="config-section">
+              <h3 class="section-title">Categoría</h3>
+              <div class="row g-4">
+                <!-- Usuarios -->
+                <div class="col-lg-3 col-md-6">
+                  <div class="config-card config-card-usuarios">
+                    <div class="config-card-icon">
+                      👥
+                    </div>
+                    <div class="config-card-content">
+                      <h4>Usuarios</h4>
+                      <p>Gestión de Usuarios y Permisos</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Obras -->
+                <div class="col-lg-3 col-md-6">
+                  <div class="config-card config-card-obras">
+                    <div class="config-card-icon">
+                      🚧
+                    </div>
+                    <div class="config-card-content">
+                      <h4>Obras</h4>
+                      <p>Gestión de Obras</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Actividades -->
+                <div class="col-lg-3 col-md-6">
+                  <div class="config-card config-card-actividades">
+                    <div class="config-card-icon">
+                      📝
+                    </div>
+                    <div class="config-card-content">
+                      <h4>Actividades</h4>
+                      <p>Gestión de actividades</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Personal -->
+                <div class="col-lg-3 col-md-6">
+                  <div class="config-card config-card-personal">
+                    <div class="config-card-icon">
+  <!-- Ejemplo con Icon8 (URL directa a PNG) -->
+  <img class="casco" src="https://cdn-icons-png.freepik.com/512/17473/17473766.png?ga=GA1.1.84767501.1748519507" alt="Casco de seguridad">
+</div>
+<style>
+  .casco {
+    width: 50%;
+    height: 50%;
+    object-fit: contain;
+    vertical-align: middle;
+  } 
+  </style>  
+                    <div class="config-card-content">
+                      <h4>Personal</h4>
+                      <p>Gestión de personal</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="config-section">
+              <h3 class="section-title">Actividad Reciente</h3>
+              <div class="activity-container">
+                {actividadReciente.map((item) => (
+                  <div class={`activity-item activity-${item.tipo}`}>
+                    <div class="activity-indicator"></div>
+                    <div class="activity-content">
+                      <div class="activity-header">
+                        <span class="activity-user">{item.usuario}</span>
+                        <span class="activity-timestamp">{item.timestamp}</span>
+                      </div>
+                      <div class="activity-description">
+                        <strong>{item.accion}</strong> {item.descripcion}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <!-- Acceso Rápido -->
+            <div class="config-section">
+              <h3 class="section-title">Acceso Rápido</h3>
+              <div class="row g-3">
+                <div class="col-lg-4 col-md-6">
+                  <button class="quick-access-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Nueva Obra</span>
+                  </button>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                  <button class="quick-access-btn">
+                    <i class="fas fa-list"></i>
+                    <span>Nueva Actividad</span>
+                  </button>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                  <button class="quick-access-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Añadir Personal</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+    
+    <Scripts path={path} />
+  </body>
+</html>
+
+<style lang="scss">
+// Variables de colores
+$primary-blue: #1a365d;
+$light-blue: #4a9eff;
+$usuarios-color: rgba(52, 152, 219, 0.15);
+$usuarios-color-border: #3498DB;
+$obras-color:rgba(255, 165, 0, 0.15);
+$obras-color-border:#f59e0b;
+$actividades-color:rgba(255, 0, 0, 0.08);
+$actividades-color-border: #ef4444;
+$personal-color: #10b981;
+$bg-gray: #f8fafc;
+$border-gray: #e2e8f0;
+$text-dark: #1f2937;
+$text-muted: #6b7280;
+
+.config-title {
+  color: $primary-blue;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+
+.config-section {
+  margin-bottom: 3rem;
+
+  .section-title {
+    color: $text-dark;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+}
+
+// Tarjetas de configuración
+.config-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 140px;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .config-card-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    i {
+      font-size: 24px;
+      color: white;
+    }
+  }
+
+  .config-card-content {
+    flex: 1;
+    
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: $text-dark;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    p {
+      font-size: 0.9rem;
+      color: $text-muted;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+
+  // Colores específicos por categoría
+  &.config-card-usuarios {
+    border-left: 4px solid $usuarios-color-border;
+    .config-card-icon {
+      background: $usuarios-color;
+    }
+    &:hover {
+      border-color: $usuarios-color;
+    }
+  }
+
+  &.config-card-obras {
+    border-left: 4px solid $obras-color-border;
+    .config-card-icon {
+      background: $obras-color;
+    }
+    &:hover {
+      border-color: $obras-color;
+    }
+  }
+
+  &.config-card-actividades {
+    border-left: 4px solid $actividades-color-border;
+    .config-card-icon {
+      background: $actividades-color;
+    }
+    &:hover {
+      border-color: $actividades-color;
+    }
+  }
+
+  &.config-card-personal {
+    border-left: 4px solid $personal-color;
+    .config-card-icon {
+      background: $personal-color;
+    }
+    &:hover {
+      border-color: $personal-color;
+    }
+  }
+}
+
+// Actividad reciente
+.activity-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid $border-gray;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .activity-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+  }
+
+  .activity-content {
+    flex: 1;
+    
+    .activity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+      
+      .activity-user {
+        font-weight: 600;
+        color: $text-dark;
+      }
+      
+      .activity-timestamp {
+        font-size: 0.875rem;
+        color: $text-muted;
+      }
+    }
+    
+    .activity-description {
+      font-size: 0.9rem;
+      color: $text-muted;
+      line-height: 1.4;
+    }
+  }
+
+  // Colores por tipo de actividad
+  &.activity-usuario .activity-indicator {
+    background: $usuarios-color;
+  }
+  
+  &.activity-obra .activity-indicator {
+    background: $obras-color;
+  }
+  
+  &.activity-personal .activity-indicator {
+    background: $personal-color;
+  }
+}
+
+// Botones de acceso rápido
+.quick-access-btn {
+  width: 100%;
+  height: 80px;
+  background: white;
+  border: 2px solid $border-gray;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    border-color: $light-blue;
+    background: $light-blue;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(74, 158, 255, 0.3);
+  }
+
+  i {
+    font-size: 1.25rem;
+  }
+
+  span {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .config-card {
+    height: auto;
+    min-height: 120px;
+  }
+  
+  .activity-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.25rem;
+  }
+  
+  .quick-access-btn {
+    height: 70px;
+    font-size: 0.9rem;
+  }
+}
+</style>

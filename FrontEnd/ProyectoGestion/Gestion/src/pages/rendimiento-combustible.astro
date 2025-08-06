@@ -1,0 +1,698 @@
+---
+import '@/styles/main.scss';  
+
+import Head from "@components/_head.astro";
+import Footer from "@components/dashboard/_footer.astro";
+import Topbar from "@components/dashboard/_topbar.astro";
+import Sidenav from "@components/dashboard/_sidenav.astro";
+import Scripts from "@components/_scripts.astro";
+
+const title = "AdminLTE | Informes de Combustible";
+const path = "../../dist";
+const mainPage = "dashboard";
+const page = "index3";
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <Head title={title} path={path} />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
+      crossorigin="anonymous"
+    />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .content-header {
+            background: #ecf0f1;
+            padding: 20px 30px;
+            border-bottom: 1px solid #bdc3c7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .export-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #34495e;
+        }
+
+        .filters-section {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #bdc3c7;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            color: #2c3e50;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .search-section {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #bdc3c7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box input {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 300px;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .report-content {
+            background: white;
+            margin: 30px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 2px solid #e5e7eb;
+        }
+
+        .report-header {
+            background: white;
+            padding: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #dc2626 50%, #f59e0b 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 9px;
+            text-align: center;
+            line-height: 1.1;
+            padding: 5px;
+        }
+
+        .company-info {
+            text-align: left;
+        }
+
+        .company-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 3px;
+            line-height: 1.2;
+        }
+
+        .report-title-section {
+            text-align: center;
+            flex: 1;
+            margin: 0 20px;
+        }
+
+        .report-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .report-meta {
+            font-size: 12px;
+            color: #2c3e50;
+        }
+
+        .vehicle-info-section {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vehicle-box {
+            background: #d1d5db;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stat-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0;
+            font-size: 12px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            color: #2c3e50;
+        }
+
+        .data-table th {
+            background: #e5e7eb;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            font-size: 12px;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .total-row {
+            background: #e5e7eb !important;
+            font-weight: 600;
+            border-top: 2px solid #95a5a6;
+        }
+
+        .total-row td {
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .pagination button:hover {
+            background: #ecf0f1;
+        }
+
+        .pagination button.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .filters-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+
+            .report-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .summary-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  </head>
+
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary" style="background-color: #ECF0F1 !important;">
+    <div class="app-wrapper">
+      <Topbar path={path} />
+      <Sidenav path={path} mainPage={mainPage} page={page} />
+
+      <main class="app-main">
+        <!-- Encabezado -->
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6">
+                <h3 class="mb-0">Informe Mensual de Combustible</h3>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="#">Informes</a></li>
+                  <li class="breadcrumb-item active">Combustible</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="app-content">
+          <div class="container-fluid">
+            <div class="content-header">
+                <h1 class="content-title">Informe Mensual de Combustible</h1>
+                <button class="export-btn">
+                    <span>📤</span>
+                    <span>Exportar</span>
+                </button>
+            </div>
+
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label>Obra</label>
+                    <select id="obraFilter">
+                        <option value="planta-laguna">Planta La Laguna</option>
+                        <option value="proyecto-norte">Proyecto Norte</option>
+                        <option value="obra-sur">Obra Sur</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Mes</label>
+                    <select id="mesFilter">
+                        <option value="enero">Enero 2025</option>
+                        <option value="febrero">Febrero 2025</option>
+                        <option value="marzo">Marzo 2025</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Año</label>
+                    <select id="añoFilter">
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Vehículo</label>
+                    <select id="vehiculoFilter">
+                        <option value="todos">Todos los vehículos</option>
+                        <option value="volqueta-chu544">Volqueta CHU544</option>
+                        <option value="volqueta-ttg449">Volqueta TTG449</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar en registros..." id="searchInput">
+                    <button class="btn-secondary">🔍 Buscar</button>
+                </div>
+                <div>
+                    <button class="btn-secondary" onclick="refreshData()">🔄 Actualizar</button>
+                </div>
+            </div>
+
+            <div class="report-content">
+                <div class="report-header">
+                    <div class="logo-section">
+                        <div class="logo-placeholder">
+                            INGENIERÍA<br>
+                            DE LA<br>
+                            CONSTRUCCIÓN<br>
+                            E<br>
+                            INTERVENTORÍA
+                        </div>
+                        <div class="company-info">
+                            <div class="company-name">INGENIERÍA DE LA CONSTRUCCIÓN E INTERVENTORÍA S.A.S</div>
+                            <div class="company-name">INCOINT</div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-title-section">
+                        <div class="report-title">INFORME MENSUAL DE COMBUSTIBLE</div>
+                        <div class="report-meta">
+                            <strong>Generado:</strong> <span id="currentDate">03/07/2025 1:23 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vehicle-info-section">
+                    <div>
+                        <span style="font-weight: bold; margin-right: 10px;">Vehículo:</span>
+                        <span class="vehicle-box" id="vehicleName">VOLQUETA CHU544</span>
+                    </div>
+                    
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Combustible total usado (gl):</span>
+                            <span class="stat-value" id="totalCombustible">45</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rendimiento total de combustible (gl/km):</span>
+                            <span class="stat-value" id="rendimiento">7.39</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Distancia recorrida (km):</span>
+                            <span class="stat-value" id="distancia">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Gasto total de tanqueo:</span>
+                            <span class="stat-value" id="gastoTotal">$56.250</span>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>FECHA</th>
+                            <th>EQUIPO</th>
+                            <th>ACTIVIDAD</th>
+                            <th>TRAYECTO</th>
+                            <th>CANTIDAD</th>
+                            <th>CONDUCTOR</th>
+                            <th>REPORTE</th>
+                            <th>VALOR TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <tr>
+                            <td>14/01/2025</td>
+                            <td>VOLQUETA TTG449</td>
+                            <td>TRANSPORTE DE CRUDO</td>
+                            <td>ESCARPETA - LA LAGUNA</td>
+                            <td>1</td>
+                            <td>CRISTIAN VIDALES</td>
+                            <td>1378</td>
+                            <td>$56250</td>
+                        </tr>
+                        <tr>
+                            <td>14/01/2025</td>
+                            <td>VOLQUETA TTG449</td>
+                            <td>TRANSPORTE DE CRUDO</td>
+                            <td>ESCARPETA - LA LAGUNA</td>
+                            <td>1</td>
+                            <td>CRISTIAN VIDALES</td>
+                            <td>1378</td>
+                            <td>$56250</td>
+                        </tr>
+                        <tr>
+                            <td>14/01/2025</td>
+                            <td>VOLQUETA TTG449</td>
+                            <td>TRANSPORTE DE CRUDO</td>
+                            <td>ESCARPETA - LA LAGUNA</td>
+                            <td>1</td>
+                            <td>CRISTIAN VIDALES</td>
+                            <td>1378</td>
+                            <td>$56250</td>
+                        </tr>
+                        <tr>
+                            <td>14/01/2025</td>
+                            <td>VOLQUETA TTG449</td>
+                            <td>TRANSPORTE DE CRUDO</td>
+                            <td>ESCARPETA - LA LAGUNA</td>
+                            <td>1</td>
+                            <td>CRISTIAN VIDALES</td>
+                            <td>1378</td>
+                            <td>$56250</td>
+                        </tr>
+                        <tr>
+                            <td>14/01/2025</td>
+                            <td>VOLQUETA TTG449</td>
+                            <td>TRANSPORTE DE CRUDO</td>
+                            <td>ESCARPETA - LA LAGUNA</td>
+                            <td>1</td>
+                            <td>CRISTIAN VIDALES</td>
+                            <td>1378</td>
+                            <td>$56250</td>
+                        </tr>
+                        <tr>
+                            <td>14/01/2025</td>
+                            <td>VOLQUETA TTG449</td>
+                            <td>TRANSPORTE DE CRUDO</td>
+                            <td>ESCARPETA - LA LAGUNA</td>
+                            <td>1</td>
+                            <td>CRISTIAN VIDALES</td>
+                            <td>1378</td>
+                            <td>$56250</td>
+                        </tr>
+                        <tr>
+                            <td>14/01/2025</td>
+                            <td>VOLQUETA TTG449</td>
+                            <td>TRANSPORTE DE CRUDO</td>
+                            <td>ESCARPETA - LA LAGUNA</td>
+                            <td>1</td>
+                            <td>CRISTIAN VIDALES</td>
+                            <td>1378</td>
+                            <td>$56250</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="7"><strong>TOTAL GENERAL</strong></td>
+                            <td><strong>$56250</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <button onclick="changePage(-1)">← Anterior</button>
+                    <button class="active">1</button>
+                    <button onclick="changePage(1)">2</button>
+                    <button onclick="changePage(1)">3</button>
+                    <button onclick="changePage(1)">Siguiente →</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+
+    <!-- Scripts -->
+    <Scripts path={path} />
+    <script
+      src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js"
+      integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+        // Actualizar fecha actual
+        function updateCurrentDate() {
+            const now = new Date();
+            const formatted = now.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit', 
+                year: 'numeric'
+            }) + ' ' + now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+            document.getElementById('currentDate').textContent = formatted;
+        }
+
+        // Función de búsqueda
+        function searchTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.getElementById('dataTableBody');
+            const rows = tbody.getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length - 1; i++) { // -1 para excluir la fila total
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(searchTerm)) {
+                        found = true;
+                        break;
+                    }
+                }
+                
+                rows[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        // Función para cambiar página
+        function changePage(direction) {
+            const buttons = document.querySelectorAll('.pagination button');
+            let currentPage = 1;
+            
+            buttons.forEach((btn, index) => {
+                if (btn.classList.contains('active') && !isNaN(btn.textContent)) {
+                    currentPage = parseInt(btn.textContent);
+                }
+            });
+            
+            console.log('Página actual:', currentPage, 'Dirección:', direction);
+        }
+
+        // Función para refrescar datos
+        function refreshData() {
+            console.log('Actualizando datos...');
+            // Aquí iría la lógica para recargar los datos
+            updateSummaryStats();
+        }
+
+        // Actualizar estadísticas de resumen
+        function updateSummaryStats() {
+            const rows = document.querySelectorAll('#dataTableBody tr:not(.total-row)');
+            let totalCombustible = 0;
+            let totalCosto = 0;
+            
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    const cantidad = parseInt(row.cells[4].textContent) || 0;
+                    const valor = parseInt(row.cells[7].textContent.replace(/[$,]/g, '')) || 0;
+                    totalCombustible += cantidad;
+                    totalCosto += valor;
+                }
+            });
+
+            document.getElementById('totalCombustible').textContent = totalCombustible;
+            document.getElementById('gastoTotal').textContent = '$' + totalCosto.toLocaleString();
+        }
+
+        // Escuchar cambios en los filtros
+        document.getElementById('vehiculoFilter').addEventListener('change', function() {
+            const selectedText = this.options[this.selectedIndex].text;
+            if (selectedText !== 'Todos los vehículos') {
+                document.getElementById('vehicleName').textContent = selectedText.toUpperCase();
+            }
+        });
+
+        // Escuchar búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', function() {
+            searchTable();
+            updateSummaryStats();
+        });
+
+        // Inicializar
+        updateCurrentDate();
+        updateSummaryStats();
+        
+        // Actualizar fecha cada minuto
+        setInterval(updateCurrentDate, 60000);
+    </script>
+  </body>
+</html>

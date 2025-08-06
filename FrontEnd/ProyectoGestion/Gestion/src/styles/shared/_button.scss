@@ -1,0 +1,11 @@
+@import '../variables';
+  /* BOTONES (SCSS) */
+  .btn-edit {
+    background-color: map-get($colors,blue-1);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+  }

@@ -1,0 +1,11 @@
+@import '../variables';
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    
+    .page-item.active .page-link {
+      background-color:map-get($colors,blue-1);
+      border-color: map-get($colors,blue-1);
+    }
+  }

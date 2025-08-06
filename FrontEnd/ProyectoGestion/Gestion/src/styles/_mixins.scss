@@ -1,0 +1,444 @@
+// ======================
+// MIXINS SCSS - ESTRUCTURA MEJORADA
+// ======================
+@use 'variables' as v;
+
+/* ============================================
+   TABLA DE CONTENIDOS - MIXINS
+   ============================================
+   1. Mixins de Layout y Flexbox
+   2. Mixins de Responsive Design
+   3. Mixins de Transiciones y Animaciones
+   4. Mixins de Tipografía
+   5. Mixins de Estados y Interacciones
+   6. Mixins de Componentes Específicos
+   7. Mixins de Utilidades
+   ============================================ */
+
+/* ============================================
+   1. MIXINS DE LAYOUT Y FLEXBOX
+   ============================================ */
+
+// Flexbox - Centrado básico
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Flexbox - Centrado con dirección personalizable
+@mixin flex-center-custom($direction: row, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+// Flexbox - Espacio entre elementos
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// Flexbox - Columna con gap
+
+@mixin flex-column($gap: map-get(v.$spacing, 'base')) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+// Grid - Layout básico
+@mixin grid-layout($columns: 1fr, $gap: v.spacing(4)) {
+  display: grid;
+  grid-template-columns: $columns;
+  gap: $gap;
+}
+
+// Contenedor centrado con max-width
+@mixin container($max-width: 1200px, $padding: v.spacing(4)) {
+  max-width: $max-width;
+  margin: 0 auto;
+  padding-left: $padding;
+  padding-right: $padding;
+}
+
+/* ============================================
+   2. MIXINS DE RESPONSIVE DESIGN
+   ============================================ */
+
+// Breakpoints - Media queries básicas (manteniendo tu estilo)
+@mixin respond-to($breakpoint) {
+  @if map-has-key(v.$breakpoints, $breakpoint) {
+    @media (min-width: map-get(v.$breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint '#{$breakpoint}' no encontrado en $breakpoints.";
+  }
+}
+
+// Media query hacia abajo
+@mixin respond-down($breakpoint) {
+  @if map-has-key(v.$breakpoints, $breakpoint) {
+    $breakpoint-value: map-get(v.$breakpoints, $breakpoint);
+    @if $breakpoint-value > 0 {
+      @media (max-width: $breakpoint-value - 1px) {
+        @content;
+      }
+    }
+  } @else {
+    @warn "Breakpoint '#{$breakpoint}' no encontrado en $breakpoints.";
+  }
+}
+
+// Media query entre breakpoints
+@mixin respond-between($min-breakpoint, $max-breakpoint) {
+  $min: map-get(v.$breakpoints, $min-breakpoint);
+  $max: map-get(v.$breakpoints, $max-breakpoint);
+  
+  @if $min and $max {
+    @media (min-width: $min) and (max-width: $max - 1px) {
+      @content;
+    }
+  }
+}
+
+// Flexbox - Columna en móvil (tu estilo mejorado)
+@mixin flex-column-mobile($breakpoint: md) {
+  @include respond-down($breakpoint) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: map-get(v.$spacing, 'base');  // Now this will work
+
+  }
+}
+
+// Ancho completo en móvil (tu estilo mejorado)
+@mixin full-width-mobile($breakpoint: md) {
+  @include respond-down($breakpoint) {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+// Footer responsivo (tu estilo mejorado)
+@mixin responsive-footer($breakpoint: md) {
+  @include respond-down($breakpoint) {
+    flex-direction: column-reverse;
+    padding: v.spacing(4);
+    gap: v.spacing(3);
+
+    .btn,
+    .btn-group {
+      width: 100%;
+    }
+
+    .btn-group {
+      flex-direction: column;
+      gap: v.spacing(2);
+    }
+
+    .btn {
+      order: 2;
+    }
+
+    .btn-danger {
+      order: 1;
+      margin-top: v.spacing(2);
+    }
+  }
+}
+
+// Hide/Show en diferentes breakpoints
+@mixin hide-on($breakpoint) {
+  @include respond-to($breakpoint) {
+    display: none !important;
+  }
+}
+
+@mixin show-on($breakpoint) {
+  display: none !important;
+  
+  @include respond-to($breakpoint) {
+    display: block !important;
+  }
+}
+
+/* ============================================
+   3. MIXINS DE TRANSICIONES Y ANIMACIONES
+   ============================================ */
+
+// Transición básica (tu estilo)
+@mixin transition-all($duration: 0.3s, $easing: ease) {
+  transition: all $duration $easing;
+}
+
+// Transición específica
+@mixin transition($property: all, $duration: 0.3s, $easing: cubic-bezier(0.4, 0, 0.2, 1)) {
+  transition: $property $duration $easing;
+}
+
+// Transiciones múltiples
+@mixin transitions($transitions...) {
+  transition: $transitions;
+}
+
+// Animación de hover suave
+@mixin hover-lift($lift: 4px, $shadow: v.shadow(lg)) {
+  @include transition(transform, box-shadow);
+  
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-$lift);
+      box-shadow: $shadow;
+    }
+  }
+}
+
+// Animación de scale en hover
+@mixin hover-scale($scale: 1.05) {
+  @include transition(transform);
+  
+  @media (hover: hover) {
+    &:hover {
+      transform: scale($scale);
+    }
+  }
+}
+
+// Fade in animation
+@mixin fade-in($duration: 0.5s, $delay: 0s) {
+  opacity: 0;
+  animation: fadeIn $duration ease-in-out $delay forwards;
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* ============================================
+   4. MIXINS DE TIPOGRAFÍA
+   ============================================ */
+
+// Truncar texto
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Truncar texto multi-línea
+@mixin text-truncate-lines($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Texto responsivo
+@mixin responsive-text($mobile-size, $desktop-size) {
+  font-size: $mobile-size;
+  
+  @include respond-to(md) {
+    font-size: $desktop-size;
+  }
+}
+
+// Estilo de título
+@mixin heading-style($size: v.font-size('2xl'), $weight: v.font-weight(bold), $color: v.color(text-primary)) {
+  font-size: $size;
+  font-weight: $weight;
+  color: $color;
+  line-height: v.line-height(tight);
+  font-family: v.font-family(display);
+}
+
+/* ============================================
+   5. MIXINS DE ESTADOS Y INTERACCIONES
+   ============================================ */
+
+// Focus visible mejorado
+@mixin focus-visible($color: v.color(primary), $width: 2px, $offset: 2px) {
+  &:focus-visible {
+    outline: $width solid $color;
+    outline-offset: $offset;
+  }
+}
+
+// Estados de botón
+@mixin button-states($bg-color, $hover-color: darken($bg-color, 10%), $active-color: darken($bg-color, 15%)) {
+  background-color: $bg-color;
+  @include transition(background-color);
+  
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background-color: $hover-color;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    background-color: $active-color;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Hover solo en dispositivos que lo soportan
+@mixin hover-support {
+  @media (hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+/* ============================================
+   6. MIXINS DE COMPONENTES ESPECÍFICOS
+   ============================================ */
+
+// Card básica
+@mixin card($padding: v.spacing(6), $radius: v.radius(xl), $shadow: v.shadow(md)) {
+  background:color(white);
+  padding: $padding;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  @include transition(box-shadow);
+}
+
+// Card con hover
+@mixin card-hover($hover-shadow: shadow(lg)) {
+  @include card();
+  
+  @include hover-support {
+    box-shadow: $hover-shadow;
+  }
+}
+
+// Badge/Pill
+@mixin badge($bg-color:color(gray-100), $text-color: color(gray-800), $size: sm) {
+  display: inline-flex;
+  align-items: center;
+  padding: v.spacing(1) v.spacing(3);
+  font-size: v.font-size($size);
+  font-weight: v.font-weight(medium);
+  border-radius: v.radius(full);
+  background-color: $bg-color;
+  color: $text-color;
+  white-space: nowrap;
+}
+
+// Modal overlay
+@mixin modal-overlay($bg: rgba(0, 0, 0, 0.5), $z-index: 1000) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $bg;
+  z-index: $z-index;
+  @include flex-center;
+}
+
+// Input base
+@mixin input-base($border-color: color(gray-300)) {
+  width: 100%;
+  padding: v.spacing(3) v.spacing(4);
+  border: 1px solid $border-color;
+  border-radius: v.radius(md);
+  font-size: v.font-size(base);
+  @include transition(border-color, box-shadow);
+  
+  &:focus {
+    outline: none;
+    border-color: v.color(blue-3);
+    box-shadow: 0 0 0 3px rgba(v.color(blue-3), 0.1);
+  }
+  
+  &::placeholder {
+    color: v.color(text-placeholder);
+  }
+}
+
+/* ============================================
+   7. MIXINS DE UTILIDADES
+   ============================================ */
+
+// Clearfix
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+// Aspect ratio
+@mixin aspect-ratio($width: 16, $height: 9) {
+  position: relative;
+  
+  &::before {
+    content: "";
+    display: block;
+    padding-top: ($height / $width) * 100%;
+  }
+  
+  > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Ocultar scrollbar manteniendo funcionalidad
+@mixin hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// Posicionamiento absolute centrado
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// Reset de lista
+@mixin list-reset {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+// Visually hidden (accesibilidad)
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+// Debug outline (para desarrollo)
+@mixin debug-outline($color: red) {
+  outline: 2px solid $color !important;
+  outline-offset: -2px !important;
+}

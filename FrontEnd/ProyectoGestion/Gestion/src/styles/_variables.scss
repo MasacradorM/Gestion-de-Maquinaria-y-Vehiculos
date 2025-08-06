@@ -1,0 +1,137 @@
+// ======================
+// Variables SCSS Modulares
+// ======================
+
+// Importar variables externas
+@import 'adminlte-vars';
+
+// -----------------------
+// 1. Paleta de colores
+// -----------------------
+$colors: (
+  blue-1: #3498DB,
+  blue-2: #4a9eff,
+  blue-3: #4b7cf3,
+  blue-4: #1a365d,
+  blue-5: #1e2d4d,
+  blue-6: #0d2b55,
+  blue-7: #2c3e50,
+  
+  white-1: #ffffff,
+  white-2: #dfe7ff,
+  white-3: #f8fafc,
+  white-4: #e2e8f0,
+
+  black-1: #000000,
+
+  grey-1: #6b7280,
+  grey-2:#6c757d,
+
+  orange-1: #FFC107,
+
+  green-1:#4CAF50,
+  
+
+
+  );
+
+
+// -----------------------
+// 2. Tipografía
+// -----------------------
+$fonts: (
+  display: ('Volkhov', serif),
+  body: ('Segoe UI', sans-serif),
+);
+
+$font-sizes: (
+  xs: 0.75rem,        // Extra small (ideal para timestamps, badges)
+  sm: 0.875rem,       // Small (textos pequeños, descripciones)
+  base: 1rem,         // Tamaño base estándar
+  md: 1.125rem,       // Medium (subtítulos, textos destacados)
+  lg: 1.25rem,        // Large (títulos pequeños o encabezados)
+  xl: 1.5rem,         // Extra large (títulos principales o secciones)
+  xxl: 2rem           // Extra extra large (títulos grandes o destacados)
+);
+
+
+// -----------------------
+// 3. Bordes
+// -----------------------
+$borders: (
+  radius: (
+    small: 4px,
+    medium: 8px,
+    large: 12px,
+    badge: 20px
+  ),
+  width: (
+    thin: 1px,
+    normal: 2px,
+    thick: 3px,
+    config-border: 4px
+  )
+);
+
+
+// -----------------------
+// 4. Sombras y efectos
+// -----------------------
+$shadows: (
+  small: 0 2px 4px rgba(0, 0, 0, 0.1),
+  medium: 0 4px 8px rgba(0, 0, 0, 0.2),
+  large: 0 8px 16px rgba(0, 0, 0, 0.3),
+  button-hover: 0 4px 8px rgba(0, 0, 0, 0.15),
+  config-card: 0 2px 8px rgba(0, 0, 0, 0.08),
+  input-focus: 0 0 0 3px rgba(52, 152, 219, 0.25),
+  config-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12),
+  quick-access-hover: 0 8px 24px rgba(74, 158, 255, 0.3),
+  badge: 0 1px 3px rgba(0, 0, 0, 0.1)
+);
+
+// -----------------------
+// 5. Espaciados y tamaños
+// -----------------------
+$spacing: (
+  base: 20px,
+  gap: 10px,
+  search-box-width: 250px,
+);
+
+$modal-spacing: (
+  padding: 0.5rem 0.75rem,
+  body-padding: 1.5rem,
+  section-margin: 1rem,
+  section-padding: 0.5rem,
+  row-margin-x: 6px,
+  col-padding-x: 8px,
+  form-control-margin-y: 4px,
+  h4-margin-top: 1rem,
+  h4-margin-bottom: 0.5rem,
+  h4-padding-left: 4px
+);
+
+$button-dimensions: (
+  min-width: 120px,
+  padding: 0.625rem 1.25rem,
+);
+
+
+// -----------------------
+// 6. Transiciones
+// -----------------------
+$transitions: (
+  fast: 0.15s,
+  normal: 0.3s,
+  slow: 0.5s,
+);
+
+// -----------------------
+// 7. Breakpoints responsivos
+// -----------------------
+$breakpoints: (
+  sm: 576px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);

@@ -1,0 +1,53 @@
+---
+import AuthLayout from '@/layouts/AuthLayout.astro';
+import LoginCard from '@/components/auth/LoginCard.astro';
+import LoginForm from '@/components/auth/LoginForm.astro';
+---
+<AuthLayout title="GM&V - Iniciar Sesión">
+  <div class="auth-container">
+    <h1 class="logo-title">G</h1>
+    <LoginCard>
+      <LoginForm />
+    </LoginCard>
+  </div>
+</AuthLayout>
+
+<style>
+  :global(.auth-page) {
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), 
+                url('/src/assets/images/backgroundLogin.jpg') no-repeat center/cover fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Cambiado de center a flex-start */
+    padding-top: 5vh; /* Ajuste del padding superior */
+  }
+
+  .auth-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 2rem auto;
+    position: relative;
+  }
+
+  .logo-title {
+    font-family: 'Volkhov', serif;
+    font-size: clamp(3rem, 8vw, 5rem); /* Tamaño responsivo */
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    margin: 0 0 1rem 0; /* Margen inferior reducido */
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    :global(.auth-page) {
+      padding-top: 8vh;
+      align-items: center; /* Centrado vertical solo en desktop */
+    }
+    
+    .auth-container {
+      margin: 0 auto;
+    }
+  }
+</style>

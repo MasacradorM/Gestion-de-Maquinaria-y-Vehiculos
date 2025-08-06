@@ -1,0 +1,560 @@
+---
+// Importaciones de componentes necesarios
+import type { Vehiculo } from '../../types/vehiculo';
+
+// Props que recibe el componente
+interface Props {
+  vehiculo?: Vehiculo;
+}
+const { vehiculo } = Astro.props;
+---
+
+
+<!-- Modal -->
+<div class="modal fade" id="equipoModal" tabindex="-1" aria-labelledby="equipoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="equipoModalLabel">Detalles del Equipo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Primera sección: Datos del equipo -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="modal-tipo" class="form-label">Tipo</label>
+            <input type="text" class="form-control" id="modal-tipo" readonly>
+          </div>
+          <div class="col-md-4">
+            <label for="modal-modelo" class="form-label">Modelo</label>
+            <input type="text" class="form-control" id="modal-modelo" readonly>
+          </div>
+          <div class="col-md-4">
+            <label for="modal-placa" class="form-label">Placa/Código</label>
+            <input type="text" class="form-control" id="modal-placa" readonly>
+          </div>
+        </div>
+
+        <!-- Segunda sección: Estado del equipo (arreglado para que no se salga del modal) -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <label class="form-label">Estado del Equipo</label>
+            <div class="d-flex flex-wrap gap-4">
+
+            
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="estado" id="mantenimiento" value="EN MANTENIMIENTO">
+                <label class="form-check-label" for="mantenimiento">En Mantenimiento</label>
+              </div>
+              
+
+              
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="estado" id="disponible" value="DISPONIBLE">
+                <label class="form-check-label" for="disponible">Disponible</label>
+              </div>
+
+
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="estado" id="operacion" value="EN OPERACION">
+                <label class="form-check-label" for="operacion">En Operación</label>
+              </div>
+            
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="estado" id="standBy" value="STAND BY">
+                <label class="form-check-label" for="operacion">Stand By</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+        
+        <!-- Tercera sección: Detalles de operación -->
+        <h4>Detalles de Operación</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="modal-fecha" class="form-label">Fecha</label>
+            <input type="date" class="form-control" id="modal-fecha">
+          </div>
+          <div class="col-md-6">
+            <label for="modal-obra" class="form-label">Obra</label>
+            <input type="text" class="form-control" id="modal-obra">
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="modal-hr-inicial" class="form-label">Horómetro Inicial</label>
+            <input type="number" class="form-control" id="modal-hr-inicial">
+          </div>
+          <div class="col-md-6">
+            <label for="modal-hr-final" class="form-label">Horómetro Final</label>
+            <input type="number" class="form-control" id="modal-hr-final">
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="modal-horometro" class="form-label">Horómetro Total</label>
+            <input type="number" class="form-control" id="modal-horometro" readonly>
+          </div>
+          <div class="col-md-4">
+            <label for="modal-valor-hr" class="form-label">Valor por hora</label>
+            <input type="number" class="form-control" id="modal-valor-hr">
+          </div>
+          <div class="col-md-4">
+            <label for="modal-total" class="form-label">Total</label>
+            <input type="number" class="form-control" id="modal-total" readonly>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="modal-conductor" class="form-label">Conductor</label>
+            <input type="text" class="form-control" id="modal-conductor">
+          </div>
+        </div>
+
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="modal-reporte" class="form-label">Reporte</label>
+            <input type="text" class="form-control" id="modal-reporte">
+          </div>
+        </div> 
+
+
+        <!-- Sección de actividades -->
+        <div  id="actividad-cell" class="mb-4">
+          <h4>Actividades</h4>
+          <div class="d-flex gap-2 mb-2">
+            <select id="actividad-select" class="form-select">
+              <option value="" disabled selected>Seleccionar actividad</option>
+              <option value="Transporte de Vibro">Transporte de Vibro</option>
+              <option value="Excavación">Excavación</option>
+              <option value="Carga de Materiales">Carga de Materiales</option>
+              <option value="Nivelación de Terreno">Nivelación de Terreno</option>
+              <option value="Otra actividad...">Otra actividad...</option>
+            </select>
+            <button id="btn-agregar-actividad" type="button" class="btn btn-primary">
+              Agregar
+            </button>
+          </div>
+
+          <div id="nueva-actividad-container" class="mt-3 p-3 border rounded" style="display: none;">
+            <label class="form-label">Nueva Actividad</label>
+            <div class="d-flex gap-2">
+              <input id="nueva-actividad-input" type="text" class="form-control" placeholder="Ingrese nueva actividad">
+              <button id="btn-guardar-actividad" type="button" class="btn btn-success">
+                Guardar
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <h5>Actividades agregadas:</h5>
+            <div id="actividades-agregadas" class="mt-2">
+              <p id="mensaje-actividades-vacio" class="text-muted fst-italic">No hay actividades agregadas.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección de combustible (si ya existía) -->
+        <div class="mb-4">
+          <h4>Combustible</h4>
+          <div class="row">
+            <div class="col-md-4">
+              <label for="combustible-galones" class="form-label">Galones</label>
+              <input type="number" id="combustible-galones" class="form-control" step="0.01">
+            </div>
+            <div class="col-md-4">
+              <label for="combustible-horometro" class="form-label">Horómetro</label>
+              <input type="number" id="combustible-horometro" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label for="combustible-rendimiento" class="form-label">Rendimiento (gal/hr)</label>
+              <input type="text" id="combustible-rendimiento" class="form-control" readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      
+        <!-- Nueva sección de observaciones -->
+        <div class="mb-4">
+          <h4>Observaciones</h4>
+          <textarea id="modal-observaciones" class="form-control" rows="3" placeholder="Ingrese observaciones adicionales sobre el equipo o la operación"></textarea>
+        </div>
+
+
+
+<!-- Footer con botones de eliminar, cancelar y guardar -->
+<div class="modal-footer justify-content-between">
+  <button type="button" class="btn btn-danger" id="btn-eliminar">
+    <i class="bi bi-trash"></i> Eliminar
+  </button>
+
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancelar">
+      <i class="bi bi-x-circle"></i> Cancelar
+    </button>
+
+    <button type="button" class="btn btn-primary" id="btn-guardar-cambios">
+      <i class="bi bi-save"></i> Guardar Cambios
+    </button>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+        
+        <!-- Resto del formulario... -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+
+
+function setupModalButtons(): void {
+  // Configurar botones de editar
+  document.querySelectorAll('.btn-info').forEach(btn => {
+    btn.addEventListener('click', function(this: HTMLButtonElement) {
+      // Obtener los datos del atributo data-*
+      const tipo = this.getAttribute('data-tipo') || '';
+      const codigo = this.getAttribute('data-codigo') || '';
+      const modelo = this.getAttribute('data-modelo') || '';
+      const estado = this.getAttribute('data-estado') || '';
+      const fecha = this.getAttribute('data-fecha') || '';
+      const obra = this.getAttribute('data-obra') || '';
+      const actividad = this.getAttribute('data-actividad') || '';
+      const conductor = this.getAttribute('data-conductor') || '';
+
+      // Llenar los campos del modal
+      const modalTipo = document.getElementById('modal-tipo') as HTMLInputElement;
+      const modalModelo = document.getElementById('modal-modelo') as HTMLInputElement;
+      const modalPlaca = document.getElementById('modal-placa') as HTMLInputElement;
+      const modalFecha = document.getElementById('modal-fecha') as HTMLInputElement;
+      const modalObra = document.getElementById('modal-obra') as HTMLInputElement;
+      const modalConductor = document.getElementById('modal-conductor') as HTMLInputElement;
+      const modalActividad = document.getElementById('modal-actividad') as HTMLSelectElement;
+
+      if (modalTipo) modalTipo.value = tipo;
+      if (modalModelo) modalModelo.value = modelo;
+      if (modalPlaca) modalPlaca.value = codigo;
+      if (modalFecha) modalFecha.value = fecha;
+      if (modalObra) modalObra.value = obra;
+      if (modalConductor) modalConductor.value = conductor;
+      if (modalActividad && actividad) modalActividad.value = actividad;
+
+      // Establecer el estado correcto
+      const estadoId = estado.toLowerCase().replace('ó', 'o').replace(' ', '');
+      const estadoElement = estadoId === 'enoperacion' ? 'operacion' : estadoId;
+      const radioBtn = document.getElementById(estadoElement) as HTMLInputElement;
+      if (radioBtn) radioBtn.checked = true;
+
+      // Mostrar/ocultar sección de actividad según el estado
+      const actividadCell = document.getElementById('actividad-cell') as HTMLElement;
+      if (actividadCell) {
+        actividadCell.style.display = estado === 'EN OPERACION' ? 'block' : 'none';
+      }
+    });
+  });
+}
+
+
+function setupEliminarButton(): void {
+  const btnEliminar = document.getElementById('btn-eliminar') as HTMLButtonElement;
+  if (!btnEliminar) return;
+
+  btnEliminar.addEventListener('click', function() {
+    if (confirm('¿Está seguro que desea eliminar este registro?')) {
+      // Aquí iría el código para eliminar el registro
+      console.log('Registro eliminado');
+      
+      // Cerrar el modal de forma segura
+      const modalElement = document.getElementById('equipoModal');
+      if (modalElement) {
+        // Forma correcta de cerrar el modal en Bootstrap 5
+        const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+        modal.hide();
+      }
+    }
+  });
+}
+
+// Definición de interfaces para tipos personalizados
+interface HTMLInputElementWithValue extends HTMLInputElement {
+  value: string;
+}
+
+interface HTMLSelectElementWithValue extends HTMLSelectElement {
+  value: string;
+}
+
+
+function calcularRendimiento(): void {
+  const galones = parseFloat((document.getElementById("combustible-galones") as HTMLInputElement)?.value) || 0;
+  const horometroTanqueo = parseFloat((document.getElementById("combustible-horometro") as HTMLInputElement)?.value) || 0;
+  const horometroInicial = parseFloat((document.getElementById("modal-hr-inicial") as HTMLInputElement)?.value) || 0;
+
+  const horasTrabajadas = horometroTanqueo - horometroInicial;
+
+  const rendimientoInput = document.getElementById("combustible-rendimiento") as HTMLInputElement;
+  if (rendimientoInput) {
+    if (horasTrabajadas > 0) {
+      const rendimiento = galones / horasTrabajadas;
+      rendimientoInput.value = rendimiento.toFixed(2);
+    } else {
+      rendimientoInput.value = "0.00";
+    }
+  }
+}
+
+
+// Función para calcular horómetro total
+function calcularHorometro(): void {
+  const hrInicial = parseInt((document.getElementById('modal-hr-inicial') as HTMLInputElementWithValue)?.value) || 0;
+  const hrFinal = parseInt((document.getElementById('modal-hr-final') as HTMLInputElementWithValue)?.value) || 0;
+  
+  const horometroTotal = document.getElementById('modal-horometro') as HTMLInputElement;
+  if (horometroTotal) {
+    horometroTotal.value = (hrFinal - hrInicial).toString();
+  }
+  
+  calcularTotal();
+  calcularRendimiento();
+}
+
+// Función para calcular el total (Horómetro Total * Valor hr)
+function calcularTotal(): void {
+  const horometroTotal = parseInt((document.getElementById('modal-horometro') as HTMLInputElementWithValue)?.value) || 0;
+  const valorHr = parseFloat((document.getElementById('modal-valor-hr') as HTMLInputElementWithValue)?.value) || 0;
+  
+  const totalInput = document.getElementById('modal-total') as HTMLInputElement;
+  if (totalInput) {
+    totalInput.value = (horometroTotal * valorHr).toFixed(2);
+  }
+}
+
+// Función para agregar una actividad a la lista
+function agregarActividad(nombre: string): void {
+  const actividadesAgregadasContainer = document.getElementById('actividades-agregadas');
+  if (!actividadesAgregadasContainer) return;
+  
+  const div = document.createElement('div');
+  div.className = 'actividad-item d-flex align-items-center justify-content-between p-2 bg-light border mb-2 rounded';
+  div.innerHTML = `
+    <span>${nombre}</span>
+    <button type="button" class="btn btn-sm btn-danger btn-eliminar-actividad">×</button>
+  `;
+  actividadesAgregadasContainer.appendChild(div);
+}
+
+// Mostrar u ocultar el mensaje de "sin actividades"
+function actualizarMensajeVacio(): void {
+  const mensajeVacio = document.getElementById('mensaje-actividades-vacio') as HTMLElement;
+  const actividadesAgregadasContainer = document.getElementById('actividades-agregadas');
+  
+  if (!mensajeVacio || !actividadesAgregadasContainer) return;
+  
+  const tieneActividades = actividadesAgregadasContainer.querySelectorAll('.actividad-item').length > 0;
+  mensajeVacio.style.display = tieneActividades ? 'none' : 'block';
+}
+
+// Cuando el documento esté listo
+document.addEventListener('DOMContentLoaded', function() {
+  // Event listeners para los cálculos
+  const galonesInput = document.getElementById("combustible-galones") as HTMLInputElement;
+  const horometroTanqueoInput = document.getElementById("combustible-horometro") as HTMLInputElement;
+  const hrInicialInput = document.getElementById("modal-hr-inicial") as HTMLInputElement;
+  const hrFinalInput = document.getElementById("modal-hr-final") as HTMLInputElement;
+  const valorHrInput = document.getElementById("modal-valor-hr") as HTMLInputElement;
+
+  if (galonesInput) galonesInput.addEventListener("input", calcularRendimiento);
+  if (horometroTanqueoInput) horometroTanqueoInput.addEventListener("input", calcularRendimiento);
+  if (hrInicialInput) hrInicialInput.addEventListener("change", calcularHorometro);
+  if (hrFinalInput) hrFinalInput.addEventListener("change", calcularHorometro);
+  if (valorHrInput) valorHrInput.addEventListener("input", calcularTotal);
+
+  // Manejo de los botones del modal
+  const btnEliminar = document.getElementById('btn-eliminar') as HTMLButtonElement;
+  const btnGuardarCambios = document.getElementById('btn-guardar-cambios') as HTMLButtonElement;
+
+  if (btnEliminar) {
+    btnEliminar.addEventListener('click', function() {
+      if (confirm('¿Está seguro que desea eliminar este registro?')) {
+        // Aquí iría el código para eliminar el registro
+        console.log('Registro eliminado');
+        
+        // Cerrar el modal
+        const modalElement = document.getElementById('equipoModal');
+        if (modalElement) {
+          const modal = bootstrap.Modal.getInstance(modalElement);
+          if (modal) modal.hide();
+        }
+      }
+    });
+  }
+
+  if (btnGuardarCambios) {
+    btnGuardarCambios.addEventListener('click', function() {
+      // Aquí iría el código para guardar los cambios
+      console.log('Cambios guardados');
+    });
+  }
+
+  // Manejo de actividades
+  const actividades: string[] = ["Transporte de Vibro", "Excavación", "Carga de Materiales", "Nivelación de Terreno"];
+  const actividadSelect = document.getElementById('actividad-select') as HTMLSelectElement;
+  const btnAgregarActividad = document.getElementById('btn-agregar-actividad') as HTMLButtonElement;
+  const nuevaActividadContainer = document.getElementById('nueva-actividad-container') as HTMLElement;
+  const nuevaActividadInput = document.getElementById('nueva-actividad-input') as HTMLInputElement;
+  const btnGuardarActividad = document.getElementById('btn-guardar-actividad') as HTMLButtonElement;
+
+  // Event listener para cambio en el select
+  if (actividadSelect) {
+    actividadSelect.addEventListener('change', function(this: HTMLSelectElement) {
+      const seleccionada = this.value;
+      if (!seleccionada || seleccionada === '') return;
+
+      if (seleccionada !== "Otra actividad...") {
+        agregarActividad(seleccionada);
+        this.value = "";
+        actualizarMensajeVacio();
+      } else {
+        // Mostrar campo para nueva actividad
+        if (nuevaActividadContainer) nuevaActividadContainer.style.display = 'block';
+      }
+    });
+  }
+
+  // Botón para agregar la actividad seleccionada
+  if (btnAgregarActividad) {
+    btnAgregarActividad.addEventListener('click', function() {
+      if (!actividadSelect) return;
+      
+      const seleccionada = actividadSelect.value;
+      if (seleccionada && seleccionada !== '' && seleccionada !== "Otra actividad...") {
+        agregarActividad(seleccionada);
+        actividadSelect.value = "";
+        actualizarMensajeVacio();
+      } else if (seleccionada === "Otra actividad...") {
+        if (nuevaActividadContainer) nuevaActividadContainer.style.display = 'block';
+      }
+    });
+  }
+
+  // Guardar nueva actividad
+  if (btnGuardarActividad && nuevaActividadInput && actividadSelect && nuevaActividadContainer) {
+    btnGuardarActividad.addEventListener('click', function() {
+      const nuevaActividad = nuevaActividadInput.value.trim();
+      if (nuevaActividad) {
+        agregarActividad(nuevaActividad);
+        
+        // Agregar al select para futuras selecciones
+        const option = document.createElement('option');
+        option.value = nuevaActividad;
+        option.textContent = nuevaActividad;
+        
+        const otraActividadOption = actividadSelect.querySelector('option[value="Otra actividad..."]');
+        if (otraActividadOption) {
+          actividadSelect.insertBefore(option, otraActividadOption);
+        } else {
+          actividadSelect.appendChild(option);
+        }
+        
+        nuevaActividadInput.value = '';
+        nuevaActividadContainer.style.display = 'none';
+        actualizarMensajeVacio();
+      }
+    });
+  }
+
+  // Delegar evento para eliminar actividad
+  const actividadesAgregadasContainer = document.getElementById('actividades-agregadas');
+  if (actividadesAgregadasContainer) {
+    actividadesAgregadasContainer.addEventListener('click', function(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains('btn-eliminar-actividad')) {
+        const item = target.closest('.actividad-item');
+        if (item) {
+          item.remove();
+          actualizarMensajeVacio();
+        }
+      }
+    });
+  }
+
+  // Radio buttons para el estado del equipo
+  document.querySelectorAll<HTMLInputElement>('input[name="estado"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      const esOperacion = this.id === 'operacion';
+      const actividadCell = document.getElementById('actividad-cell') as HTMLElement;
+      
+      if (actividadCell) {
+        actividadCell.style.display = esOperacion ? 'block' : 'none';
+      }
+    });
+  });
+
+  // Inicializar cálculos
+  try {
+    calcularHorometro();
+    calcularRendimiento();
+    calcularTotal();
+    actualizarMensajeVacio();
+  } catch (e) {
+    console.error("Error en la inicialización:", e);
+  }
+  setupModalButtons();
+  setupEliminarButton();
+});
+
+document.getElementById('btn-nuevo')?.addEventListener('click', function () {
+  // Obtener valores desde los atributos del botón
+  const tipo = this.getAttribute('data-tipo') || '';
+  const modelo = this.getAttribute('data-modelo') || '';
+  const placa = this.getAttribute('data-placa') || '';
+
+  // Establecer valores predeterminados
+  (document.getElementById('modal-tipo') as HTMLInputElement).value = tipo;
+  (document.getElementById('modal-modelo') as HTMLInputElement).value = modelo;
+  (document.getElementById('modal-placa') as HTMLInputElement).value = placa;
+
+  // Limpiar los demás campos
+  (document.getElementById('modal-fecha') as HTMLInputElement).value = '';
+  (document.getElementById('modal-obra') as HTMLInputElement).value = '';
+  (document.getElementById('modal-hr-inicial') as HTMLInputElement).value = '';
+  (document.getElementById('modal-hr-final') as HTMLInputElement).value = '';
+  (document.getElementById('modal-horometro') as HTMLInputElement).value = '';
+  (document.getElementById('modal-valor-hr') as HTMLInputElement).value = '';
+  (document.getElementById('modal-total') as HTMLInputElement).value = '';
+  (document.getElementById('modal-conductor') as HTMLInputElement).value = '';
+  (document.getElementById('combustible-galones') as HTMLInputElement).value = '';
+  (document.getElementById('combustible-horometro') as HTMLInputElement).value = '';
+  (document.getElementById('combustible-rendimiento') as HTMLInputElement).value = '';
+  (document.getElementById('modal-observaciones') as HTMLTextAreaElement).value = '';
+
+  // Limpiar radio buttons de estado
+  document.querySelectorAll('input[name="estado"]').forEach((el) => {
+    (el as HTMLInputElement).checked = false;
+  });
+
+  // Limpiar actividades
+  const actividadesContenedor = document.getElementById('actividades-agregadas');
+  if (actividadesContenedor) actividadesContenedor.innerHTML = '<p id="mensaje-actividades-vacio" class="text-muted fst-italic">No hay actividades agregadas.</p>';
+
+  // Ocultar nueva actividad (si está visible)
+  const nuevaActividad = document.getElementById('nueva-actividad-container');
+  if (nuevaActividad) nuevaActividad.style.display = 'none';
+});
+
+</script>

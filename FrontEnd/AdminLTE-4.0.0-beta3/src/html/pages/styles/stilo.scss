@@ -1,0 +1,398 @@
+
+$shadow-color: rgba(0, 0, 0, 0.1);
+$border-color: rgba(0, 0, 0, 0.1);
+$text-muted: #6c757d;
+$success-color: #28a745;
+$highlight-blue: rgba(75, 169, 233, 0.1);
+
+  // Variables de color
+$azul-primario: #1a4e8a;
+$azul-secundario: #29437a;
+$blanco: white;
+$sombra-azul: rgba(52, 152, 219, 0.4);
+$sombra-azul-hover: rgba(52, 152, 219, 0.5);
+$borde-color: #dee2e6;
+$sombra-generica: rgba(0, 0, 0, 0.1);
+
+// Botones de header
+.btn-outline-secondary, .btn-outline-primary {
+  border: 1px solid $borde-color;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+}
+
+.btn-outline-secondary {
+  color: $text-muted;
+  &:hover {
+    background-color: #f8f9fa;
+    border-color: darken($borde-color, 10%);
+  }
+}
+
+.btn-outline-primary {
+  color: $azul-primario;
+  &:hover {
+    background-color: rgba($azul-primario, 0.1);
+    border-color: $azul-primario;
+  }
+}
+
+// Ajuste para breadcrumb
+.breadcrumb {
+  padding-left: 1rem;
+  margin-left: 1rem;
+  border-left: 1px solid $borde-color;
+}
+
+
+// Estilos globales
+.card {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px $shadow-color;
+  height: 100%;
+  
+  > .card-body {
+    flex: 1 1 auto;
+    min-height: 150px;
+    padding: 1.5rem;
+  }
+}
+
+.row {
+  align-items: stretch;
+}
+
+// Componente Small Box
+.small-box {
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px $shadow-color;
+  height: 90%;
+  transition: transform 0.3s;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+// Componente Card
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid $border-color;
+  padding: 1rem 1.5rem;
+}
+
+// Componente Emoji
+.emoji-icon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: $highlight-blue;
+  border-radius: 10px;
+}
+
+// Componente Inner
+.inner {
+  h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: $text-muted;
+  }
+}
+
+// Componente Trend Indicator
+.trend-indicator {
+  font-size: 12px;
+  color: $success-color;
+}
+
+// Media Queries
+@media (max-width: 992px) {
+  .h-100 {
+    height: auto !important;
+  }
+  
+  .d-flex.flex-column {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .inner {
+    h3 {
+      font-size: 20px;
+    }
+  }
+  
+  .emoji-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
+// Botón azul oscuro
+.btn-azul-oscuro {
+  background-color: $azul-primario;
+  color: $blanco;
+  box-shadow: 0 2px 8px $sombra-azul;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $azul-secundario;
+    box-shadow: 0 4px 14px $sombra-azul-hover;
+  }
+}
+
+// Contenedor dropdown
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+// Contenido desplegable
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px;
+  max-height: 0;
+  overflow: hidden;
+  background-color: $blanco;
+  box-shadow: 0 4px 8px $sombra-generica;
+  border-radius: 0.25rem;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease;
+  opacity: 0;
+  z-index: 1050; // Mayor que otros elementos
+
+  // Estado visible
+  &.visible {
+    max-height: 500px;
+    opacity: 1;
+    border: 1px solid $borde-color;
+  }
+}
+
+// Flecha
+.arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  margin-left: 0.5rem;
+
+  &.rotated {
+    transform: rotate(90deg);
+  }
+}
+
+// Lista
+.list-group {
+  border-radius: 0 !important;
+
+  &-item {
+    border-left: none;
+    border-right: none;
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+// Botones personalizados
+.btn-custom {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px $sombra-generica;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+// Media queries
+@media (max-width: 768px) {
+  .dropdown-content {
+    width: 250px;
+    right: auto;
+    left: 0;
+  }
+
+  .btn-custom {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Estilos para widgets compactos */
+.compact-widget {
+  padding: 0.8rem !important; /* Reduce el padding interno */
+  border-radius: 0.7rem !important;
+  
+  .icon-left {
+    width: 45px !important;
+    height: 45px !important;
+    padding: 0.5rem !important;
+    
+    .emoji-icon {
+      font-size: 1.5rem !important;
+    }
+  }
+  
+  .inner {
+    h3 {
+      font-size: 1.5rem !important;
+      padding-top: 1rem !important; /* Ajusta la posición del número */
+      margin-bottom: 0.1rem !important;
+    }
+    
+    p {
+      font-size: 0.75rem !important;
+      margin-bottom: 0.2rem !important;
+    }
+    
+    .trend-indicator {
+      font-size: 0.7rem !important;
+    }
+  }
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .compact-widget {
+    padding: 0.7rem !important;
+    
+    .icon-left {
+      width: 40px !important;
+      height: 40px !important;
+    }
+    
+    .inner h3 {
+      font-size: 1.3rem !important;
+    }
+  }
+}
+  .btn-custom {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px $shadow-color;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  i {
+    font-size: 0.9rem;
+  }
+}
+
+/* Para pantallas pequeñas */
+@media (max-width: 768px) {
+  .btn-custom {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+.small-box.left-icon-layout {
+  position: relative;
+  border-radius: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  height: 100%; /* Asegura que todas las cajas tengan la misma altura */
+
+  .d-flex {
+    flex-wrap: nowrap;
+    align-items: center;
+
+    .icon-left {
+      flex-shrink: 0;
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      display: grid;
+      place-items: center;
+      width: 60px;
+      height: 60px;
+      
+      @media (max-width: 768px) {
+        width: 50px;
+        height: 50px;
+        padding: 0.5rem;
+      }
+      
+      .emoji-icon {
+        font-size: 2rem;
+        line-height: 1;
+        
+        @media (max-width: 768px) {
+          font-size: 1.75rem;
+        }
+      }
+    }
+
+    .inner {
+      min-width: 0;
+      
+      h3 {
+        font-size: 1.75rem;
+        margin: 0 0 0.15rem 0;
+        line-height: 1.2;
+        font-weight: bold; /* Añade negrita */
+        padding-top: 2rem; /* Baja un poco el número */
+        
+        @media (max-width: 768px) {
+          font-size: 1.5rem;
+        }
+      }
+      
+      p {
+        margin: 0;
+        color: #666;
+        font-size: 0.80rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        
+        @media (max-width: 576px) {
+          white-space: normal;
+        }
+      }
+      
+      .trend-indicator {
+        color: #4CAF50;
+        font-size: 0.8rem;
+        display: inline-block;
+      }
+    }
+  }
+}

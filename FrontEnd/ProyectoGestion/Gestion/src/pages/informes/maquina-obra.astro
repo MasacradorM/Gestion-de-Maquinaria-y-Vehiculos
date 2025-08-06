@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Informes - Maquinaria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: #2c3e50;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 20px;
+            gap: 20px;
+        }
+
+        .top-bar .notification {
+            color: #f39c12;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .top-bar .settings {
+            color: #ecf0f1;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .top-bar .admin-info {
+            color: #ecf0f1;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .top-bar .admin-avatar {
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #34495e;
+            padding: 0;
+        }
+
+        .sidebar-header {
+            background: #2c3e50;
+            padding: 20px;
+            border-bottom: 1px solid #3d566e;
+        }
+
+        .sidebar-header h2 {
+            color: #ecf0f1;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 30px;
+        }
+
+        .menu-category h3 {
+            color: #bdc3c7;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 0 20px;
+            margin-bottom: 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 15px;
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #3d566e;
+        }
+
+        .menu-item.active {
+            background: #3d566e;
+            border-right: 3px solid #3498db;
+        }
+
+        .menu-icon {
+            font-size: 16px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 0;
+            background: #ecf0f1;
+        }
+
+        .content-header {
+            background: #ecf0f1;
+            padding: 20px 30px;
+            border-bottom: 1px solid #bdc3c7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .export-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #34495e;
+        }
+
+        .filters-section {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #bdc3c7;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            color: #2c3e50;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .search-section {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #bdc3c7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box input {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 300px;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .report-content {
+            background: white;
+            margin: 30px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .report-header {
+            background: white;
+            padding: 20px;
+            border-bottom: 2px solid #2c3e50;
+            text-align: center;
+        }
+
+        .company-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(135deg, #3498db 0%, #e74c3c 50%, #f39c12 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 10px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .company-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .company-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .report-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            margin: 20px 0 10px 0;
+        }
+
+        .report-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .report-meta {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .project-info {
+            display: flex;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-top: 1px solid #e9ecef;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .project-detail {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #bdc3c7;
+            font-size: 12px;
+        }
+
+        .data-table th {
+            background: #ecf0f1;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .data-table td {
+            color: #2c3e50;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .total-row {
+            background: #e8f4f8 !important;
+            font-weight: 600;
+        }
+
+        .total-row td {
+            font-weight: 600;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .pagination button:hover {
+            background: #ecf0f1;
+        }
+
+        .pagination button.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-maintenance {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .filters-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="notification">🔔</div>
+        <div class="settings">⚙️</div>
+        <div class="admin-info">Admin</div>
+        <div class="admin-avatar">A</div>
+    </div>
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>📊 Dashboard</h2>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-category">
+                    <h3>Categoría</h3>
+                    <div class="menu-item">
+                        <span class="menu-icon">🚜</span>
+                        <span>Maquinaria Amarilla</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-icon">🚗</span>
+                        <span>Vehículos</span>
+                    </div>
+                    <div class="menu-item active">
+                        <span class="menu-icon">📋</span>
+                        <span>Informes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="content-header">
+                <h1 class="content-title">Informe Mensual de Maquinaria</h1>
+                <button class="export-btn">
+                    <span>📤</span>
+                    <span>Exportar</span>
+                </button>
+            </div>
+
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label>Obra</label>
+                    <select id="obraFilter">
+                        <option value="planta-laguna">Planta La Laguna</option>
+                        <option value="proyecto-norte">Proyecto Norte</option>
+                        <option value="obra-sur">Obra Sur</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Mes</label>
+                    <select id="mesFilter">
+                        <option value="enero">Enero 2025</option>
+                        <option value="febrero">Febrero 2025</option>
+                        <option value="marzo">Marzo 2025</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Año</label>
+                    <select id="añoFilter">
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Equipo</label>
+                    <select id="equipoFilter">
+                        <option value="todos">Todos los equipos</option>
+                        <option value="excavadora">Excavadora Komatsu</option>
+                        <option value="bulldozer">Bulldozer CAT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar en registros..." id="searchInput">
+                    <button class="btn-secondary">🔍 Buscar</button>
+                </div>
+                <div>
+                    <button class="btn-secondary" onclick="refreshData()">🔄 Actualizar</button>
+                </div>
+            </div>
+
+            <div class="report-content">
+                <div class="report-header">
+                    <div class="company-logo">
+                        <div class="logo-placeholder">
+                            INGENIERÍA<br>
+                            CONSTRUCCIÓN<br>
+                            INTERVENTORÍA
+                        </div>
+                        <div class="company-info">
+                            <div class="company-name">INGENIERÍA DE LA CONSTRUCCIÓN E INTERVENTORÍA S.A.S</div>
+                            <div class="company-name">INCOINT</div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-title">INFORME MENSUAL DE MAQUINARIA</div>
+                    
+                    <div class="report-info">
+                        <div class="report-meta">
+                            <strong>Generado:</strong> <span id="currentDate">03/07/2025 - 3:29 PM</span>
+                        </div>
+                        <div class="report-meta">
+                            <strong>Usuario:</strong> Admin
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-info">
+                    <div class="project-detail">
+                        <strong>OBRA:</strong> <span id="obraName">PLANTA LA LAGUNA</span>
+                    </div>
+                    <div class="project-detail">
+                        <strong>MES:</strong> <span id="mesName">ENERO, 2025</span>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>FECHA</th>
+                            <th>EQUIPO</th>
+                            <th>ACTIVIDAD</th>
+                            <th>H INICIAL</th>
+                            <th>H FINAL</th>
+                            <th>H TOTAL</th>
+                            <th>VALOR H</th>
+                            <th>OPERADOR</th>
+                            <th>REPORTE</th>
+                            <th>VALOR TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$18,000</td>
+                            <td>LUIS ENRIQUE TOVAR</td>
+                            <td>347</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$18,000</td>
+                            <td>LUIS ENRIQUE TOVAR</td>
+                            <td>347</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$18,000</td>
+                            <td>LUIS ENRIQUE TOVAR</td>
+                            <td>347</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$18,000</td>
+                            <td>LUIS ENRIQUE TOVAR</td>
+                            <td>347</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$18,000</td>
+                            <td>LUIS ENRIQUE TOVAR</td>
+                            <td>347</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$18,000</td>
+                            <td>LUIS ENRIQUE TOVAR</td>
+                            <td>347</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$18,000</td>
+                            <td>LUIS ENRIQUE TOVAR</td>
+                            <td>347</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="9"><strong>TOTAL GENERAL</strong></td>
+                            <td><strong>$126,000</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <button onclick="changePage(-1)">← Anterior</button>
+                    <button class="active">1</button>
+                    <button onclick="changePage(1)">2</button>
+                    <button onclick="changePage(1)">3</button>
+                    <button onclick="changePage(1)">Siguiente →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Actualizar fecha actual
+        function updateCurrentDate() {
+            const now = new Date();
+            const formatted = now.toLocaleDateString('es-ES') + ' - ' + now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('currentDate').textContent = formatted;
+        }
+
+        // Función de búsqueda
+        function searchTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.getElementById('dataTableBody');
+            const rows = tbody.getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length - 1; i++) { // -1 para excluir la fila total
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(searchTerm)) {
+                        found = true;
+                        break;
+                    }
+                }
+                
+                rows[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        // Función para cambiar página
+        function changePage(direction) {
+            const buttons = document.querySelectorAll('.pagination button');
+            let currentPage = 1;
+            
+            buttons.forEach((btn, index) => {
+                if (btn.classList.contains('active') && !isNaN(btn.textContent)) {
+                    currentPage = parseInt(btn.textContent);
+                }
+            });
+            
+            console.log('Página actual:', currentPage, 'Dirección:', direction);
+        }
+
+        // Función para refrescar datos
+        function refreshData() {
+            console.log('Actualizando datos...');
+            // Aquí iría la lógica para recargar los datos
+        }
+
+        // Escuchar cambios en los filtros
+        document.getElementById('obraFilter').addEventListener('change', function() {
+            document.getElementById('obraName').textContent = this.options[this.selectedIndex].text.toUpperCase();
+        });
+
+        document.getElementById('mesFilter').addEventListener('change', function() {
+            document.getElementById('mesName').textContent = this.options[this.selectedIndex].text.toUpperCase();
+        });
+
+        // Escuchar búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', searchTable);
+
+        // Inicializar
+        updateCurrentDate();
+        
+        // Actualizar fecha cada minuto
+        setInterval(updateCurrentDate, 60000);
+    </script>
+</body>
+</html>

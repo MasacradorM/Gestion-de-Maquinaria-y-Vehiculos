@@ -1,0 +1,15 @@
+---
+import AuthLayout from '@/layouts/AuthLayout.astro';
+import LoginCard from '@/components/auth/LoginCard.astro';
+import LoginForm from '@/components/auth/LoginForm.astro';
+
+import '@/styles/main.scss';  
+---
+<AuthLayout title="GM&V - Iniciar Sesión">
+  <div class="auth-container">
+    <h1 class="logo-title">GM&V</h1>
+    <LoginCard>
+      <LoginForm />
+    </LoginCard>
+  </div>
+</AuthLayout>

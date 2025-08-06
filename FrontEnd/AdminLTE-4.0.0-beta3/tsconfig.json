@@ -1,0 +1,37 @@
+{
+  "root": true,
+  "compilerOptions": {
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "module": "esnext",
+    "alwaysStrict": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": [
+        "src/html/components/*"
+      ]
+    },
+    "target": "es6",
+    "lib": [
+      "es2018",
+      "DOM"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
+  "include": [
+    "src/ts/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

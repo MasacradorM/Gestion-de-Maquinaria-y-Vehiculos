@@ -1,0 +1,39 @@
+
+
+@use './../variables' as *;  // Importa todo al scope global
+@use '../mixins' as mix;      // Mixins (solo una vez)
+
+
+.auth-page {
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), 
+              url('/src/assets/images/backgroundLogin.jpg') no-repeat center/cover fixed;
+  min-height: 100dvh;
+  @include mix.flex-center;
+  align-items: flex-start;
+  padding: 10dvh 5dvw;
+
+  .auth-container {
+    width: min(90%, 450px);
+    margin: 2rem auto;
+    position: relative;
+    transform: translateY(-10%);
+
+    .logo-title {
+      font-family: map-get($fonts, 'display');  // Ahora funciona
+      font-size: clamp(2.5rem, 8dvw, 4rem);
+      color: map-get($colors, 'white-1');
+      text-shadow: map-get($shadows, 'medium');
+      margin: 0 0 1rem;
+      text-align: center;
+    }
+  }
+
+  @include mix.respond-to('tablet') {
+    align-items: center;
+    padding: 5dvh 10dvw;
+
+    .auth-container {
+      width: min(85%, 450px);
+    }
+  }
+}
