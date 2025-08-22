@@ -1,0 +1,249 @@
+---
+import '@/styles/main.scss';  
+
+import Head from "@components/_head.astro";
+import Footer from "@components/dashboard/_footer.astro";
+import Topbar from "@components/dashboard/_topbar.astro";
+import Sidenav from "@components/dashboard/_sidenav.astro";
+import Scripts from "@components/_scripts.astro";
+
+const title = "AdminLTE | Informes de Vehiculos";
+const path = "../../dist";
+const mainPage = "dashboard";
+const page = "index3";
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <Head title={title} path={path} />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary" style="background-color: #ECF0F1 !important;">
+    <div class="app-wrapper">
+      <Topbar path={path} />
+      <Sidenav path={path} mainPage={mainPage} page={page} />
+
+      <main class="app-main">
+        <!-- Encabezado -->
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6">
+                <h3 class="mb-0 fs-2 content-title">Informe Mensual de Vehiculos</h3>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="#">Informes</a></li>
+                  <li class="breadcrumb-item active">Vehiculos</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="app-content">
+          <div class="container-fluid">
+            <div class="content-header d-flex align-items-center justify-content-end">
+               
+                <button class="export-btn">
+                    <span>📤</span>
+                    <span>Exportar</span>
+                </button>
+            </div>
+
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label>Obra</label>
+                    <select id="obraFilter">
+                        <option value="planta-laguna">Planta La Laguna</option>
+                        <option value="proyecto-norte">Proyecto Norte</option>
+                        <option value="obra-sur">Obra Sur</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Mes</label>
+                    <select id="mesFilter">
+                        <option value="enero">Enero 2025</option>
+                        <option value="febrero">Febrero 2025</option>
+                        <option value="marzo">Marzo 2025</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Año</label>
+                    <select id="añoFilter">
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Equipo</label>
+                    <select id="equipoFilter">
+                        <option value="todos">Todos los equipos</option>
+                        <option value="excavadora">Excavadora Komatsu</option>
+                        <option value="bulldozer">Bulldozer CAT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar en registros..." id="searchInput">
+                    <button class="btn-secondary">🔍 Buscar</button>
+                </div>
+                <div>
+                    <button class="btn-secondary" onclick="refreshData()">🔄 Actualizar</button>
+                </div>
+            </div>
+
+            <div class="report-content">
+                <div class="report-header">
+                    <div class="company-logo">
+                        <div class="logo-placeholder">
+                            INGENIERÍA<br>
+                            CONSTRUCCIÓN<br>
+                            INTERVENTORÍA
+                        </div>
+                        <div class="company-info">
+                            <div class="company-name">INGENIERÍA DE LA CONSTRUCCIÓN E INTERVENTORÍA S.A.S</div>
+                            <div class="company-name">INCOINT</div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-title">INFORME MENSUAL DE VEHICULOS</div>
+                    
+                    <div class="report-info">
+                        <div class="report-meta">
+                            <strong>Generado:</strong> <span id="currentDate">03/07/2025 - 3:29 PM</span>
+                        </div>
+                        <div class="report-meta">
+                            <strong>Usuario:</strong> Admin
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-info">
+                    <div class="project-detail">
+                        <strong>OBRA:</strong> <span id="obraName">PLANTA LA LAGUNA</span>
+                    </div>
+                    <div class="project-detail">
+                        <strong>MES:</strong> <span id="mesName">ENERO, 2025</span>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>FECHA</th>
+                            <th>EQUIPO</th>
+                            <th>ACTIVIDAD</th>
+                            <th>TRAYECTO</th>
+                            <th>CANTIDAD</th>
+                            <th>REPORTE</th>
+                            <th>VALOR TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr>
+                            <td>4/01/2025</td>
+                            <td>EXCAVADORA KOMATSU</td>
+                            <td>ENCADENAMIENTO MATERIAL</td>
+                            <td>17536</td>
+                            <td>17543</td>
+                            <td>7</td>
+                            <td>$126,000</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="6"><strong>TOTAL GENERAL</strong></td>
+                            <td><strong>$126,000</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <button onclick="changePage(-1)">← Anterior</button>
+                    <button class="active">1</button>
+                    <button onclick="changePage(1)">2</button>
+                    <button onclick="changePage(1)">3</button>
+                    <button onclick="changePage(1)">Siguiente →</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+
+    <!-- Scripts -->
+    <Scripts path={path} />
+    <script
+      src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js"
+      integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8="
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

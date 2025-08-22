@@ -1,0 +1,322 @@
+
+@use '../variables' as *;
+@use '../mixins' as mix;
+
+// Variables locales del componente
+$header-padding: 20px 30px;
+$border-color: #bdc3c7;
+$box-shadow-light: 0 2px 4px rgba(0,0,0,0.1);
+
+// Mixins locales
+@mixin button-base {
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+@mixin form-input {
+    padding: 8px 12px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    font-size: 14px;
+    background: map-get($colors, white-1);
+    
+    &:focus {
+        outline: none;
+        border-color: map-get($colors, blue-1);
+    }
+}
+
+// Estilos globales
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: map-get($colors, white-3);
+    color: #333;
+    min-height: 100vh;
+}
+
+// Header section
+.content-header {
+    background: #ecf0f1;
+    padding: $header-padding;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .content-title {
+        color: map-get($colors, blue-7);
+        font-weight: 500;
+    }
+
+    .export-btn {
+        @include button-base;
+        background: map-get($colors, blue-7);
+        color: map-get($colors, white-1);
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &:hover {
+            background: #34495e;
+        }
+    }
+}
+
+// Filters section
+.filters-section {
+    background: map-get($colors, white-1);
+    padding: $header-padding;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        label {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        select,
+        input {
+            @include form-input;
+            color: map-get($colors, blue-7);
+        }
+    }
+}
+
+// Search section
+.search-section {
+    background: map-get($colors, white-1);
+    padding: $header-padding;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        input {
+            @include form-input;
+            width: 300px;
+        }
+    }
+
+    .btn-secondary {
+        @include button-base;
+        background: #95a5a6;
+        color: map-get($colors, white-1);
+        padding: 8px 16px;
+
+        &:hover {
+            background: #7f8c8d;
+        }
+    }
+}
+
+// Report content
+.report-content {
+    background: map-get($colors, white-1);
+    margin: 30px;
+    border-radius: 4px;
+    box-shadow: $box-shadow-light;
+    overflow: hidden;
+
+    .report-header {
+        background: map-get($colors, white-1);
+        padding: 20px;
+        border-bottom: 2px solid map-get($colors, blue-7);
+        text-align: center;
+
+        .company-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+
+            .logo-placeholder {
+                width: 80px;
+                height: 60px;
+                background: linear-gradient(135deg, #3498db 0%, #e74c3c 50%, #f39c12 100%);
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: map-get($colors, white-1);
+                font-weight: bold;
+                font-size: 10px;
+                text-align: center;
+                line-height: 1.2;
+            }
+
+            .company-info {
+                flex: 1;
+                text-align: left;
+
+                .company-name {
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: map-get($colors, blue-7);
+                    margin-bottom: 5px;
+                }
+            }
+        }
+
+        .report-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: map-get($colors, blue-7);
+            text-align: center;
+            margin: 20px 0 10px 0;
+        }
+
+        .report-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+
+            .report-meta {
+                font-size: 13px;
+                color: #7f8c8d;
+            }
+        }
+    }
+
+    .project-info {
+        display: flex;
+        justify-content: space-between;
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-top: 1px solid #e9ecef;
+        border-bottom: 1px solid #e9ecef;
+
+        .project-detail {
+            font-size: 14px;
+            color: map-get($colors, blue-7);
+            font-weight: 500;
+        }
+    }
+}
+
+// Data table
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+
+    th,
+    td {
+        padding: 10px 8px;
+        text-align: center;
+        border: 1px solid $border-color;
+        font-size: 12px;
+    }
+
+    th {
+        background: #ecf0f1;
+        font-weight: 600;
+        color: map-get($colors, blue-7);
+    }
+
+    td {
+        color: map-get($colors, blue-7);
+    }
+
+    tr {
+        &:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        &.total-row {
+            background: #e8f4f8 !important;
+            font-weight: 600;
+
+            td {
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+// Pagination
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 10px;
+
+    button {
+        padding: 8px 12px;
+        border: 1px solid $border-color;
+        background: map-get($colors, white-1);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        color: map-get($colors, blue-7);
+
+        &:hover {
+            background: #ecf0f1;
+        }
+
+        &.active {
+            background: map-get($colors, blue-1);
+            color: map-get($colors, white-1);
+            border-color: map-get($colors, blue-1);
+        }
+    }
+}
+
+// Status badges
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+
+    &.status-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    &.status-maintenance {
+        background: #fff3cd;
+        color: #856404;
+    }
+}
+
+// Media queries
+@media (max-width: 768px) {
+    .filters-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .search-section {
+        flex-direction: column;
+        gap: 15px;
+
+        .search-box input {
+            width: 100%;
+        }
+    }
+}

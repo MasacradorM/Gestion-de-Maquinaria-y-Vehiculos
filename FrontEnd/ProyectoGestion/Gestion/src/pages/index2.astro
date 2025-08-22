@@ -1,0 +1,790 @@
+---
+import '@/styles/main.scss';  // Ya incluye todos los estilos de configuración
+
+import Head from "@components/_head.astro";
+import Footer from "@components/dashboard/_footer.astro";
+import Topbar from "@components/dashboard/_topbar.astro";
+import Sidenav from "@components/dashboard/_sidenav.astro";
+import Scripts from "@components/_scripts.astro";
+
+const title = "GM&V | Configuración";
+const path = "../../dist";
+const mainPage = "configuracion";
+const page = "index";
+
+// Datos de ejemplo para la actividad reciente
+const actividadReciente = [
+  {
+    id: 1,
+    usuario: "Juan Perez",
+    accion: "Nuevo usuario",
+    descripcion: "añadido al sistema.",
+    tipo: "usuario", // usuario, obra, personal
+    timestamp: "Hace 2 horas"
+  },
+  {
+    id: 2,
+    usuario: "Nueva Obra",
+    accion: "Plaza Comercial Las Palmas",
+    descripcion: "registrada.",
+    tipo: "obra",
+    timestamp: "Hace 4 horas"
+  },
+  {
+    id: 3,
+    usuario: "Carlos Rodriguez",
+    accion: "Nuevo conductor",
+    descripcion: "añadido al sistema",
+    tipo: "personal",
+    timestamp: "Hace 6 horas"
+  }
+];
+
+// Configuración de tarjetas
+const tarjetasConfig = [
+  {
+    id: 'usuarios',
+    titulo: 'Usuarios',
+    descripcion: 'Gestión de Usuarios y Permisos',
+    icono: '👥',
+    clase: 'config-card-usuarios'
+  },
+  {
+    id: 'obras',
+    titulo: 'Obras',
+    descripcion: 'Gestión de Obras',
+    icono: '🚧',
+    clase: 'config-card-obras'
+  },
+  {
+    id: 'actividades',
+    titulo: 'Actividades',
+    descripcion: 'Gestión de actividades',
+    icono: '📝',
+    clase: 'config-card-actividades'
+  },
+  {
+    id: 'personal',
+    titulo: 'Personal',
+    descripcion: 'Gestión de personal',
+    icono: null, // Para la imagen personalizada
+    clase: 'config-card-personal'
+  }
+];
+
+const botonesAccesoRapido = [
+  {
+    icono: 'https://cdn-icons-png.flaticon.com/512/2661/2661440.png',
+    texto: 'Nueva Obra',
+    action: 'nueva-obra',
+    modalId: 'modalNuevaObra' // Nueva propiedad
+  },
+  {
+    icono: 'https://cdn-icons-png.flaticon.com/512/561/561184.png',
+    texto: 'Nueva Actividad',
+    action: 'nueva-actividad',
+    modalId: 'modalNuevaActividad'
+  },
+  {
+    icono: 'https://cdn-icons-png.flaticon.com/512/4175/4175032.png',
+    texto: 'Añadir Personal',
+    action: 'añadir-personal',
+    modalId: 'modalNuevoPersonal'
+  }
+];
+// Datos de obras
+const obras = [
+  { id: 1, nombre: "Invias" },
+  { id: 2, nombre: "Incont" },
+  { id: 3, nombre: "Consorcio Montebello" },
+  { id: 4, nombre: "V&M Ingeniería sas vías Colombia" },
+  { id: 5, nombre: "Consorcio olivera Aipe" }
+];
+const  actividades = [
+  { id: 1, nombreActividad: "Transporte de Vibro" },
+  { id: 2, nombreActividad: "Excavación" },
+  { id: 3, nombreActividad: "Carga de Materiales" },
+  { id: 4, nombreActividad: "Nivelación de Terreno" },
+  { id: 5, nombreActividad: "Otra actividad..." }
+];
+const  personal = [
+  { id: 1, nombre: "Cristian Aldana", nDocumento: "123456789", tipo: "Operador" },
+  { id: 2, nombre: "Aldair Diaz", nDocumento: "123456789", tipo: "Conductor" },
+  { id: 3, nombre: "Cristian Aldana", nDocumento: "123456789", tipo: "Operador" },
+  { id: 4, nombre: "Aldair Diaz", nDocumento: "123456789", tipo: "Conductor" },
+  { id: 5, nombre: "Cristian Aldana", nDocumento: "123456789", tipo: "Operador" },
+  { id: 6, nombre: "Aldair Diaz", nDocumento: "123456789", tipo: "Conductor" },
+  { id: 7, nombre: "Cristian Aldana", nDocumento: "123456789", tipo: "Operador" },
+  { id: 8, nombre: "Aldair Diaz", nDocumento: "123456789", tipo: "Conductor" },
+  { id: 9, nombre: "Cristian Aldana", nDocumento: "123456789", tipo: "Operador" },
+  { id: 10, nombre: "Aldair Diaz", nDocumento: "123456789", tipo: "Conductor" },
+  { id: 11, nombre: "Cristian Aldana", nDocumento: "123456789", tipo: "Operador" },
+  { id: 12, nombre: "Aldair Diaz", nDocumento: "123456789", tipo: "Conductor" },
+  { id: 13, nombre: "Cristian Aldana", nDocumento: "123456789", tipo: "Operador" },
+  { id: 14, nombre: "Aldair Diaz", nDocumento: "123456789", tipo: "Conductor" },  
+];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <Head title={title} path={path} />
+  </head>
+  
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+      <Topbar path={path} />
+      <Sidenav path={path} mainPage={mainPage} page={page} />
+      
+      <main class="app-main">
+        <div class="app-content-header">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-6">
+        <h2 id="page-title" class="mb-0 config-title" style="font-size: 1.5rem;">Configuración</h2>  
+      </div>
+      <div class="col-sm-6">
+        <ol id="breadcrumb-nav" class="breadcrumb float-sm-end">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            Configuración
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+        <div class="app-content">
+          <div class="container-fluid">
+            
+            <!-- Sección de Categorías -->
+            <div class="config-section">
+              
+              <div class="row g-4">
+                {tarjetasConfig.map((tarjeta) => (
+                  <div class="col-lg-3 col-md-6">
+                    <div class={`config-card ${tarjeta.clase}`} data-config={tarjeta.id}>
+                      <div class="config-card-icon">
+                        {tarjeta.id === 'personal' ? (
+                          <img 
+                            class="casco" 
+                            src="https://cdn-icons-png.freepik.com/512/17473/17473766.png?ga=GA1.1.84767501.1748519507" 
+                            alt="Casco de seguridad"
+                          />
+                        ) : (
+                          <span>{tarjeta.icono}</span>
+                        )}
+                      </div>
+                      <div class="config-card-content">
+                        <h4>{tarjeta.titulo}</h4>
+                        <p>{tarjeta.descripcion}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+ 
+            <!-- Actividad Reciente -->
+            <div class="config-section">
+              <h3 class="section-title">Actividad Reciente</h3>
+              <div class="activity-container">
+                {actividadReciente.map((item) => (
+                  <div class={`activity-item activity-${item.tipo}`}>
+                    <div class="activity-indicator"></div>
+                    <div class="activity-content">
+                      <div class="activity-header">
+                        <span class="activity-user">{item.usuario}</span>
+                        <span class="activity-timestamp">{item.timestamp}</span>
+                      </div>
+                      <div class="activity-description">
+                        <strong>{item.accion}</strong> {item.descripcion}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <!-- Sección de Gestión de Obras -->
+<div id="seccion-obras" class="gestion-section" style="display: none;">
+  <!-- Controles superiores -->
+   <div class="obras-controls">
+  <div class="container-fluid">
+    <div class="row justify-content-end"> 
+      <div class="col-auto ms-auto"> 
+        <div class="search-box-config">
+          <div class="input-group-config">
+            <input type="search" class="form-control-config" placeholder="Buscar Obras...">
+            <span class="input-group-text">🔎</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-auto"> <!-- Columna automática -->
+        <button class="btn-nueva-obra" onclick="nuevaObra()">
+          + Nueva Obra
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- Tabla de obras (contenedor independiente) -->
+  <div class="obras-table-wrapper">
+    <div class="obras-table-container">
+      <table class="obras-table">
+        <thead>
+          <tr>
+            <th class="col-numero">#</th>
+            <th class="col-obra">Obra</th>
+            <th class="col-acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaObras">
+          {obras.map((obra) => (
+            <tr>
+              <td class="numero">{obra.id}</td>
+              <td class="nombre-obra">{obra.nombre}</td>
+              
+              <td class="acciones">
+  <div class="acciones-container">
+    <button class="btn-action btn-edit emoji" title="Editar">✏️</button>
+    <button class="btn-action btn-delete emoji" title="Eliminar">🗑️</button>
+  </div>
+</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Controles inferiores (completamente fuera de la tabla) -->
+  <div class="obras-bottom-controls">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <!-- Botón Volver a la izquierda -->
+        <div class="col-md-2">
+          <button class="btn-volver">
+            <i class="fas fa-arrow-left"></i> Volver
+          </button>
+        </div>
+        
+        <!-- Paginación centrada -->
+        <div class="col-md-8 text-center">
+          <div class="paginationConfig">
+            <button onclick="cambiarPagina('prev')" id="prevBtn" class="page-btn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="page-btn active" onclick="irAPagina(1)">1</button>
+            <button class="page-btn" onclick="irAPagina(2)">2</button>
+            <button class="page-btn" onclick="irAPagina(3)">3</button>
+            <button class="page-btn" onclick="irAPagina(4)">4</button>
+            <button class="page-btn" onclick="irAPagina(5)">5</button>
+            <button onclick="cambiarPagina('next')" id="nextBtn" class="page-btn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Espacio vacío a la derecha -->
+        <div class="col-md-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+            <!-- Sección de Gestión de actividades -->
+<div id="seccion-actividades" class="gestion-section" style="display: none;">
+
+   <div class="obras-controls">
+  <div class="container-fluid">
+    <div class="row justify-content-end">
+      <div class="col-auto ms-auto"> 
+        <div class="search-box-config">
+          <div class="input-group-config">
+            <input type="search" class="form-control-config" placeholder="Buscar Actividades...">
+            <span class="input-group-text">🔎</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-auto"> 
+        <button class="btn-nueva-actividad">
+  + Nueva Actividad
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- Tabla de obras (contenedor independiente) -->
+  <div class="obras-table-wrapper">
+    <div class="obras-table-container">
+      <table class="obras-table">
+        <thead>
+          <tr>
+            <th class="col-numero">#</th>
+            <th class="col-obra">Actividad</th>
+            <th class="col-acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaActividades">
+  {actividades.map((actividad) => (
+    <tr>
+      <td class="numero">{actividad.id}</td>
+      <td class="nombre-actividad">{actividad.nombreActividad}</td>
+      <td class="acciones">
+        <div class="acciones-container">
+          <button class="btn-action btn-edit emoji" 
+                  onclick="editarActividad(${actividad.id})">✏️</button>
+          <button class="btn-action btn-delete emoji"
+                  onclick="eliminarActividad(${actividad.id})">🗑️</button>
+        </div>
+      </td>
+    </tr>
+  ))}
+</tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="obras-bottom-controls">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <!-- Botón Volver a la izquierda -->
+        <div class="col-md-2">
+          <button class="btn-volverActividad">
+            <i class="fas fa-arrow-left"></i> Volver
+          </button>
+        </div>
+        
+
+
+        <!-- Paginación centrada -->
+        <div class="col-md-8 text-center">
+          <div class="pagination">
+            <button onclick="cambiarPagina('prev')" id="prevBtn" class="page-btn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="page-btn active" onclick="irAPagina(1)">1</button>
+            <button class="page-btn" onclick="irAPagina(2)">2</button>
+            <button class="page-btn" onclick="irAPagina(3)">3</button>
+            <button class="page-btn" onclick="irAPagina(4)">4</button>
+            <button class="page-btn" onclick="irAPagina(5)">5</button>
+            <button onclick="cambiarPagina('next')" id="nextBtn" class="page-btn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Espacio vacío a la derecha -->
+        <div class="col-md-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+            <!-- Sección de Gestión de personal -->
+<div id="seccion-personal" class="gestion-section" style="display: none;">
+  <!-- Controles superiores -->
+   <div class="obras-controls">
+  <div class="container-fluid">
+    <div class="row justify-content-end"> <!-- Cambiado a justify-content-end -->
+      <div class="col-auto ms-auto"> <!-- ms-auto empuja a la derecha -->
+        <div class="search-box-config">
+          <div class="input-group-config">
+            <input type="search" class="form-control-config" placeholder="Buscar Personal...">
+            <span class="input-group-text">🔎</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-auto"> <!-- Columna automática -->
+        <button class="btn-nueva-personal" >
+          + Nuevo Personal
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Tabla de personal (contenedor independiente) -->
+<div class="obras-table-wrapper">
+    <div class="obras-table-container">
+      <table class="obras-table">
+        <thead>
+          <tr>
+            <th class="col-numero">#</th>
+            <th class="col-nombre">Nombre Completo</th>
+            <th class="col-nDocumento">No. Documento</th>
+            <th class="col-tipo">Tipo de Personal</th>
+            <th class="col-acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaPersonal">
+          {personal.map((item) => (
+            <tr>
+              <td class="numero">{item.id}</td>
+              <td class="nombre">{item.nombre}</td>
+              <td class="nDocumento">{item.nDocumento}</td>
+              <td class="tipo">{item.tipo}</td>
+              <td class="acciones">
+                <div class="acciones-container">
+                  <button class="btn-action btn-edit emoji" title="Editar" onclick="editarPersonal(${item.id})">✏️</button>
+                  <button class="btn-action btn-delete emoji" title="Eliminar" onclick="eliminarPersonal(${item.id})">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>  
+  <!-- Controles inferiores (completamente fuera de la tabla) -->
+  <div class="obras-bottom-controls">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <!-- Botón Volver a la izquierda -->
+        <div class="col-md-2">
+          <button class="btn-volverPersonal">
+            <i class="fas fa-arrow-left"></i> Volver
+          </button>
+        </div>
+        
+
+
+        <!-- Paginación centrada -->
+        <div class="col-md-8 text-center">
+          <div class="pagination">
+            <button onclick="cambiarPagina('prev')" id="prevBtn" class="page-btn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="page-btn active" onclick="irAPagina(1)">1</button>
+            <button class="page-btn" onclick="irAPagina(2)">2</button>
+            <button class="page-btn" onclick="irAPagina(3)">3</button>
+            <button class="page-btn" onclick="irAPagina(4)">4</button>
+            <button class="page-btn" onclick="irAPagina(5)">5</button>
+            <button onclick="cambiarPagina('next')" id="nextBtn" class="page-btn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Espacio vacío a la derecha -->
+        <div class="col-md-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+   <!-- Acceso Rápido -->
+  <div class="config-section">
+  <h3 class="section-title" style="margin-bottom: 0.5rem; color: #1A365D !important;font-weight: bold !important;">Acceso Rápido</h3>
+  <div class="quick-access-container"> <!-- Nuevo contenedor -->
+  {botonesAccesoRapido.map((boton) => (
+  <button class="quick-access-btn" data-action={boton.action} data-modal-target={boton.modalId}>
+    <img src={boton.icono} alt="icono" class="quick-access-icon"/>
+    <span>{boton.texto}</span>
+  </button>
+))}
+  </div>
+</div>
+
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+    
+    <Scripts path={path} />
+    <script>
+
+// Función para abrir modal de nueva obra
+function nuevaObra() {
+  const modal = document.getElementById('modalNuevaObra');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('nombreObra')?.focus();
+  }
+}
+
+// Función para cambiar página
+function irAPagina(pagina) {
+  document.querySelectorAll('.page-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  console.log(`Ir a página ${pagina}`);
+}
+
+// Función para cambiar página (prev/next)
+function cambiarPagina(direccion) {
+  const activeBtn = document.querySelector('.page-btn.active');
+  const currentPage = activeBtn ? parseInt(activeBtn.textContent) : 1;
+  
+  if (direccion === 'prev' && currentPage > 1) {
+    irAPagina(currentPage - 1);
+  } else if (direccion === 'next' && currentPage < 5) {
+    irAPagina(currentPage + 1);
+  }
+}
+function cambiarTitulo(titulo, breadcrumbItem) {
+  const pageTitle = document.getElementById('page-title');
+  const breadcrumb = document.getElementById('breadcrumb-nav');
+  
+  if (pageTitle) pageTitle.textContent = titulo;
+  
+  if (breadcrumb) {
+    breadcrumb.innerHTML = `
+      <li class="breadcrumb-item"><a href="#" onclick="volverInicio()">Home</a></li>
+      <li class="breadcrumb-item"><a href="#" onclick="volverInicio()">Configuración</a></li>
+      <li class="breadcrumb-item active" aria-current="page">${breadcrumbItem}</li>
+    `;
+  }
+}
+
+function volverInicio() {
+  document.querySelectorAll('.gestion-section').forEach(section => {
+    section.style.display = 'none';
+  });
+  document.querySelectorAll('.config-section').forEach(section => {
+    section.style.display = 'block';
+  });
+  cambiarTitulo('Configuración', 'Configuración');
+}
+
+// MAIN CODE
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM cargado - Iniciando configuración...');
+
+  // 1. CONFIGURACIÓN DE TARJETAS
+  const tarjetas = document.querySelectorAll('.config-card');
+  console.log(`Tarjetas encontradas: ${tarjetas.length}`);
+
+  tarjetas.forEach(tarjeta => {
+    tarjeta.addEventListener('click', function() {
+      const sectionId = this.getAttribute('data-config');
+      console.log(`Clic en tarjeta: ${sectionId}`);
+
+      // Ocultar todas las secciones
+      document.querySelectorAll('.gestion-section, .config-section').forEach(section => {
+        section.style.display = 'none';
+      });
+
+      // Mostrar sección objetivo
+      const targetId = `seccion-${sectionId}`;
+      const targetSection = document.getElementById(targetId);
+      
+      if (targetSection) {
+        console.log(`Mostrando sección: ${targetId}`);
+        targetSection.style.display = 'block';
+        
+        // Actualizar título y breadcrumb
+        const nombreSeccion = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+        cambiarTitulo(`Gestión de ${nombreSeccion}`, `Gestión de ${nombreSeccion}`);
+        
+        // Scroll suave
+        targetSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        console.error(`Sección no encontrada: ${targetId}`);
+      }
+    });
+  });
+
+  // 2. MANEJO DE MODALES (versión optimizada)
+  const configModales = {
+    obra: {
+      id: 'modalNuevaObra',
+      btnApertura: '.btn-nueva-obra',
+      formId: 'formNuevaObra',
+      campoFoco: '#nombreObra'
+    },
+    actividad: {
+      id: 'modalNuevaActividad',
+      btnApertura: '.btn-nueva-actividad',
+      formId: 'formNuevaActividad',
+      campoFoco: '#nombreActividad'
+    },
+    personal: {
+      id: 'modalNuevoPersonal',
+      btnApertura: '.btn-nuevo-personal',
+      formId: 'formNuevoPersonal',
+      campoFoco: '#nombrePersonal'
+    }
+  };
+
+  Object.values(configModales).forEach(modalConfig => {
+    const modal = document.getElementById(modalConfig.id);
+    if (!modal) {
+      console.error(`Modal no encontrado: ${modalConfig.id}`);
+      return;
+    }
+
+    // Evento apertura
+    document.querySelectorAll(modalConfig.btnApertura).forEach(boton => {
+      boton.addEventListener('click', (e) => {
+        e.preventDefault();
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        const campo = document.querySelector(modalConfig.campoFoco);
+        if (campo) campo.focus();
+      });
+    });
+
+    // Evento cierre
+    modal.querySelectorAll('[data-dismiss="modal"], .btn-secondary').forEach(boton => {
+      boton.addEventListener('click', () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      });
+    });
+
+    // Clic fuera del modal
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // Submit formulario
+    const form = document.getElementById(modalConfig.formId);
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Aquí tu lógica para guardar
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      });
+    }
+  });
+
+  // Cerrar modales con ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-commons-backdrop').forEach(modal => {
+        if (modal.style.display === 'flex') {
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+      });
+    }
+  });
+
+  console.log('Configuración completada correctamente');
+});
+
+// Otras funciones que necesites conservar
+function cambiarTituloInicio() {
+  cambiarTitulo('Configuración', 'Configuración');
+}
+
+// Manejo de botones Volver
+document.querySelectorAll('.btn-volver, .btn-volverActividad, .btn-volverPersonal').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    volverInicio();
+  });
+});
+
+
+ // Manejo de botones de Acceso Rápido
+  document.querySelectorAll('.quick-access-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const modalId = this.getAttribute('data-modal-target');
+      if (modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+          const input = modal.querySelector('input');
+          if (input) input.focus();
+        }
+      }
+    });
+  });
+</script>
+
+
+<!-- Modal Nueva Obra -->
+<div id="modalNuevaObra" class="modal-commons-backdrop">
+  <div class="modal-commons-container">
+    <div class="modal-commons-header">
+      <h2>Nueva Obra</h2>
+    </div>
+    <div class="modal-commons-body">
+      <form id="formNuevaObra" class="form-config">
+        <div class="form-config-group">
+          <label for="nombreObra">Nombre de la Obra *</label>
+          <input type="text" id="nombreObra" class="form-config-control" required>
+        </div>
+        <div class="modal-commons-footer">
+          <button type="button" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nueva Actividad -->
+<div id="modalNuevaActividad" class="modal-commons-backdrop">
+  <div class="modal-commons-container">
+    <div class="modal-commons-header">
+      <h2>Nueva Actividad</h2>
+    </div>
+    <div class="modal-commons-body">
+      <form id="formNuevaActividad" class="form-config">
+        <div class="form-config-group">
+          <label for="nombreActividad">Nombre de la Actividad *</label>
+          <input type="text" id="nombreActividad" class="form-config-control" required>
+        </div>
+        <div class="modal-commons-footer">
+          <button type="button" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nuevo Personal -->
+<div id="modalNuevoPersonal" class="modal-commons-backdrop">
+  <div class="modal-commons-container">
+    <div class="modal-commons-header">
+      <h2>Nuevo Personal</h2>
+    </div>
+    <div class="modal-commons-body">
+      <form id="formNuevoPersonal" class="form-config">
+        <div class="form-config-group">
+          <label for="nombrePersonal">Nombre del Personal *</label>
+          <input type="text" id="nombrePersonal" class="form-config-control" required>
+        </div>
+        <div class="form-config-group">
+          <label for="documentoPersonal">No. Documento *</label>
+          <input type="number" id="documentoPersonal" class="form-config-control" required>
+        </div>
+        <div class="form-config-group">
+          <label for="tipoPersonal">Tipo de Personal *</label>  
+          <select id="tipoPersonal" class="form-config-control" required>
+            <option value="">Seleccione...</option>
+            <option value="Operador">Operador</option>
+            <option value="Conductor">Conductor</option>
+          </select>
+        </div>
+        <div class="modal-commons-footer">
+          <button type="button" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+  </body>
+</html>
