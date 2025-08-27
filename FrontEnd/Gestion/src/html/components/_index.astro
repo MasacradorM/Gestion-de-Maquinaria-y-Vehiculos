@@ -1,0 +1,83 @@
+---
+const { path } = Astro.props;
+const adminlteJsUrl = path + "/js/adminlte.js";
+---
+
+<!--begin::Third Party Plugin(OverlayScrollbars)-->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js" integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ=" crossorigin="anonymous"></script>
+<!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Required Plugin(popperjs for Bootstrap 5)-->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
+<script src={adminlteJsUrl} is:inline></script>
+<!--end::Required Plugin(AdminLTE)-->
+<!--begin::OverlayScrollbars Configure-->
+
+
+  <script type="module">
+  const tarjetas = {
+    rendimiento: document.getElementById('card-rendimiento'),
+    estado: document.getElementById('card-estado'),
+    resumen: document.getElementById('card-resumen'),
+    alertas: document.getElementById('card-alertas'),
+  };
+
+  const tarjetaNombres = {
+    rendimiento: 'Comparación de Rendimiento',
+    estado: 'Estado de Vehículos',
+    resumen: 'Resumen del Registro',
+    alertas: 'Alertas Pendientes'
+  };
+
+  const mensajeTarjetas = document.getElementById('mensaje-tarjetas');
+  const listaAgregar = document.getElementById('lista-agregar');
+
+  function verificarTarjetasMostradas() {
+    const todasVisibles = Object.values(tarjetas).every(t => !t.classList.contains('d-none'));
+    mensajeTarjetas && (mensajeTarjetas.style.display = todasVisibles ? 'block' : 'none');
+  }
+
+  function actualizarListaAgregar() {
+    listaAgregar.innerHTML = ''; // Limpiar la lista
+
+    Object.entries(tarjetas).forEach(([key, tarjeta]) => {
+      if (tarjeta.classList.contains('d-none')) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item agregar-item';
+        li.dataset.card = key;
+        li.textContent = tarjetaNombres[key];
+        listaAgregar.appendChild(li);
+
+        // Asignar evento al hacer clic
+        li.addEventListener('click', () => {
+          tarjeta.classList.remove('d-none');
+          actualizarListaAgregar();
+          verificarTarjetasMostradas();
+        });
+      }
+    });
+
+    // Si no hay tarjetas para agregar, ocultar el menú
+    const dropdown = document.querySelector('.dropdown-content');
+    if (dropdown) {
+      dropdown.style.display = listaAgregar.children.length > 0 ? 'block' : 'none';
+    }
+  }
+
+  // Ocultar tarjetas al hacer clic en la X
+  document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('btn-close')) {
+      const card = event.target.closest('.card');
+      if (card) {
+        card.classList.add('d-none');
+        actualizarListaAgregar();
+        verificarTarjetasMostradas();
+      }
+    }
+  });
+
+  // Inicializar
+  actualizarListaAgregar();
+</script>
+

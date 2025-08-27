@@ -1,0 +1,188 @@
+---
+// AlertasPendientes.astro
+type TipoAlerta = 'urgente' | 'advertencia' | 'informacion';
+
+interface Alerta {
+  tipo: TipoAlerta;
+  mensaje: string;
+  detalle?: string;
+}
+
+const {
+  alertas = [
+    {
+      tipo: 'urgente',
+      mensaje: 'Mantenimiento Urgente',
+      detalle: 'CAMION DA3435 - Programar hoy para revisión'
+    },
+    {
+      tipo: 'advertencia',
+      mensaje: 'Combustible Bajo',
+      detalle: 'Volqueta SVF404 - 15% restante, programar repostaje'
+    },
+    {
+      tipo: 'informacion',
+      mensaje: 'Eficiencia Mejorada',
+      detalle: 'Hoy la flota consumió 8% menos combustible que ayer'
+    }
+  ] as Alerta[]
+} = Astro.props;
+
+// Mapeo de tipos de alerta a clases de estilo e íconos
+const alertaConfig = {
+  'urgente': {
+    icono: '!',
+    clase: 'alerta-urgente'
+  },
+  'advertencia': {
+    icono: '!',
+    clase: 'alerta-advertencia'
+  },
+  'informacion': {
+    icono: 'i',
+    clase: 'alerta-informacion'
+  }
+};
+---
+
+<div class="alertas-pendientes-container h-100">
+  
+    <div class="card-body">
+      <div class="alertas-lista">
+        {alertas.map((alerta) => {
+          const config = alertaConfig[alerta.tipo];
+          return (
+            <div class={`alerta ${config.clase}`}>
+              <div class="alerta-icono">{config.icono}</div>
+              <div class="alerta-contenido">
+                <div class="alerta-mensaje">{alerta.mensaje}</div>
+                <div class="alerta-detalle">{alerta.detalle}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+
+<style lang="scss">
+.alertas-pendientes-container {
+  width: 100%;
+  .card-header{
+    border-bottom: none !important;
+  }
+  
+  .card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .card-header {
+      padding: 0.75rem 1rem;
+      border-bottom: none;
+      .card-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #000;
+      }
+    }
+    
+    .card-body {
+      padding: 0.75rem 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+  }
+  
+  .alertas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  //Para alinear los elementos de la lista
+    align-items: stretch;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .alerta {
+    display: flex;
+    align-items: center;
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    min-height:80px;
+    
+    .alerta-icono {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+    }
+    
+    .alerta-contenido {
+      flex-grow: 1;
+      word-wrap:break-word;
+      word-break: break-word;
+      white-space:normal;
+      
+      .alerta-mensaje {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        font-size: 0.95rem;
+      }
+      
+      .alerta-detalle {
+        font-size: 0.85rem;
+        color: #6c757d;
+      }
+    }
+  }
+  
+  .alerta-urgente {
+    background-color: #ffdddd;
+    
+    .alerta-icono {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .alerta-mensaje {
+      color: #721c24;
+    }
+  }
+  
+  .alerta-advertencia {
+    background-color: #fff3cd;
+    
+    .alerta-icono {
+      background-color: #ffc107;
+      color: #212529;
+    }
+    
+    .alerta-mensaje {
+      color: #856404;
+    }
+  }
+  
+  .alerta-informacion {
+    background-color: #d1ecf1;
+    
+    .alerta-icono {
+      background-color: #17a2b8;
+      color: white;
+    }
+    
+    .alerta-mensaje {
+      color: #0c5460;
+    }
+  }
+}
+</style>

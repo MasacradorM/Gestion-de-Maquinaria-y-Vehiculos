@@ -1,0 +1,15 @@
+// src/styles/main.scss
+
+@use 'variables' as *; 
+@use 'mixins' as mx;   
+
+// 2. módulos
+@use 'auth/auth-main' as auth;          
+@use 'shared/shared' as shared;
+@use 'config/config-main' as config;
+@use 'machinery/machine-main' as machine;
+@use 'dashboard/dashboard-main' as dashboard;
+@use 'reports/reports-main' as reports;
+@use 'vehicle/vehicle-main' as vehicle;
+@forward 'variables';
+@forward 'mixins';

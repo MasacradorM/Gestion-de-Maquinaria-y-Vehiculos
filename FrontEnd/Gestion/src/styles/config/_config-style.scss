@@ -1,0 +1,717 @@
+// =====================
+// Estilos para actividad reciente
+// =====================
+@use '../variables' as *;
+@use './variablesConfig' as cv;
+
+// Contenedor de actividad
+.activity-container {
+  background: map-get($colors,white-1);
+  border-radius: map-get(map-get($borders, radius), large);
+  padding: 1.5rem;
+  box-shadow: map-get($shadows, config-card);
+}
+
+// Items de actividad
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: map-get(map-get($borders, width), thin) solid map-get($colors,white-4);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  // Indicador de actividad
+  .activity-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+  }
+
+  // Contenido de actividad
+  .activity-content {
+    flex: 1;
+    
+    .activity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+      
+      .activity-user {
+        font-weight: 600;
+        color: map-get($colors,black-1);
+      }
+      
+      .activity-timestamp {
+        font-size: map-get($font-sizes, sm);
+        color: map-get($colors,blue-1);
+      }
+    }
+    
+    .activity-description {
+      font-size: map-get($font-sizes, sm);
+      color: map-get($colors,muted);
+      line-height: 1.4;
+    }
+  }
+}
+
+// Colores por tipo de actividad
+.activity-usuario .activity-indicator {
+  background: cv.$usuarios-color;
+}
+
+.activity-obra .activity-indicator {
+    background: cv.$obras-color;
+}
+
+.activity-actividad .activity-indicator {
+    background: cv.$actividades-color;
+}
+
+.activity-personal .activity-indicator {
+   background: cv.$personal-color;
+}
+
+// Responsive adjustments
+@media (max-width: map-get($breakpoints, md)) {
+  .activity-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.25rem;
+  }
+  
+  
+}
+
+
+
+// Tarjetas de configuración base
+.config-card {
+  background: map-get($colors, white-1);
+  border-radius: map-get(map-get($borders, radius), large);
+  padding:  1.5rem;
+  height: 140px;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all map-get($transitions, normal) ease;
+  border: map-get(map-get($borders, width), normal) solid transparent;
+  box-shadow: map-get($shadows, config-card);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: map-get($shadows, config-card-hover);
+  }
+
+  // Icono de la tarjeta
+  .config-card-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    i {
+      font-size: 24px;
+      color: map-get($colors, white-1);
+    }
+  }
+
+  // Contenido de la tarjeta
+  .config-card-content {
+    flex: 1;
+    
+    h4 {
+      font-size: map-get($font-sizes, lg);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: map-get($colors,black-1);
+      font-family: map-get($fonts, body);
+    }
+    
+    p {
+      font-size: map-get($font-sizes, base);
+      color: map-get($colors,muted);
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+}
+
+// Estilos específicos por categoría
+.config-card-usuarios {
+  border-left:  map-get(map-get($borders, radius), small) solid cv.$usuarios-color-border;
+  
+  .config-card-icon {
+    background: cv.$usuarios-color;
+  }
+  
+  &:hover {
+    border-color: cv.$usuarios-color;
+  }
+}
+
+.config-card-obras {
+  border-left: map-get(map-get($borders, radius), small) solid cv.$obras-color-border;
+  
+  .config-card-icon {
+    background: cv.$obras-color;
+  }
+  
+  &:hover {
+    border-color: cv.$obras-color;
+  }
+}
+
+.config-card-actividades {
+  border-left: map-get(map-get($borders, radius), small)solid cv.$actividades-color-border;
+  
+  .config-card-icon {
+    background: cv.$actividades-color;
+  }
+  
+  &:hover {
+    border-color: cv.$actividades-color;
+  }
+}
+
+.config-card-personal {
+  border-left: map-get(map-get($borders, radius), small) solid cv.$personal-color;
+  
+  .config-card-icon {
+    background: cv.$personal-color;
+  }
+  
+  &:hover {
+    border-color: cv.$personal-color;
+  }
+}
+
+// Botones de acceso rápido
+.quick-access-btn {
+  width: 100%;
+  height: 80px;
+  background: map-get($colors, white-1);
+  border: map-get(map-get($borders, width), normal) solid map-get($colors, white-4);
+  border-radius: map-get(map-get($borders, radius), large);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all map-get($transitions, normal) ease;
+  font-family: map-get($fonts, body);
+  box-shadow: map-get($shadows, config-card);
+
+  &:hover {
+    border-color: map-get($colors, blue-2);
+    background: map-get($colors, blue-2);
+    color: map-get($colors, white-1);
+    transform: translateY(-2px);
+    box-shadow: map-get($shadows, quick-access-hover);
+  }
+
+  i {
+    font-size: 1.25rem;
+  }
+
+  span {
+    font-weight: 500;
+    font-size: map-get($font-sizes, base);
+  }
+}
+
+// Estilos específicos solo para esta página (si los necesitas)
+  .casco {
+    width: 50%;
+    height: 50%;
+    object-fit: contain;
+    vertical-align: middle;
+    filter: brightness(0) invert(1); // Para que sea blanco
+  }
+  
+  // Personalización específica para esta página
+  .config-card {
+    cursor: pointer;
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+// Responsive adjustments
+@media (max-width: map-get($breakpoints, md)) {
+  .config-card {
+    height: auto;
+    min-height: 120px;
+  }
+  
+  .quick-access-btn {
+    height: 70px;
+    font-size: map-get($font-sizes, base) * 0.9;
+  }
+}
+
+
+// Títulos principales
+.config-title {
+  margin-top:3px;
+ color: map-get($colors, blue-5);  // Forma correcta
+  font-weight: bold;
+  font-family: map-get($fonts, body);
+  font-size: map-get($font-sizes, xs);
+  margin-bottom: 0;
+}
+
+// Secciones de configuración
+.config-section {
+  margin-bottom: 3rem;
+  .section-title {
+    color: map-get($colors,black-1);
+    font-weight: 600;
+    font-size: map-get($font-sizes, xl);
+    margin-bottom: 1,5rem;
+    font-family: map-get($fonts, body);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: map-get($breakpoints, md)) {
+  .config-title {
+    font-size: map-get($font-sizes, xs) * 0.8;
+  }
+  
+  .section-title {
+    font-size: map-get($font-sizes, xl) * 0.9;
+  }
+}
+// Quick Access Section
+.quick-access {
+  &-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  &-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    min-height: 100px;
+    border-radius: 8px;
+    background: map-get($colors, white-1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    span {
+      text-align: center;
+      width: 100%;
+    }
+  }
+
+  &-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+}
+
+// Obras Section
+.obras {
+  &-main-container {
+    background: map-get($colors, white-1);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  &-table-wrapper {
+    border: 1px solid map-get($colors, white-3);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  &-table-container {
+    overflow-x: auto;
+    max-height: 500px;
+  }
+
+  &-bottom-controls {
+    margin-top: 10px;
+    padding: 15px 0;
+    border-top: 1px solid map-get($colors, white-3);
+  }
+
+  &-controls {
+    padding: 15px;
+    background: cv.$light-gray;
+    border-bottom: 1px solid map-get($colors, white-3);
+  }
+
+  &-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: map-get($colors, white-1);
+
+    thead {
+      background: map-get($colors, blue-4);
+
+      th {
+        color: map-get($colors, white-1);
+        padding: 18px 20px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+
+        &.col-numero {
+          width: 60px;
+          text-align: center;
+        }
+
+        &.col-acciones {
+          width: 120px;
+          min-width: 120px;
+          max-width: 120px;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid map-get($colors, white-3);
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: cv.$light-gray;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        td {
+          padding: 18px 20px;
+          color: map-get($colors, blue-7);
+          font-size: 14px;
+          border: none;
+
+          &.numero {
+            text-align: center;
+            font-weight: 600;
+            color: #7f8c8d;
+          }
+
+          &.nombre-obra {
+            font-weight: 500;
+          }
+
+          &.acciones {
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Buttons
+.btn {
+  &-action {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #808080;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: map-get($colors, white-1);
+
+    &.emoji {
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    &-edit {
+      background-color: map-get($colors, white-1);
+      color: map-get($colors, white-1);
+
+      &:hover {
+        background-color: grey;
+        transform: scale(1.05);
+      }
+    }
+
+    &-delete {
+      background-color: map-get($colors, white-1);
+      color: map-get($colors, white-1);
+    
+
+      &:hover {
+        background-color: grey;
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  &-nueva {
+    &-obra, &-actividad, &-personal {
+      background: map-get($colors, blue-4);
+      color: map-get($colors, white-1);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      &:hover {
+        background: map-get($colors, blue-1);
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  &-volver, &-volverActividad, &-volverPersonal {
+    background-color: cv.$background-color;
+    color: map-get($colors, white-1);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: darken(cv.$background-color, 10%);
+    }
+  }
+}
+
+// Search Box
+.search-box-config {
+  position: relative;
+  width: 100%;
+
+  .input-group-config {
+    width: 100%;
+    border-radius: 25px;
+    overflow: hidden;
+  }
+
+  .form-control-config {
+    padding: 8px 15px 8px 40px;
+    border: 1px solid map-get($colors, white-3);
+    border-radius: 25px;
+    width: 100%;
+    font-size: 14px;
+
+    &:focus {
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+  }
+
+  .input-group-text {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    z-index: 4;
+    padding: 0;
+  }
+
+  .search-icon {
+    width: 1em;
+    height: 1em;
+    filter: brightness(0.5);
+  }
+}
+
+// Pagination
+.paginationConfig {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.page-btn {
+  border: 1px solid map-get($colors, white-3);
+  background-color: map-get($colors, white-1);
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 36px;
+
+  &.active {
+    background-color: map-get($colors, blue-1);
+    color: map-get($colors, white-1);
+    border-color: map-get($colors, blue-1);
+  }
+
+  &:hover:not(.active) {
+    background-color: map-get($colors, white-3);
+  }
+}
+
+
+
+/* Estilos unificados para todos los modales */
+.modal-commons {
+  &-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+
+    &.active {
+      display: flex;
+    }
+  }
+
+  &-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 500px; /* Tamaño uniforme para todos los modales */
+  }
+
+  &-header {
+    background: #1A365D; /* Color unificado */
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 2px solid #0F2A4D; /* Borde más oscuro */
+  }
+
+  &-body {
+    padding: 20px;
+  }
+
+  &-footer {
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-radius: 0 0 8px 8px;
+  }
+}
+
+/* Estilos para formularios (compartidos) */
+.form-config {
+  &-group {
+    margin-bottom: 1.2rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #495057;
+    }
+  }
+
+  &-control {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    transition: border-color 0.15s ease-in-out;
+
+    &:focus {
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+  }
+}
+
+
+
+
+
+
+
+// Responsive Styles
+@media (max-width: 768px) {
+  .obras-controls {
+    padding: 15px 10px;
+  }
+
+  .search-box .form-control {
+    padding: 8px 15px 8px 35px;
+    font-size: 13px;
+  }
+
+  .btn-nueva-obra, .btn-nueva-actividad {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .obras-external-controls .row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .obras-external-controls .col-md-2,
+  .obras-external-controls .col-md-8 {
+    width: 100%;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .search-box .form-control {
+    padding: 6px 12px 6px 30px;
+    font-size: 12px;
+  }
+
+  .search-box .input-group-text {
+    left: 8px;
+    font-size: 14px;
+  }
+
+  .btn-nueva-obra, .btn-nueva-actividad {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
