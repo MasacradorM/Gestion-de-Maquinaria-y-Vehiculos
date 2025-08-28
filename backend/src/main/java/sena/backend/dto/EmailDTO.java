@@ -1,0 +1,12 @@
+package sena.backend.dto;
+
+import lombok.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class EmailDTO {
+    private String email;
+    private boolean status;
+}
