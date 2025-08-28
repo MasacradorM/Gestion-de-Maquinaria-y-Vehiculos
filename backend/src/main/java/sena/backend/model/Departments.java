@@ -12,12 +12,12 @@ public class Departments {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "departments_id")
+    @Column(name = "departmentsId")
     private Integer departmentsId;
 
-    @Column(name = "departments_name", nullable = false, length = 100)
+    @Column(name = "departmentsName", nullable = false, length = 100)
     private String departmentsName;
 
-    @Column(name = "dane_code", nullable = false)
+    @Column(name = "daneCode", nullable = false)
     private Integer daneCode;
 }

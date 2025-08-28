@@ -12,16 +12,16 @@ import lombok.*;
 public class Page {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(name= "pageId",strategy = GenerationType.IDENTITY)
     private Integer pageId;
 
-    @Column(nullable = false, length = 100)
+    @Column(name= "name",nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, length = 250)
+    @Column(name= "description",nullable = false, length = 250)
     private String description;
 
-    @Column(nullable = false, length = 200)
+    @Column(name= "url",nullable = false, length = 200)
     private String url;
 }
 
