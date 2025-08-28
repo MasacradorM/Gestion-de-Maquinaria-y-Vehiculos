@@ -13,16 +13,16 @@ public class Machines {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "machine_id")
+    @Column(name = "machineId", nullable = false)
     private Integer machineId;
 
     @Column(nullable = false, length = 50)
     private String plate;
 
     @ManyToOne
-    @JoinColumn(name = "type_machinery_id", nullable = false)
+    @JoinColumn(name = "typeMachineryId", nullable = false)
     private TypeMachinery typeMachinery;
 
-    @Column(nullable = false)
+    @Column(name= "status",nullable = false)
     private Boolean status;
 }

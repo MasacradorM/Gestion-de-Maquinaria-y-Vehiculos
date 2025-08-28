@@ -12,9 +12,9 @@ import lombok.*;
 public class Activity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(name= "activityId",strategy = GenerationType.IDENTITY)
     private Integer activityId;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(name= "activityName",nullable = false, unique = true, length = 100)
     private String activityName;
 }

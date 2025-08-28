@@ -13,17 +13,16 @@ public class Municipalities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "municipalities_id")
+    @Column(name = "municipalitiesId")
     private Integer municipalitiesId;
 
-    @Column(name = "municipalities_name", nullable = false, length = 100)
+    @Column(name = "municipalitiesName", nullable = false, length = 100)
     private String municipalitiesName;
 
-    @Column(name = "dane_code", nullable = false)
+    @Column(name = "daneCode", nullable = false)
     private Integer daneCode;
 
-    // Relación con Departments
     @ManyToOne
-    @JoinColumn(name = "departments_id", nullable = false)
+    @JoinColumn(name = "departmentsId", nullable = false)
     private Departments department;
 }

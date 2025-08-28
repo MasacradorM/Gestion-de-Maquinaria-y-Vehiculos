@@ -12,13 +12,13 @@ import lombok.*;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(name= "roleId",strategy = GenerationType.IDENTITY)
     private Integer roleId;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(name= "role",nullable = false, unique = true, length = 100)
     private String role;
 
-    @Column(nullable = false, length = 250)
+    @Column(name= "permissionDescription",nullable = false, length = 250)
     private String permissionDescription;
 }
 

@@ -13,14 +13,15 @@ public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "vehicle_id")
-    private Integer vehicleId;
+    @Column(name = "vehicleId", nullable = false)
+    private int vehicleId;
 
-    @Column(name = "vehicle_name", nullable = false, length = 100)
+    @Column(name = "vehicleName", nullable = false, length = 100)
     private String vehicleName;
 
-    @Column(name = "vehicle_type_id", nullable = false)
-    private Integer vehicleTypeId;
+    @ManyToOne
+    @JoinColumn(name = "vehicleTypeId", nullable = false)
+    private VehicleType vehicleTypeId;
 
     @Column(name = "status", nullable = false)
     private Boolean status;
