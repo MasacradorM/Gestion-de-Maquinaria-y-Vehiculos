@@ -12,7 +12,8 @@ import lombok.*;
 public class Role {
 
     @Id
-    @GeneratedValue(name= "roleId",strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "roleId")
     private Integer roleId;
 
     @Column(name= "role",nullable = false, unique = true, length = 100)

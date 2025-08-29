@@ -2,7 +2,6 @@ package sena.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import sena.backend.dto.UserLoginDTO;
 import sena.backend.dto.UserRegisterDTO;
 import sena.backend.model.User;
 import sena.backend.repository.IUser;

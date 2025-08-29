@@ -16,11 +16,11 @@ public class EmailService {
     private final IEmail IEmail;
 
     public List<Email> findAll() {
-        return emailRepository.findAll();
+        return IEmail.findAll();
     }
 
     public Optional<Email> findById(Integer id) {
-        return emailRepository.findById(id);
+        return IEmail.findById(id);
     }
 
     public Email save(EmailDTO dto) {
@@ -28,10 +28,10 @@ public class EmailService {
                 .email(dto.getEmail())
                 .status(dto.isStatus())
                 .build();
-        return emailRepository.save(email);
+        return IEmail.save(email);
     }
 
     public void delete(Integer id) {
-        emailRepository.deleteById(id);
+        IEmail.deleteById(id);
     }
 }

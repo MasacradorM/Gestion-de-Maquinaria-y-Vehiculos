@@ -1,6 +1,7 @@
 package sena.backend.dto;
 
 import lombok.*;
+import sena.backend.model.VehicleType;
 
 @Data
 @AllArgsConstructor
@@ -8,5 +9,5 @@ import lombok.*;
 @Builder
 public class VehicleDTO {
     private String vehicleName;
-    private Integer vehicleTypeId;
+    private VehicleType vehicleTypeId;
 }

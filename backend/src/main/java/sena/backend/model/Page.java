@@ -12,7 +12,8 @@ import lombok.*;
 public class Page {
 
     @Id
-    @GeneratedValue(name= "pageId",strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pageId")
     private Integer pageId;
 
     @Column(name= "name",nullable = false, length = 100)
