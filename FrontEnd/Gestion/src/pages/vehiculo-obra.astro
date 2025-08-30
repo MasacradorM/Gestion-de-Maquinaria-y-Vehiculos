@@ -1,6 +1,8 @@
 ---
 import '@/styles/main.scss';  
 import "../css/vehiculo-obra.css";
+import { siteConfig } from "../config/siteConfig.js";
+
 
 import Head from "@components/_head.astro";
 import Footer from "@components/dashboard/_footer.astro";
@@ -111,18 +113,13 @@ const page = "index3";
 
             <div class="report-content">
                 <div class="report-header">
-                    <div class="company-logo">
-                        <div class="logo-placeholder">
-                            INGENIERÍA<br>
-                            CONSTRUCCIÓN<br>
-                            INTERVENTORÍA
-                        </div>
-                        <div class="company-info">
-                            <div class="company-name">INGENIERÍA DE LA CONSTRUCCIÓN E INTERVENTORÍA S.A.S</div>
-                            <div class="company-name">INCOINT</div>
-                        </div>
-                    </div>
-                    
+                    <div class="company-logo flex items-center gap-3">
+  <img src={siteConfig.logo} alt={`Logo de ${siteConfig.companyShort}`} height="50" />
+  <div class="company-info">
+    <div class="company-name">{siteConfig.companyName}</div>
+    <div class="company-name">{siteConfig.companyShort}</div>
+  </div>
+</div>
                     
                     <div class="report-info">
                         <div class="report-meta">

@@ -1,6 +1,10 @@
 ---
 import '@/styles/main.scss';  
 import "../css/maquina-obra.css";
+import { siteConfig } from "../config/siteConfig.js";
+
+
+
 
 import Head from "@components/_head.astro";
 import Footer from "@components/dashboard/_footer.astro";
@@ -24,91 +28,6 @@ const page = "index3";
       integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
       crossorigin="anonymous"
     />
-    <style>
-      /* Estilos adicionales para el selector de periodicidad */
-      .period-selector {
-        background: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e3e6f0;
-      }
-      
-      .period-selector h3 {
-        margin-bottom: 15px;
-        color: #2c3e50;
-        font-size: 1.1rem;
-        font-weight: 600;
-      }
-      
-      .period-buttons {
-        display: flex;
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 4px;
-        gap: 4px;
-        max-width: 400px;
-      }
-      
-      .period-btn {
-        flex: 1;
-        padding: 12px 20px;
-        background: transparent;
-        border: none;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        color: #6c757d;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      }
-      
-      .period-btn.active {
-        background: #007bff;
-        color: white;
-        box-shadow: 0 2px 4px rgba(0, 123, 255, 0.25);
-      }
-      
-      .period-btn:hover:not(.active) {
-        color: #495057;
-        background: rgba(0, 123, 255, 0.1);
-      }
-      
-      .alert-period {
-        background: linear-gradient(45deg, #17a2b8, #138496);
-        color: white;
-        padding: 12px 20px;
-        border-radius: 6px;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.9rem;
-      }
-      
-      .filters-section {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-      
-      @media (max-width: 768px) {
-        .period-buttons {
-          flex-direction: column;
-          max-width: 100%;
-        }
-        
-        .filters-section {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
   </head>
 
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary" style="background-color: #ECF0F1 !important;">
@@ -122,7 +41,7 @@ const page = "index3";
           <div class="container-fluid">
             <div class="row">
               <div class="col-sm-6">
-                 <h1 class="content-title" id="pageTitle">Informe Mensual de Maquinaria</h1>
+                 <h1 class="content-title" id="pageTitle">Informe Maquinaria</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
@@ -138,6 +57,16 @@ const page = "index3";
         <!-- Contenido principal -->
         <div class="app-content">
           <div class="container-fluid">
+
+            
+            <div class="content-header">
+                <h1 class="content-title"></h1>
+                <button class="export-btn" onclick="exportReport()">
+                    <span>📤</span>
+                    <span>Exportar</span>
+                </button>
+            </div>
+
             
             <!-- Selector de Periodicidad -->
             <div class="period-selector">
@@ -151,21 +80,7 @@ const page = "index3";
                 </button>
               </div>
             </div>
-
-            <!-- Alerta informativa -->
-            <div class="alert-period" id="periodAlert">
-              <span>ℹ️</span>
-              <span>Visualizando informe <strong id="currentPeriodType">mensual</strong>. Los datos se actualizan automáticamente según la periodicidad seleccionada.</span>
-            </div>
-
-            <div class="content-header">
-                <h1 class="content-title"></h1>
-                <button class="export-btn" onclick="exportReport()">
-                    <span>📤</span>
-                    <span>Exportar</span>
-                </button>
-            </div>
-
+            
             <div class="filters-section">
                 <div class="filter-group">
                     <label>Obra</label>
@@ -215,39 +130,26 @@ const page = "index3";
                 </div>
             </div>
 
-            <div class="search-section">
-                <div class="search-box">
-                    <input type="text" placeholder="Buscar en registros..." id="searchInput">
-                    <button class="btn-secondary" onclick="searchRecords()">🔍 Buscar</button>
-                </div>
-                <div>
-                    <button class="btn-secondary" onclick="refreshData()">🔄 Actualizar</button>
-                </div>
-            </div>
-
             <div class="report-content">
-                <div class="report-header">
-                    <div class="company-logo">
-                        <div class="logo-placeholder">
-                            INGENIERÍA<br>
-                            CONSTRUCCIÓN<br>
-                            INTERVENTORÍA
-                        </div>
-                        <div class="company-info">
-                            <div class="company-name">INGENIERÍA DE LA CONSTRUCCIÓN E INTERVENTORÍA S.A.S</div>
-                            <div class="company-name">INCOINT</div>
-                        </div>
-                    </div>
-                    
-                    <div class="report-info">
-                        <div class="report-meta">
-                            <strong>Generado:</strong> <span id="currentDate">03/07/2025 - 3:29 PM</span>
-                        </div>
-                        <div class="report-meta">
-                            <strong>Usuario:</strong> Admin
-                        </div>
-                    </div>
-                </div>
+               <div class="report-header">
+  <div class="company-logo">
+    <img src={siteConfig.logo} alt={`Logo de ${siteConfig.companyShort}`} height="50" />
+    <div class="company-info">
+      <div class="company-name">{siteConfig.companyName}</div>
+      <div class="company-name">{siteConfig.companyShort}</div>
+    </div>
+  </div>
+  <div class="report-title">
+    INFORME MENSUAL DE MAQUINARIA
+  </div>
+</div>
+
+<div class="report-info">
+  <div class="report-meta">
+    <strong>Generado:</strong> <span id="currentDate">03/07/2025 - 3:29 PM</span>
+  </div>
+</div>
+
 
                 <div class="project-info">
                     <div class="project-detail">
@@ -257,74 +159,83 @@ const page = "index3";
                         <strong id="periodoType">MES:</strong> <span id="periodoName">ENERO, 2025</span>
                     </div>
                 </div>
+<div id="tableContainer">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>OBRA</th>
+        <th>MÁQUINA</th>
+        <th>HORAS TOTALES</th>
+        <th>INGRESOS TOTALES</th>
+        <th>GASTOS TOTALES</th>
+        <th>GANANCIA NETA</th>
+        <th>% RENTABILIDAD</th>
+      </tr>
+    </thead>
+    <tbody id="dataTableBody">
+      <!-- Los datos se cargarán dinámicamente aquí -->
+      <tr>
+        <td rowspan="5">CONSORCIO OLIVERA AIPE</td>
+        <td>RETRO 416D-1</td>
+        <td>26</td>
+        <td>$2.838.000</td>
+        <td>$115.890</td>
+        <td>$2.722.110</td>
+        <td>9590,0%</td>
+      </tr>
+      <tr>
+        <td>EXCAVADORA KOBELCO</td>
+        <td>24</td>
+        <td>$2.500.000</td>
+        <td>$100.000</td>
+        <td>$2.400.000</td>
+        <td>9500,0%</td>
+      </tr>
+      <tr>
+        <td>BULLDOZER CAT D6</td>
+        <td>19</td>
+        <td>$1.900.000</td>
+        <td>$80.000</td>
+        <td>$1.820.000</td>
+        <td>9400,0%</td>
+      </tr>
+      <tr>
+        <td>CARGADOR 950H</td>
+        <td>25</td>
+        <td>$2.700.000</td>
+        <td>$90.000</td>
+        <td>$2.610.000</td>
+        <td>9670,0%</td>
+      </tr>
+      <tr>
+        <td>MOTONIVELADORA 140K</td>
+        <td>22</td>
+        <td>$2.200.000</td>
+        <td>$95.000</td>
+        <td>$2.105.000</td>
+        <td>9550,0%</td>
+      </tr>
+      <tr class="total">
+        <td colspan="2">TOTAL OBRA</td>
+        <td>116</td>
+        <td>$12.138.000</td>
+        <td>$480.890</td>
+        <td>$11.657.110</td>
+        <td>9590,0%</td>
+      </tr>
+    </tbody>
 
-                <div id="tableContainer">
-                    <table class="data-table">
-                      <thead>
-                        <tr>
-                          <th>OBRA</th>
-                          <th>MÁQUINA</th>
-                          <th>HORAS TOTALES</th>
-                          <th>INGRESOS TOTALES</th>
-                          <th>GASTOS TOTALES</th>
-                          <th>GANANCIA NETA</th>
-                          <th>% RENTABILIDAD</th>
-                        </tr>
-                      </thead>
-                      <tbody id="dataTableBody">
-                        <!-- Los datos se cargarán dinámicamente aquí -->
-                        <tr>
-                          <td rowspan="5">CONSORCIO OLIVERA AIPE</td>
-                          <td>RETRO 416D-1</td>
-                          <td>26</td>
-                          <td>$2.838.000</td>
-                          <td>$115.890</td>
-                          <td>$2.722.110</td>
-                          <td>9590,0%</td>
-                        </tr>
-                        <tr>
-                          <td>EXCAVADORA KOBELCO</td>
-                          <td>24</td>
-                          <td>$2.500.000</td>
-                          <td>$100.000</td>
-                          <td>$2.400.000</td>
-                          <td>9500,0%</td>
-                        </tr>
-                        <tr>
-                          <td>BULLDOZER CAT D6</td>
-                          <td>19</td>
-                          <td>$1.900.000</td>
-                          <td>$80.000</td>
-                          <td>$1.820.000</td>
-                          <td>9400,0%</td>
-                        </tr>
-                        <tr>
-                          <td>CARGADOR 950H</td>
-                          <td>25</td>
-                          <td>$2.700.000</td>
-                          <td>$90.000</td>
-                          <td>$2.610.000</td>
-                          <td>9670,0%</td>
-                        </tr>
-                        <tr>
-                          <td>MOTONIVELADORA 140K</td>
-                          <td>22</td>
-                          <td>$2.200.000</td>
-                          <td>$95.000</td>
-                          <td>$2.105.000</td>
-                          <td>9550,0%</td>
-                        </tr>
-                        <tr class="total">
-                          <td colspan="2">TOTAL OBRA</td>
-                          <td>116</td>
-                          <td>$12.138.000</td>
-                          <td>$480.890</td>
-                          <td>$11.657.110</td>
-                          <td>9590,0%</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                </div>
+    <!-- Pie de tabla con derechos de autor -->
+    <tfoot>
+      <tr>
+        <td colspan="7" style="text-align: right; font-size: 0.75rem; color: #6c757d;">
+          &copy; 2025 - Trinity.dev | Creative Commons
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
 
                 <div class="pagination">
                     <button onclick="changePage(-1)">← Anterior</button>
@@ -338,211 +249,6 @@ const page = "index3";
       </div>
     </main>
   </div>
-
-  <script>
-    // Variables globales
-    let currentPeriod = 'mensual';
-    let currentFilters = {
-      obra: 'planta-laguna',
-      periodo: 'enero',
-      año: '2025',
-      equipo: 'todos'
-    };
-
-    // Función principal para cambiar el período
-    function selectPeriod(period, button) {
-      // Actualizar botones activos
-      document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      
-      currentPeriod = period;
-      
-      // Actualizar interfaz según el período
-      updatePeriodInterface(period);
-      
-      // Actualizar alerta informativa
-      document.getElementById('currentPeriodType').textContent = period;
-      
-      // Actualizar título de la página
-      const pageTitle = document.getElementById('pageTitle');
-      pageTitle.textContent = period === 'diario' ? 'Informe Diario de Maquinaria' : 'Informe Mensual de Maquinaria';
-      
-      // Cargar datos según el nuevo período
-      loadReportData(period);
-    }
-
-    // Actualizar interfaz según el período seleccionado
-    function updatePeriodInterface(period) {
-      const periodoLabel = document.getElementById('periodoLabel');
-      const periodoFilter = document.getElementById('periodoFilter');
-      const periodoType = document.getElementById('periodoType');
-      const periodoName = document.getElementById('periodoName');
-      
-      if (period === 'diario') {
-        periodoLabel.textContent = 'Día';
-        periodoType.textContent = 'DÍA:';
-        periodoFilter.innerHTML = generateDayOptions();
-        periodoName.textContent = '03 ENERO, 2025';
-      } else {
-        periodoLabel.textContent = 'Mes';
-        periodoType.textContent = 'MES:';
-        periodoFilter.innerHTML = generateMonthOptions();
-        periodoName.textContent = 'ENERO, 2025';
-      }
-    }
-
-    // Generar opciones de días
-    function generateDayOptions() {
-      let options = '';
-      for (let i = 1; i <= 31; i++) {
-        const selected = i === 3 ? 'selected' : '';
-        options += `<option value="${i}" ${selected}>${i.toString().padStart(2, '0')}</option>`;
-      }
-      return options;
-    }
-
-    // Generar opciones de meses
-    function generateMonthOptions() {
-      const months = [
-        { value: 'enero', text: 'Enero' },
-        { value: 'febrero', text: 'Febrero' },
-        { value: 'marzo', text: 'Marzo' },
-        { value: 'abril', text: 'Abril' },
-        { value: 'mayo', text: 'Mayo' },
-        { value: 'junio', text: 'Junio' },
-        { value: 'julio', text: 'Julio' },
-        { value: 'agosto', text: 'Agosto' },
-        { value: 'septiembre', text: 'Septiembre' },
-        { value: 'octubre', text: 'Octubre' },
-        { value: 'noviembre', text: 'Noviembre' },
-        { value: 'diciembre', text: 'Diciembre' }
-      ];
-      
-      let options = '';
-      months.forEach(month => {
-        const selected = month.value === 'enero' ? 'selected' : '';
-        options += `<option value="${month.value}" ${selected}>${month.text}</option>`;
-      });
-      return options;
-    }
-
-    // Cargar datos del reporte
-    async function loadReportData(period) {
-      console.log(`Cargando datos para período: ${period}`);
-      
-      try {
-        // Aquí harías la petición a tu backend
-        const response = await fetch('/api/informes/maquinaria', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            periodo: period,
-            filtros: currentFilters
-          })
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          updateTable(data);
-        } else {
-          console.error('Error al cargar los datos');
-        }
-      } catch (error) {
-        console.error('Error en la petición:', error);
-        // Mostrar datos de ejemplo mientras tanto
-        console.log('Mostrando datos de ejemplo para:', period);
-      }
-    }
-
-    // Actualizar filtros
-    function updateFilters() {
-      // Obtener valores actuales de los filtros
-      currentFilters = {
-        obra: document.getElementById('obraFilter').value,
-        periodo: document.getElementById('periodoFilter').value,
-        año: document.getElementById('añoFilter').value,
-        equipo: document.getElementById('equipoFilter').value
-      };
-      
-      // Actualizar información del proyecto
-      updateProjectInfo();
-      
-      // Recargar datos con los nuevos filtros
-      loadReportData(currentPeriod);
-    }
-
-    // Actualizar información del proyecto en la UI
-    function updateProjectInfo() {
-      const obraName = document.getElementById('obraName');
-      const periodoName = document.getElementById('periodoName');
-      
-      // Mapear valores a nombres legibles
-      const obraNames = {
-        'planta-laguna': 'CONSORCIO OLIVERA AIPE',
-        'proyecto-norte': 'PROYECTO NORTE',
-        'obra-sur': 'OBRA SUR'
-      };
-      
-      obraName.textContent = obraNames[currentFilters.obra] || 'OBRA NO ESPECIFICADA';
-      
-      if (currentPeriod === 'diario') {
-        periodoName.textContent = `${currentFilters.periodo.padStart(2, '0')} ENERO, ${currentFilters.año}`;
-      } else {
-        periodoName.textContent = `${currentFilters.periodo.toUpperCase()}, ${currentFilters.año}`;
-      }
-    }
-
-    // Actualizar tabla con nuevos datos
-    function updateTable(data) {
-      const tableBody = document.getElementById('dataTableBody');
-      // Aquí actualizarías el contenido de la tabla con los datos recibidos
-      // tableBody.innerHTML = generateTableRows(data);
-    }
-
-    // Función de búsqueda
-    function searchRecords() {
-      const searchTerm = document.getElementById('searchInput').value;
-      console.log(`Buscando: ${searchTerm}`);
-      // Implementar lógica de búsqueda
-    }
-
-    // Función de actualización
-    function refreshData() {
-      console.log('Actualizando datos...');
-      loadReportData(currentPeriod);
-      
-      // Actualizar timestamp
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('es-ES') + ' - ' + now.toLocaleTimeString('es-ES');
-      document.getElementById('currentDate').textContent = dateStr;
-    }
-
-    // Función de exportación
-    function exportReport() {
-      console.log(`Exportando reporte ${currentPeriod}...`);
-      // Implementar lógica de exportación
-      // Podrías enviar los filtros actuales al servidor para generar el reporte
-      window.open(`/api/export/maquinaria?periodo=${currentPeriod}&filtros=${JSON.stringify(currentFilters)}`, '_blank');
-    }
-
-    // Función de paginación (ya existente, la mantienes)
-    function changePage(direction) {
-      console.log(`Cambiando página: ${direction}`);
-      // Tu lógica de paginación existente
-    }
-
-    // Inicialización cuando se carga la página
-    document.addEventListener('DOMContentLoaded', function() {
-      // Inicializar con período mensual por defecto
-      updatePeriodInterface('mensual');
-      updateFilters();
-      
-      console.log('Interfaz de informes inicializada');
-    });
-  </script>
-
   <Scripts path={path} />
 </body>
 </html>
